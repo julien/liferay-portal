@@ -29,8 +29,10 @@ public class FieldsetGroupTag extends BaseFieldsetGroupTag {
 
 	@Override
 	protected String getEndPage() {
-		if (Validator.isNotNull(getMarkupView())) {
-			return "/html/taglib/aui/fieldset_group/" + getMarkupView() +
+		String markupView = getMarkupView();
+
+		if (Validator.isNotNull(markupView) && !markupView.equals("lexicon")) {
+			return "/html/taglib/aui/fieldset_group/" + markupView +
 				"/end.jsp";
 		}
 
@@ -39,8 +41,10 @@ public class FieldsetGroupTag extends BaseFieldsetGroupTag {
 
 	@Override
 	protected String getStartPage() {
-		if (Validator.isNotNull(getMarkupView())) {
-			return "/html/taglib/aui/fieldset_group/" + getMarkupView() +
+		String markupView = getMarkupView();
+
+		if (Validator.isNotNull(markupView) && !markupView.equals("lexicon")) {
+			return "/html/taglib/aui/fieldset_group/" + markupView +
 				"/start.jsp";
 		}
 

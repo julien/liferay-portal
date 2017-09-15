@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.JavaConstants;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.taglib.aui.base.BaseFieldsetTag;
 import com.liferay.taglib.ui.IconHelpTag;
@@ -52,8 +53,10 @@ public class FieldsetTag extends BaseFieldsetTag {
 
 	@Override
 	protected String getEndPage() {
-		if (Validator.isNotNull(getMarkupView())) {
-			return "/html/taglib/aui/fieldset/" + getMarkupView() + "/end.jsp";
+		String markupView = getMarkupView();
+
+		if (Validator.isNotNull(markupView) && !markupView.equals("lexicon")) {
+			return "/html/taglib/aui/fieldset/" + markupView + "/end.jsp";
 		}
 
 		return "/html/taglib/aui/fieldset/end.jsp";
@@ -61,8 +64,10 @@ public class FieldsetTag extends BaseFieldsetTag {
 
 	@Override
 	protected String getStartPage() {
-		if (Validator.isNotNull(getMarkupView())) {
-			return "/html/taglib/aui/fieldset/" + getMarkupView() +
+		String markupView = getMarkupView();
+
+		if (Validator.isNotNull(markupView) && !markupView.equals("lexicon")) {
+			return "/html/taglib/aui/fieldset/" + markupView +
 				"/start.jsp";
 		}
 
