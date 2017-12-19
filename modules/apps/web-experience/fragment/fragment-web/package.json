@@ -10,14 +10,21 @@
 	},
 	"devDependencies": {
 		"check-source-formatting": "^2.0.4",
+		"babel-cli": "^6.26.0",
+		"babel-preset-env": "^1.6.1",
+		"babel-preset-liferay-project": "^1.2.3",
 		"liferay-module-config-generator": "^1.1.10",
-		"metal-cli": "^4.3.3"
+		"liferay-npm-bundler": "^1.2.3",
+		"liferay-npm-bundler-preset-standard": "^1.2.3",
+		"metal-cli": "^4.3.3",
+		"metal-tools-soy": "^4.2.9"
 	},
 	"name": "fragment-web",
 	"scripts": {
 		"checkFormat": "npm run csf",
 		"csf": "csf src/**/*.js",
-		"format": "npm run csf -- -i"
+		"format": "npm run csf -- -i",
+		"build": "metalsoy && babel --source-maps -d classes/META-INF/resources src/main/resources/META-INF/resources && liferay-npm-bundler"
 	},
 	"version": "1.0.0"
 }
