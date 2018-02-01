@@ -452,7 +452,8 @@ AUI.add(
 						var instance = this;
 
 						if (!event.domEvent) {
-							instance.selectFlag(event.value);
+							instance.selectFlag(event.currentTarget.one('a').getAttribute('data-value'));
+							instance.set('selected', parseInt(event.currentTarget.one('a').getAttribute('data-index')));
 						}
 					},
 
@@ -598,14 +599,26 @@ AUI.add(
 
 					var flag = currentTarget.one('.lfr-input-localized-flag');
 
-					// var input = currentTarget.ancestor('.input-localized').one(SELECTOR_LANG_VALUE);
-					var input = A.getDoc().one('.input-localized').one(SELECTOR_LANG_VALUE);
+					var input = A.one(flag.ancestor('[data-foo]').getData('foo') + ' ' + SELECTOR_LANG_VALUE);
 
 					if (input && flag) {
 						var languageNode = flag.ancestor('[data-languageid]', true, '.palette-item') || flag;
+						var languageId = languageNode.attr('data-languageid');
 
-						InputLocalized._initializeInputLocalized(event, input, languageNode.attr('data-languageid'));
+						InputLocalized._initializeInputLocalized(event, input, languageId);
+
+						Object.keys(InputLocalized._registered)
+							.forEach(
+								il => {
+									InputLocalized._initializeInputLocalized(
+										event,
+										A.one(InputLocalized._registered[il].inputPlaceholder),
+										languageId
+									);
+								}
+							);
 					}
+
 				},
 
 				_onInputUserInteraction: function(event) {

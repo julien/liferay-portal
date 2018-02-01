@@ -181,20 +181,21 @@
 						iconData.put("value", curLanguageId);
 						iconData.put("languageid", curLanguageId);
 						%>
-						<liferay-ui:icon
-							alt="<%= title %>"
-							cssClass="<%= itemCssClass %>"
-							data="<%= iconData %>"
-							icon="<%= StringUtil.toLowerCase(StringUtil.replace(curLanguageId, '_', '-')) %>"
+						<div data-foo="#<portlet:namespace /><%= id %>BoundingBox">
+							<liferay-ui:icon
+								alt="<%= title %>"
+								cssClass="<%= itemCssClass %>"
+								data="<%= iconData %>"
+								icon="<%= StringUtil.toLowerCase(StringUtil.replace(curLanguageId, '_', '-')) %>"
 
-							linkCssClass="lfr-input-localized-flag"
-							localizeMessage="<%= true %>"
-							markupView="lexicon"
-							message="<%= curLanguageId %>"
-							url="javascript:;"
-							>
-						</liferay-ui:icon>
-					</li>
+								linkCssClass="lfr-input-localized-flag"
+								localizeMessage="<%= true %>"
+								markupView="lexicon"
+								message="<%= curLanguageId %>"
+								url="javascript:;"
+								>
+							</liferay-ui:icon>
+						</div>
 					<%
 					}
 					%>
