@@ -127,8 +127,8 @@
 
 		<div class="input-localized-content" id="<portlet:namespace /><%= id %>ContentBox" role="menu">
 			<div class="palette-container">
-				<ul class="palette-items-container">
-
+				<%--<ul class="palette-items-container">--%>
+				<liferay-ui:icon-menu direction="left-side" icon="<%= StringPool.BLANK %>" markupView="lexicon" message="<%= StringPool.BLANK %>" showWhenSingleIcon="<%= true %>">
 					<%
 					LinkedHashSet<String> uniqueLanguageIds = new LinkedHashSet<String>();
 
@@ -165,7 +165,7 @@
 
 						data.put("languageid", curLanguageId);
 					%>
-
+						<%--
 						<li class="palette-item <%= itemCssClass %>" data-index="<%= index++ %>" data-value="<%= curLanguageId %>" role="menuitem" style="display: inline-block;" title="<%= title %>">
 							<a class="palette-item-inner" data-languageid="<%= curLanguageId %>" href="javascript:;">
 								<aui:icon alt="<%= title %>" cssClass="lfr-input-localized-flag" image="<%= StringUtil.toLowerCase(StringUtil.replace(curLanguageId, '_', '-')) %>" markupView="lexicon" />
@@ -173,12 +173,34 @@
 								<div class="<%= errorLocales.contains(curLocale) ? "lfr-input-localized-state lfr-input-localized-state-error" : "lfr-input-localized-state" %>"></div>
 							</a>
 						</li>
+						--%>
 
+						<%
+						Map<String, Object> iconData = new HashMap<>();
+						iconData.put("index", index++);
+						iconData.put("value", curLanguageId);
+						iconData.put("languageid", curLanguageId);
+						%>
+						<div data-foo="#<portlet:namespace /><%= id %>BoundingBox">
+							<liferay-ui:icon
+								alt="<%= title %>"
+								cssClass="<%= itemCssClass %>"
+								data="<%= iconData %>"
+								icon="<%= StringUtil.toLowerCase(StringUtil.replace(curLanguageId, '_', '-')) %>"
+
+								linkCssClass="lfr-input-localized-flag"
+								localizeMessage="<%= true %>"
+								markupView="lexicon"
+								message="<%= curLanguageId %>"
+								url="javascript:;"
+								>
+							</liferay-ui:icon>
+						</div>
 					<%
 					}
 					%>
-
-				</ul>
+				</liferay-ui:icon-menu>
+				<%--</ul>--%>
 			</div>
 		</div>
 	</c:if>
