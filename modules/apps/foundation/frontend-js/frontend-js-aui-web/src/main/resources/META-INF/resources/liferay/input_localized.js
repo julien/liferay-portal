@@ -598,7 +598,8 @@ AUI.add(
 
 					var flag = currentTarget.one('.lfr-input-localized-flag');
 
-					var input = currentTarget.ancestor('.input-localized').one(SELECTOR_LANG_VALUE);
+					// var input = currentTarget.ancestor('.input-localized').one(SELECTOR_LANG_VALUE);
+					var input = A.getDoc().one('.input-localized').one(SELECTOR_LANG_VALUE);
 
 					if (input && flag) {
 						var languageNode = flag.ancestor('[data-languageid]', true, '.palette-item') || flag;
@@ -624,7 +625,7 @@ AUI.add(
 						InputLocalized._interactionHandle = new A.EventHandle(
 							[
 								doc.delegate(['focus', 'input'], InputLocalized._onInputUserInteraction, SELECTOR_LANG_VALUE),
-								doc.delegate('click', InputLocalized._onFlagUserInteraction, '.input-localized-content .palette-item')
+								doc.delegate('click', InputLocalized._onFlagUserInteraction, '.palette-item')
 							]
 						);
 					}
