@@ -43,6 +43,7 @@ public class ChartSampleDisplayContext {
 
 	public ChartSampleDisplayContext(PortletRequest portletRequest) {
 		_portletRequest = portletRequest;
+
 		_initAreaSplineChartConfig();
 		_initAreaStepChartConfig();
 		_initBarChartConfig();
