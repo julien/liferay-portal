@@ -157,18 +157,18 @@ public class ChartSampleDisplayContext {
 	}
 
 	private void _initGeomapConfig() {
-		GeomapColor color = new GeomapColor();
+		GeomapColor geomapColor = new GeomapColor();
 
-		GeomapColorRange range = new GeomapColorRange();
+		GeomapColorRange geomapColorRange = new GeomapColorRange();
 
-		range.setMax("#b2150a");
-		range.setMin("#ee3e32");
+		geomapColorRange.setMax("#b2150a");
+		geomapColorRange.setMin("#ee3e32");
 
-		color.setRange(range);
-		color.setSelected("#a9615c");
-		color.setValue("name_len");
+		geomapColor.setRange(geomapColorRange);
+		geomapColor.setSelected("#a9615c");
+		geomapColor.setValue("name_len");
 
-		_geomapConfig2.setColor(color);
+		_geomapConfig2.setColor(geomapColor);
 
 		StringBuilder sb = new StringBuilder();
 
