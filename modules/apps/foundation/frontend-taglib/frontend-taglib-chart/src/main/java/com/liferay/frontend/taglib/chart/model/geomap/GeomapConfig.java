@@ -15,6 +15,7 @@
 package com.liferay.frontend.taglib.chart.model.geomap;
 
 import com.liferay.frontend.taglib.chart.model.ChartObject;
+import com.liferay.portal.kernel.util.StringPool;
 
 /**
  * @author Julien Castelain
@@ -26,31 +27,39 @@ public class GeomapConfig extends ChartObject {
 	}
 
 	public Object getData() {
-		return get("data", Object.class);
+		Object data = get("data", Object.class, false);
+
+		if (data == null) {
+			return StringPool.BLANK;
+		}
+
+		return data;
 	}
 
 	public void setColor(GeomapColor color) {
 		set("color", color);
 	}
 
-	public void setDataUrl(String url) {
+	public void setDataObject(Object dataObject) {
 		Object data = get("data", Object.class, false);
 
-		if (data != null) {
-			throw new IllegalStateException("data has already been set");
+		if ((data != null) && !(data instanceof Object)) {
+			throw new IllegalStateException(
+				"Unable to set Object data because it has been set as URL");
 		}
 
-		set("data", url);
+		set("data", dataObject);
 	}
 
-	public void setJson(Object jsonObj) {
-		Object data = get("data", String.class, false);
+	public void setDataUrl(String dataUrl) {
+		Object data = get("data", Object.class, false);
 
-		if (data != null) {
-			throw new IllegalStateException("data has already been set");
+		if ((data != null) && !(data instanceof String)) {
+			throw new IllegalStateException(
+				"Unable to set data URL because is has been set as Object");
 		}
 
-		set("data", jsonObj);
+		set("data", dataUrl);
 	}
 
 }
