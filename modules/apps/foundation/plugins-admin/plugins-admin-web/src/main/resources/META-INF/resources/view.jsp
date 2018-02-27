@@ -29,6 +29,7 @@ PortletURL marketplaceURL = null;
 boolean showEditPluginHREF = true;
 %>
 
+<%--
 <aui:nav-bar cssClass="collapse-basic-search" markupView="lexicon">
 	<aui:nav cssClass="navbar-nav">
 
@@ -69,6 +70,40 @@ boolean showEditPluginHREF = true;
 		/>
 	</aui:nav>
 </aui:nav-bar>
+--%>
+
+<clay:navigation-bar
+		inverted="<%= true %>"
+		items="<%=
+				new JSPNavigationItemList(pageContext) {
+						{
+								add(
+									navigationItem -> {
+										navigationItem.setActive(tabs2.equals("portlets"));
+										navigationItem.setHref(renderResponse.createRenderURL(), "tabs2", "portlets");
+										navigationItem.setLabel(LanguageUtil.get(request, "portlets"));
+									}
+								);
+
+								add(
+									navigationItem -> {
+										navigationItem.setActive(tabs2.equals("themes"));
+										navigationItem.setHref(renderResponse.createRenderURL(), "tabs2", "themes");
+										navigationItem.setLabel(LanguageUtil.get(request, "themes"));
+									}
+								);
+
+								add(
+									navigationItem -> {
+										navigationItem.setActive(tabs2.equals("layout-templates"));
+										navigationItem.setHref(renderResponse.createRenderURL(), "tabs2", "layout-templates");
+										navigationItem.setLabel(LanguageUtil.get(request, "layout-templates"));
+									}
+								);
+						}
+				}
+		%>"
+/>
 
 <div class="container-fluid-1280">
 	<c:choose>
