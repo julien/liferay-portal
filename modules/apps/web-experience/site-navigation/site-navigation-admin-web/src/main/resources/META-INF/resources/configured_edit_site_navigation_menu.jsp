@@ -137,11 +137,15 @@
 </aui:script>
 
 <aui:script use="aui-base,aui-parse-content">
-	Liferay.componentReady('<portlet:namespace/>sidebar').then(function(sidebar) {
-		sidebar.on('hide', function() {
-			sidebar.body = '';
-			sidebar.visible = false;
-		});
+	Liferay.componentReady('<portlet:namespace/>sidebar').then(
+		function(sidebar) {
+			sidebar.on(
+				'hide',
+				function() {
+					sidebar.body = '';
+					sidebar.visible = false;
+				}
+			);
 
 		function openSidebar (title) {
 			sidebar.body = '<div id="<portlet:namespace />sidebarBody"><div class="loading-animation"></div></div>';
@@ -164,10 +168,13 @@
 			}
 
 			if (sidebarHeaderButton) {
-				sidebarHeaderButton.addEventListener('click', function() {
-					sidebar.body = '';
-					sidebar.visible = false;
-				});
+				sidebarHeaderButton.addEventListener(
+					'click',
+					function() {
+							sidebar.body = '';
+							sidebar.visible = false;
+					}
+				);
 			}
 		}
 
