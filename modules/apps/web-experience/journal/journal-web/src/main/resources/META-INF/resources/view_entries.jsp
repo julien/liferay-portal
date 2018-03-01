@@ -41,7 +41,7 @@ String searchContainerId = ParamUtil.getString(request, "searchContainerId");
 		JournalArticle curArticle = null;
 		JournalFolder curFolder = null;
 
-		Object result = row.getObject();
+		final Object result = row.getObject();
 
 		if (result instanceof JournalFolder) {
 			curFolder = (JournalFolder)result;
@@ -137,6 +137,58 @@ String searchContainerId = ParamUtil.getString(request, "searchContainerId");
 
 							<c:choose>
 								<c:when test="<%= Validator.isNotNull(articleImageURL) %>">
+									<%
+										User curArticleAuthor = UserLocalServiceUtil.fetchUser(curArticle.getUserId());
+									%>
+
+									<clay:image-card
+										actionItems="<%=
+											new JSPDropdownItemList(pageContext) {
+												{
+													add(
+														dropdownItem -> {
+															dropdownItem.setHref(renderResponse.createRenderURL(), "mvcPath", "/edit_article.jsp");
+															dropdownItem.setLabel(LanguageUtil.get(request, "edit"));
+														}
+													);
+												}
+											}
+										%>"
+										href="<%= editURL %>"
+										imageSrc="<%= HtmlUtil.escape(articleImageURL) %>"
+										labels="<%=
+											new JSPLabelItemList(pageContext) {
+												{
+													final JournalArticle curArticle = (JournalArticle)result;
+
+													add(
+														labelItem -> {
+															labelItem.setLabel(LanguageUtil.get(request, WorkflowConstants.getStatusLabel(curArticle.getStatus())));
+															labelItem.setStyle(WorkflowConstants.getStatusCssClass(curArticle.getStatus()));
+														}
+													);
+												}
+											}
+										%>"
+										stickerLabel="<%= curArticleAuthor.getInitials() %>"
+										stickerShape="circle"
+										stickerStyle="<%= LexiconUtil.getUserColorCssClass(curArticleAuthor) %>"
+										subtitle="<%=
+											LanguageUtil.format(request, "x-modified-x-ago",
+												new String[] {
+													HtmlUtil.escape(curArticle.getUserName()),
+													LanguageUtil.getTimeDescription(request,
+														System.currentTimeMillis() - curArticle.getModifiedDate().getTime(),
+														true
+													)
+												}
+											)
+										%>"
+										title="<%= curArticle.getTitle(locale) %>"
+										resultRow="<%= row %>"
+										rowChecker="<%= articleSearchContainer.getRowChecker() %>"
+									/>
+
 									<liferay-frontend:vertical-card
 										actionJsp='<%= journalDisplayContext.isShowEditActions() ? "/article_action.jsp" : null %>'
 										actionJspServletContext="<%= application %>"
@@ -150,6 +202,58 @@ String searchContainerId = ParamUtil.getString(request, "searchContainerId");
 									</liferay-frontend:vertical-card>
 								</c:when>
 								<c:otherwise>
+									<%
+										User curArticleAuthor = UserLocalServiceUtil.fetchUser(curArticle.getUserId());
+									%>
+
+									<clay:file-card
+										actionItems="<%=
+											new JSPDropdownItemList(pageContext) {
+												{
+													add(
+														dropdownItem -> {
+															dropdownItem.setHref(renderResponse.createRenderURL(), "mvcPath", "/edit_article.jsp");
+															dropdownItem.setLabel(LanguageUtil.get(request, "edit"));
+														}
+													);
+												}
+											}
+										%>"
+										href="<%= editURL %>"
+										icon="web-content"
+										labels="<%=
+											new JSPLabelItemList(pageContext) {
+												{
+													final JournalArticle curArticle = (JournalArticle)result;
+
+													add(
+														labelItem -> {
+															labelItem.setLabel(LanguageUtil.get(request, WorkflowConstants.getStatusLabel(curArticle.getStatus())));
+															labelItem.setStyle(WorkflowConstants.getStatusCssClass(curArticle.getStatus()));
+														}
+													);
+												}
+											}
+										%>"
+										stickerLabel="<%= curArticleAuthor.getInitials() %>"
+										stickerShape="circle"
+										stickerStyle="<%= LexiconUtil.getUserColorCssClass(curArticleAuthor) %>"
+										subtitle="<%=
+											LanguageUtil.format(request, "x-modified-x-ago",
+												new String[] {
+													HtmlUtil.escape(curArticle.getUserName()),
+													LanguageUtil.getTimeDescription(request,
+														System.currentTimeMillis() - curArticle.getModifiedDate().getTime(),
+														true
+													)
+												}
+											)
+										%>"
+										title="<%= curArticle.getTitle(locale) %>"
+										resultRow="<%= row %>"
+										rowChecker="<%= articleSearchContainer.getRowChecker() %>"
+									/>
+
 									<liferay-frontend:icon-vertical-card
 										actionJsp='<%= journalDisplayContext.isShowEditActions() ? "/article_action.jsp" : null %>'
 										actionJspServletContext="<%= application %>"
@@ -289,6 +393,46 @@ String searchContainerId = ParamUtil.getString(request, "searchContainerId");
 						%>
 
 						<liferay-ui:search-container-column-text colspan="<%= 2 %>">
+							<clay:horizontal-card
+								actionItems="<%=
+										new JSPDropdownItemList(pageContext) {
+												{
+													final JournalFolder currentFolder = (JournalFolder)result;
+
+													add(
+														dropdownItem -> {
+															dropdownItem.setHref(
+																renderResponse.createRenderURL(),
+																"mvcPath", "/edit_folder.jsp",
+																"redirect", renderResponse.createRenderURL(), 
+																"groupId", String.valueOf(currentFolder.getGroupId()),
+																"folderId", String.valueOf(currentFolder.getFolderId())
+															);
+															dropdownItem.setLabel(LanguageUtil.get(request, "edit"));
+														}
+													);
+
+													add(
+														dropdownItem -> {
+															dropdownItem.setHref(
+																renderResponse.createRenderURL(),
+																"mvcPath", "/move_entries.jsp",
+																"redirect", renderResponse.createRenderURL(), 
+																"rowIdsJournalFolder", String.valueOf(currentFolder.getFolderId())
+															);
+															dropdownItem.setLabel(LanguageUtil.get(request, "move"));
+														}
+													);
+												}
+										}
+								%>"
+								href="<%= rowURL.toString() %>"
+								icon="folder"
+								title="<%= HtmlUtil.escape(curFolder.getName()) %>"
+								resultRow="<%= row %>"
+								rowChecker="<%= articleSearchContainer.getRowChecker() %>"
+							/>
+
 							<liferay-frontend:horizontal-card
 								actionJsp='<%= journalDisplayContext.isShowEditActions() ? "/folder_action.jsp" : null %>'
 								actionJspServletContext="<%= application %>"
