@@ -1,23 +1,32 @@
 {
 	"dependencies": {
-		"metal": "^2.13.2",
-		"metal-component": "^2.13.2",
+		"metal": "^2.16.5",
+		"metal-component": "^2.16.5",
 		"metal-debounce": "^2.0.0",
-		"metal-dom": "^2.13.2",
-		"metal-soy": "^2.13.2",
-		"metal-state": "^2.13.2",
-		"metal-uri": "^2.3.0"
+		"metal-dom": "^2.16.5",
+		"metal-soy": "^2.16.5",
+		"metal-state": "^2.16.5",
+		"metal-uri": "^3.1.1"
 	},
 	"devDependencies": {
+		"babel-cli": "^6.26.0",
+		"babel-preset-env": "^1.6.1",
+		"babel-preset-liferay-project": "^1.6.1",
 		"check-source-formatting": "^2.0.4",
-		"liferay-module-config-generator": "^1.1.10",
-		"metal-cli": "^4.3.3"
+		"cross-env": "^5.1.4",
+		"liferay-npm-bundler": "^1.6.1",
+		"liferay-npm-bundler-preset-standard": "^1.6.1",
+		"metal-tools-soy": "^6.0.0"
 	},
 	"name": "fragment-web",
 	"scripts": {
 		"checkFormat": "npm run csf",
 		"csf": "csf src/**/*.js",
-		"format": "npm run csf -- -i"
+		"format": "npm run csf -- -i",
+		"build:bundle": "liferay-npm-bundler",
+		"build:js": "cross-env NODE_ENV=production babel --source-maps -d classes/META-INF/resources src/main/resources/META-INF/resources",
+		"build:soy": "metalsoy",
+		"build": "npm run build:soy && npm run build:js && npm run build:bundle"
 	},
 	"version": "1.0.0"
 }

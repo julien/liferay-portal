@@ -101,7 +101,7 @@ renderResponse.setTitle(title);
 	<portlet:param name="fragmentEntryId" value="<%= String.valueOf(fragmentDisplayContext.getFragmentEntryId()) %>" />
 </portlet:actionURL>
 
-<aui:script require="fragment-web/js/FragmentEditor.es as FragmentEditor, metal-dom/src/all/dom as dom">
+<aui:script require="fragment-web@1.0.0/js/FragmentEditor.es as FragmentEditor">
 	var cssInput = document.getElementById('<portlet:namespace />cssContent');
 	var htmlInput = document.getElementById('<portlet:namespace />htmlContent');
 	var jsInput = document.getElementById('<portlet:namespace />jsContent');
