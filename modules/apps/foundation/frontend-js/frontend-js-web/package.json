@@ -26,14 +26,14 @@
 		"metal-events": "^2.5.16",
 		"metal-keyboard-focus": "^2.0.1",
 		"metal-position": "^2.1.1",
-		"metal-promise": "^3.0.3",
+		"metal-promise": "^3.0.4",
 		"metal-soy": "^2.16.4",
 		"svg4everybody": "^2.1.8"
 	},
 	"devDependencies": {
 		"babel-loader": "^7.1.2",
 		"babel-preset-env": "^1.6.0",
-		"check-source-formatting": "^2.0.4",
+		"check-source-formatting": "^2.0.6",
 		"jest": "^20.0.4",
 		"liferay-jest-junit-reporter": "0.0.3",
 		"liferay-module-config-generator": "^1.2.1",
@@ -48,6 +48,10 @@
 		},
 		"testMatch": [
 			"**/test/**/*.js"
+		],
+		"testPathIgnorePatterns": [
+			"<rootDir>/node_modules/",
+			"<rootDir>/test/liferay/MockData*"
 		],
 		"testResultsProcessor": "./node_modules/liferay-jest-junit-reporter",
 		"transformIgnorePatterns": [
