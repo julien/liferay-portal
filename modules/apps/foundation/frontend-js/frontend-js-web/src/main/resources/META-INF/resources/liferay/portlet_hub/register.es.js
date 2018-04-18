@@ -23,7 +23,7 @@ const register = function(portletId) {
 			}
 		}
 	);
-}
+};
 
 export {register};
 export default register;

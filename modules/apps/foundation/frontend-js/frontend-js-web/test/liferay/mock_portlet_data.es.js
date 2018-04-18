@@ -1,10 +1,4 @@
-/**
- * Helper methods for tests
- * @see
- * https://github.com/apache/portals-pluto/portlet-api/src/main/javascript/MockData.js
- */
-
-export const portlet = {
+const portlet = {
 	test: {
 		data: {
 			initialPageState: {
@@ -145,16 +139,16 @@ export const portlet = {
 				}
 			}
 		},
+
 		getIds() {
 			return Object.keys(portlet.test.data.initialPageState.portlets);
 		},
+
 		getInitData() {
 			return JSON.parse(JSON.stringify(portlet.test.data.initialPageState));
 		},
+
 		resource: {
-
-			// Gets the cacheability from the URL
-
 			getCacheability(url) {
 				const regex = /p_p_cacheability=(\w+)/g;
 				const str = regex.exec(url);
@@ -164,21 +158,25 @@ export const portlet = {
 				if (Array.isArray(str) && str.length === 2) {
 					cacheability = str[1];
 				}
+
 				return cacheability;
 			},
-
-			// Tests if resource URL
 
 			isResourceUrl(url) {
 				const regex = /(p_p_hub=2)(&p_p_resource_id=\w+)?/g;
 				const str = regex.exec(url);
 
 				let found = false;
+
 				if (Array.isArray(str) && str.length > 0) {
 					found = true;
 				}
+
 				return found;
 			}
 		}
 	}
 };
+
+export {portlet};
+export default portlet;

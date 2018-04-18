@@ -1,5 +1,3 @@
-'use strict';
-
 import PortletBase from '../../src/main/resources/META-INF/resources/liferay/PortletBase.es';
 
 describe(

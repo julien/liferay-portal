@@ -1,7 +1,5 @@
-'use strict';
-
+import PortletConstants from '../../src/main/resources/META-INF/resources/liferay/portlet_hub/portlet_constants.es';
 import RenderState from '../../src/main/resources/META-INF/resources/liferay/portlet_hub/RenderState.es';
-import PortletConstants from '../../src/main/resources/META-INF/resources/liferay/portlet_hub/PortletConstants.es';
 
 describe(
 	'Render State',
@@ -23,15 +21,22 @@ describe(
 							windowState: 'maximized'
 						};
 
-						const rs = new RenderState(mockData);
+						const renderState = new RenderState(mockData);
 
-						expect(rs.parameters.a).toBeDefined();
-						expect(rs.parameters.a).toEqual(expect.arrayContaining([null]));
-						expect(rs.parameters.b).toBeDefined();
-						expect(rs.parameters.b).toEqual(expect.arrayContaining([1, 2, 3]));
-						expect(rs.parameters.c).not.toBeDefined();
-						expect(rs.parameters.d).not.toBeDefined();
-						expect(rs.portletMode).toEqual(PortletConstants.EDIT);
+						expect(renderState.parameters.a).toBeDefined();
+						expect(renderState.parameters.a).toEqual(
+							expect.arrayContaining([null])
+						);
+
+						expect(renderState.parameters.b).toBeDefined();
+						expect(renderState.parameters.b).toEqual(
+							expect.arrayContaining([1, 2, 3])
+						);
+
+						expect(renderState.parameters.c).not.toBeDefined();
+						expect(renderState.parameters.d).not.toBeDefined();
+
+						expect(renderState.portletMode).toEqual(PortletConstants.EDIT);
 					}
 				);
 			}
@@ -43,7 +48,7 @@ describe(
 				it(
 					'should return a new RenderState instance with the same properties',
 					() => {
-						const rs1 = new RenderState(
+						const renderState1 = new RenderState(
 							{
 								parameters:
 								{
@@ -56,21 +61,28 @@ describe(
 							}
 						);
 
-						const rs2 = rs1.clone();
+						const renderState2 = renderState1.clone();
 
-						expect(rs2.parameters.a).toEqual(expect.arrayContaining(rs1.parameters.a));
+						expect(renderState2.parameters.a).toEqual(
+							expect.arrayContaining(renderState1.parameters.a)
+						);
 
-						expect(rs1.parameters.b).not.toBeDefined();
-						expect(rs2.parameters.b).toEqual(rs1.parameters.b);
+						expect(renderState1.parameters.b).not.toBeDefined();
+						expect(renderState2.parameters.b).toEqual(renderState1.parameters.b);
 
-						expect(rs1.parameters.c).toEqual(expect.arrayContaining(['bar', null]));
-						expect(rs2.parameters.c).toEqual(expect.arrayContaining(rs1.parameters.c));
+						expect(renderState1.parameters.c).toEqual(
+							expect.arrayContaining(['bar', null])
+						);
 
-						expect(rs1.portletMode).toEqual(PortletConstants.VIEW);
-						expect(rs2.portletMode).toEqual(rs1.portletMode);
+						expect(renderState2.parameters.c).toEqual(
+							expect.arrayContaining(renderState1.parameters.c)
+						);
 
-						expect(rs1.windowState).toEqual(PortletConstants.NORMAL);
-						expect(rs2.windowState).toEqual(rs1.windowState);
+						expect(renderState1.portletMode).toEqual(PortletConstants.VIEW);
+						expect(renderState2.portletMode).toEqual(renderState1.portletMode);
+
+						expect(renderState1.windowState).toEqual(PortletConstants.NORMAL);
+						expect(renderState2.windowState).toEqual(renderState1.windowState);
 					}
 				);
 			}
@@ -79,11 +91,10 @@ describe(
 		describe(
 			'getValue',
 			() => {
-
 				it(
 					'should throw an error if specified parameter is not a string',
 					() => {
-						const rs = new RenderState(
+						const renderState = new RenderState(
 							{
 								parameters: {
 									a: [1, 2, 3]
@@ -93,31 +104,33 @@ describe(
 							}
 						);
 
-						const fn = () => {
-							rs.getValue(1);
+						const testFn = () => {
+							renderState.getValue(1);
 						};
 
-						expect(fn).toThrow();
+						expect(testFn).toThrow();
 					}
 				);
 
 				it(
 					'should return a value if specified parameter is undefined and default value is specified',
 					() => {
-						const rs = new RenderState();
+						const renderState = new RenderState();
 
-						const def = [1, 2, 3];
+						const defaultValue = [1, 2, 3];
 
-						const res = rs.getValue('a', def);
+						const value = renderState.getValue('a', defaultValue);
 
-						expect(res).toEqual(expect.arrayContaining(def));
+						expect(value).toEqual(
+							expect.arrayContaining(defaultValue)
+						);
 					}
 				);
 
 				it(
 					'should return a parameter value if it is defined',
 					() => {
-						const rs = new RenderState(
+						const renderState = new RenderState(
 							{
 								parameters: {
 									a: ['foo']
@@ -127,7 +140,9 @@ describe(
 							}
 						);
 
-						expect(rs.getValue('a')).toEqual('foo');
+						const value = renderState.getValue('a');
+
+						expect(value).toEqual('foo');
 					}
 				);
 			}
@@ -136,33 +151,34 @@ describe(
 		describe(
 			'getValues',
 			() => {
-
 				it(
 					'should throw an error if the specified parameter is not a string',
 					() => {
-						const rs = new RenderState();
+						const renderState = new RenderState();
 
-						const fn = () => {
-							rs.getValues(1);
+						const testFn = () => {
+							renderState.getValues(1);
 						};
 
-						expect(fn).toThrow();
+						expect(testFn).toThrow();
 					}
 				);
 
 				it(
 					'should return a value if the specified parameter is undefined and a default value is provided',
 					() => {
-						const rs = new RenderState();
+						const renderState = new RenderState();
 
-						expect(rs.getValues('foo', 'bar')).toEqual('bar');
+						const values = renderState.getValues('foo', 'bar');
+
+						expect(values).toEqual('bar');
 					}
 				);
 
 				it(
 					'should return a parameter\'s value if it is defined',
 					() => {
-						const rs = new RenderState(
+						const renderState = new RenderState(
 							{
 								parameters: {
 									data: ['something', 'here']
@@ -172,7 +188,11 @@ describe(
 							}
 						);
 
-						expect(rs.getValues('data')).toEqual(expect.arrayContaining(['something', 'here']));
+						const values = renderState.getValues('data');
+
+						expect(values).toEqual(
+							expect.arrayContaining(['something', 'here'])
+						);
 					}
 				);
 			}
@@ -181,24 +201,23 @@ describe(
 		describe(
 			'remove',
 			() => {
-
 				it(
 					'should throw an error if the speficied parameter is not a string',
 					() => {
-						const rs = new RenderState();
+						const renderState = new RenderState();
 
-						const fn = () => {
-							rs.remove(1);
+						const testFn = () => {
+							renderState.remove(1);
 						};
 
-						expect(fn).toThrow();
+						expect(testFn).toThrow();
 					}
 				);
 
 				it(
 					'should not remove a existing parameter',
 					() => {
-						const rs = new RenderState(
+						const renderState = new RenderState(
 							{
 								parameters: {
 									data: [1, 2, 3]
@@ -208,11 +227,15 @@ describe(
 							}
 						);
 
-						expect(rs.getValues('data')).toEqual(expect.arrayContaining([1, 2, 3]));
+						const values = renderState.getValues('data');
 
-						rs.remove('data');
+						expect(values).toEqual(
+							expect.arrayContaining([1, 2, 3])
+						);
 
-						expect(rs.parameters.data).not.toBeDefined();
+						renderState.remove('data');
+
+						expect(renderState.parameters.data).not.toBeDefined();
 					}
 				);
 			}
@@ -221,40 +244,39 @@ describe(
 		describe(
 			'setValue',
 			() => {
-
 				it(
 					'should throw an error if `name` is not a string',
 					() => {
-						const rs = new RenderState();
+						const renderState = new RenderState();
 
-						const fn = () => {
-							rs.setValue(1);
+						const testFn = () => {
+							renderState.setValue(1);
 						};
 
-						expect(fn).toThrow();
+						expect(testFn).toThrow();
 					}
 				);
 
 				it(
 					'should throw an error if `value` is not a string',
 					() => {
-						const rs = new RenderState();
+						const renderState = new RenderState();
 
-						const fn = () => {
-							rs.setValue('a', 1);
+						const testFn = () => {
+							renderState.setValue('a', 1);
 						};
 
-						expect(fn).toThrow();
+						expect(testFn).toThrow();
 					}
 				);
 
 				it(
 					'should throw an error if `value` is not a array',
 					() => {
-						const rs = new RenderState();
+						const renderState = new RenderState();
 
-						const fn = () => {
-							rs.setValue(
+						const testFn = () => {
+							renderState.setValue(
 								'a',
 								{
 									foo: 'bar'
@@ -262,54 +284,63 @@ describe(
 							);
 						};
 
-						expect(fn).toThrow();
+						expect(testFn).toThrow();
 					}
 				);
 
 				it(
 					'should throw an error if `value` is not null',
 					() => {
-						const rs = new RenderState();
+						const renderState = new RenderState();
 
-						const fn = () => {
-							rs.setValue('a', undefined);
+						const testFn = () => {
+							renderState.setValue('a', undefined);
 						};
 
-						expect(fn).toThrow();
+						expect(testFn).toThrow();
 					}
 				);
 
 				it(
 					'should set a parameter if `value` is a string',
 					() => {
-						const rs = new RenderState();
+						const renderState = new RenderState();
 
-						rs.setValue('a', 'foo');
+						renderState.setValue('a', 'foo');
 
-						expect(rs.getValue('a')).toEqual('foo');
+						expect(renderState.getValue('a')).toEqual('foo');
 					}
 				);
 
 				it(
 					'should set a parameter if `value` is null',
 					() => {
-						const rs = new RenderState();
+						const renderState = new RenderState();
 
-						rs.setValue('b', null);
+						renderState.setValue('b', null);
 
-						expect(rs.getValue('b')).toEqual(null);
+						const value = renderState.getValue('b');
+
+						expect(value).toEqual(null);
 					}
 				);
 
 				it(
 					'should set a parameter if `value` is an array',
 					() => {
-						const rs = new RenderState();
+						const renderState = new RenderState();
 
-						rs.setValue('c', [4, 5, 6]);
+						renderState.setValue('c', [4, 5, 6]);
 
-						expect(rs.getValue('c')).toEqual(4);
-						expect(rs.getValues('c')).toEqual(expect.arrayContaining([4, 5, 6]));
+						const value = renderState.getValue('c');
+
+						expect(value).toEqual(4);
+
+						const values = renderState.getValues('c');
+
+						expect(values).toEqual(
+							expect.arrayContaining([4, 5, 6])
+						);
 					}
 				);
 			}
@@ -318,40 +349,39 @@ describe(
 		describe(
 			'setValues',
 			() => {
-
 				it(
 					'should throw an error if `value` is not a string',
 					() => {
-						const rs = new RenderState();
+						const renderState = new RenderState();
 
-						const fn = () => {
-							rs.setValues('a', 1);
+						const testFn = () => {
+							renderState.setValues('a', 1);
 						};
 
-						expect(fn).toThrow();
+						expect(testFn).toThrow();
 					}
 				);
 
 				it(
 					'should throw an error if `value` is not null',
 					() => {
-						const rs = new RenderState();
+						const renderState = new RenderState();
 
-						const fn = () => {
-							rs.setValues('b', undefined);
+						const testFn = () => {
+							renderState.setValues('b', undefined);
 						};
 
-						expect(fn).toThrow();
+						expect(testFn).toThrow();
 					}
 				);
 
 				it(
 					'should throw an error if `value` is not an array',
 					() => {
-						const rs = new RenderState();
+						const renderState = new RenderState();
 
-						const fn = () => {
-							rs.setValues(
+						const testFn = () => {
+							renderState.setValues(
 								'c',
 								{
 									foo: 'bar'
@@ -359,41 +389,67 @@ describe(
 							);
 						};
 
-						expect(fn).toThrow();
+						expect(testFn).toThrow();
 					}
 				);
 
 				it(
 					'should set a parameter value if `value` is a string',
 					() => {
-						const rs = new RenderState();
+						const renderState = new RenderState();
 
-						rs.setValues('data', 'hello');
+						renderState.setValues('data', 'hello');
 
-						expect(rs.getValues('data')).toEqual(expect.arrayContaining(['hello']));
-						expect(rs.getValue('data')).toEqual('hello');
+						const values = renderState.getValues('data');
+
+						expect(values).toEqual(
+							expect.arrayContaining(['hello'])
+						);
+
+						const value = renderState.getValue('data');
+
+						expect(value).toEqual('hello');
 					}
 				);
 
 				it(
 					'should set a parameter value if `value` is null',
 					() => {
-						const rs = new RenderState();
-						rs.setValues('data', null);
+						const renderState = new RenderState();
 
-						expect(rs.getValues('data')).toEqual(expect.arrayContaining([null]));
-						expect(rs.getValue('data')).toEqual(null);
+						renderState.setValues('data', null);
+
+						const values = renderState.getValues('data');
+
+						expect(values).toEqual(
+							expect.arrayContaining([null])
+						);
+
+						const value = renderState.getValue('data');
+
+						expect(value).toEqual(null);
 					}
 				);
 
 				it(
 					'should set a parameter value if `value` is an array',
 					() => {
-						const rs = new RenderState();
-						rs.setValues('url', ['one', 'two', 'three']);
+						const renderState = new RenderState();
 
-						expect(rs.getValues('url')).toEqual(expect.arrayContaining(['one', 'two', 'three']));
-						expect(rs.getValue('url')).toEqual('one');
+						renderState.setValues(
+							'url',
+							['one', 'two', 'three']
+						);
+
+						const values = renderState.getValues('url');
+
+						expect(values).toEqual(
+							expect.arrayContaining(['one', 'two', 'three'])
+						);
+
+						const value = renderState.getValue('url');
+
+						expect(value).toEqual('one');
 					}
 				);
 			}

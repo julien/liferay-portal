@@ -1,3 +1,8 @@
+import {
+	isDefAndNotNull,
+	isString
+} from 'metal';
+
 const TOKEN_DELIM = '&';
 
 const VALUE_ARRAY_EMPTY = '';
@@ -10,50 +15,55 @@ const VALUE_NULL = '';
  * Function to extract data from form and encode
  * it as an 'application/x-www-form-urlencoded' string
  *
- * @param   {HTMLFormElement}  form    Form to be submitted
- * @private
+ * @param {HTMLFormElement} form Form to be submitted
+ * @review
  */
 
 const encodeFormAsString = function(pid, form) {
 	const params = [];
 
-	const l = form.elements.length;
+	for (let i = 0; i < form.elements.length; i++) {
+		const element = form.elements[i];
+		const name = element.name;
+		const tag = element.nodeName.toUpperCase();
+		const type = tag === 'INPUT' ? element.type.toUpperCase() : '';
+		const value = element.value;
 
-	for (let i = 0; i < l; i++) {
-		const el = form.elements[i];
-		const name = el.name;
-		const tag = el.nodeName.toUpperCase();
-		const type = tag === 'INPUT' ? el.type.toUpperCase() : '';
-		const val = el.value;
+		if (name && !element.disabled && type !== 'FILE') {
+			if (tag === 'SELECT' && element.multiple) {
+				const options = [...element.options];
 
-		if (name && !el.disabled && type !== 'FILE') {
-			if (tag === 'SELECT' && el.multiple) {
-				const options = [...el.options];
 				options.forEach(
 					opt => {
 						if (opt.checked) {
-							const val = opt.value;
+							const value = opt.value;
 
-							const param = encodeURIComponent(pid + name) + '=' + encodeURIComponent(val);
+							const param = encodeURIComponent(pid + name) + '=' + encodeURIComponent(value);
 
 							params.push(param);
 						}
 					}
 				);
 			}
-			else if ((type !== 'CHECKBOX' && type !== 'RADIO') || el.checked) {
-				let param = encodeURIComponent(pid + name) + '=' + encodeURIComponent(val);
+			else if (
+				(type !== 'CHECKBOX' && type !== 'RADIO') || element.checked) {
+				let param = encodeURIComponent(pid + name) + '=' + encodeURIComponent(value);
+
 				params.push(param);
 			}
 		}
 	}
 
-	const fstr = params.join('&');
-	return fstr;
-}
+	return params.join('&');
+};
 
 /**
  * Helper for encoding a multivalued parameter
+ *
+ * @param name
+ * @param vals
+ * @returns {string}
+ * @review
  */
 
 const encodeParameter = function(name, vals) {
@@ -76,41 +86,13 @@ const encodeParameter = function(name, vals) {
 		}
 	}
 	return str;
-}
+};
 
 /**
- * Compares the values of two parameters and returns true if they are equal.
- * The values are either string arrays or undefined
  *
- * @param {string[]} parm1 First parameter
- * @param {string[]} parm2 2nd parameter
- * @returns {boolean} true if the new parm value is equal to the current value
+ * @param {*} form
+ * @review
  */
-
-const isParmEqual = function(param1, param2) {
-	let ret = true;
-
-	if (param1 === undefined && param2 === undefined) {
-		ret = true;
-	}
-
-	if (param1 === undefined || param2 === undefined) {
-		ret = false;
-	}
-	else {
-		if (param1.length !== param2.length) {
-			ret = false;
-		}
-
-		for (let i = param1.length - 1; i >= 0; i--) {
-			if (param1[i] !== param2[i]) {
-				ret = false;
-			}
-		}
-	}
-
-	return ret;
-}
 
 const validateForm = function(form) {
 	if (!(form instanceof HTMLFormElement)) {
@@ -118,11 +100,13 @@ const validateForm = function(form) {
 	}
 
 	const method = form.method ? form.method.toUpperCase() : undefined;
+
 	if (method && method !== 'GET' && method !== 'POST') {
 		throw new TypeError(`Invalid form method ${method}. Allowed methods are GET & POST`);
 	}
 
 	const enctype = form.enctype;
+
 	if (enctype	&& enctype !== 'application\/x-www-form-urlencoded' && enctype !== 'multipart\/form-data') {
 		throw new TypeError(`Invalid form enctype ${enctype}. Allowed: 'application\/x-www-form-urlencoded' & 'multipart\/form-data'`);
 	}
@@ -131,21 +115,97 @@ const validateForm = function(form) {
 		throw new TypeError('Invalid method with multipart/form-data. Must be POST');
 	}
 
-	// If the data is supposed to be urlencoded, we don't suport FILE element
-
 	if (!enctype || enctype === 'application\/x-www-form-urlencoded') {
 		const l = form.elements.length;
+
 		for (let i = 0; i < l; i++) {
 			if (form.elements[i].nodeName.toUpperCase() === 'INPUT' && form.elements[i].type.toUpperCase() === 'FILE') {
 				throw new TypeError('Must use enctype = \'multipart/form-data\' with input type FILE.');
 			}
 		}
 	}
-}
+};
+
+/**
+ * Verifies that the input parameters are in valid format.
+ *
+ * Parameters must be an object containing parameter names. It may also
+ * contain no property names which represents the case of having no
+ * parameters.
+ *
+ * If properties are present, each property must refer to an array of string
+ * values. The array length must be at least 1, because each parameter must
+ * have a value. However, a value of 'null' may appear in any array entry.
+ *
+ * To represent a <code>null</code> value, the property value must equal [null].
+ *
+ * @param {Object} params The parameters to check
+ * @review
+ * @throws {TypeError} Thrown if the parameters are incorrect
+ */
+
+const validateParams = function(params) {
+	if (!isDefAndNotNull(params)) {
+		throw new TypeError(`The parameter object is: ${typeof params}`);
+	}
+
+	for (let param in params) {
+		if (params.hasOwnProperty(param)) {
+			if (!Array.isArray(params[param])) {
+				throw new TypeError(`${param} parameter is not an array`);
+			}
+
+			if (!params[param].length) {
+				throw new TypeError(`${param} parameter is an empty array`);
+			}
+		}
+	}
+};
+
+/**
+ * Verifies that the input parameters are in valid format, that the portlet
+ * mode and window state values are allowed for the portlet.
+ *
+ * @param {RenderState} state The render state object to check
+ * @param {Object} portletData The porltet render state
+ * @review
+ * @throws {TypeError} Thrown if any component of the state is incorrect
+ */
+
+const validateState = function(state, portletData) {
+	validateParams(state.parameters);
+
+	const portletMode = state.portletMode;
+
+	if (!isString(portletMode)) {
+		throw new TypeError(`Invalid parameters. portletMode is ${typeof portletMode}`);
+	}
+	else {
+		const allowedPortletModes = portletData.allowedPM;
+
+		if (!allowedPortletModes.includes(portletMode.toLowerCase())) {
+			throw new TypeError(`Invalid portletMode=${portletMode} is not in ${allowedPortletModes}`);
+		}
+	}
+
+	const windowState = state.windowState;
+
+	if (!isString(windowState)) {
+		throw new TypeError(`Invalid parameters. windowState is ${typeof windowState}`);
+	}
+	else {
+		const allowedWindowStates = portletData.allowedWS;
+
+		if (!allowedWindowStates.includes(windowState.toLowerCase())) {
+			throw new TypeError(`Invalid windowState=${windowState} is not in ${allowedWindowStates}`);
+		}
+	}
+};
 
 export {
 	encodeFormAsString,
 	encodeParameter,
-	isParmEqual,
-	validateForm
+	validateForm,
+	validateParams,
+	validateState
 };

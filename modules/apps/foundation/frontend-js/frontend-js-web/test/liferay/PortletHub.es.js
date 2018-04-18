@@ -1,9 +1,7 @@
-'use strict';
-
 import PortletInit from '../../src/main/resources/META-INF/resources/liferay/portlet_hub/PortletInit.es';
 import RenderState from '../../src/main/resources/META-INF/resources/liferay/portlet_hub/RenderState.es';
 import register from '../../src/main/resources/META-INF/resources/liferay/portlet_hub/register.es';
-import {portlet} from './MockData.es';
+import {portlet} from './mock_portlet_data.es';
 
 function fetchMock(data) {
 	global.fetch = jest.fn().mockImplementation(
@@ -21,16 +19,10 @@ function fetchMock(data) {
 describe(
 	'Portlet Hub',
 	() => {
-
 		beforeEach(
 			() => {
 				PortletInit._renderState = portlet.test.getInitData();
 				PortletInit._initialized = true;
-			}
-		);
-
-		afterEach(
-			() => {
 			}
 		);
 
@@ -66,7 +58,6 @@ describe(
 		describe(
 			'client events',
 			() => {
-
 				afterEach(
 					() => {
 						PortletInit._clientEventListeners = [];
@@ -254,7 +245,7 @@ describe(
 						return register('portletB')
 							.then(
 								hub => {
-									const rs = hub.newState(
+									const renderState = hub.newState(
 										{
 											parameters: {
 												a: [1, 2, 3],
@@ -265,9 +256,17 @@ describe(
 										}
 									);
 
-									expect(rs.getValues('a')).toEqual(expect.arrayContaining([1, 2, 3]));
-									expect(rs.getValue('b')).toEqual(4);
-									expect(rs.portletMode).toEqual('view');
+									const valuesA = renderState.getValues('a');
+
+									expect(valuesA).toEqual(
+										expect.arrayContaining([1, 2, 3])
+									);
+
+									const valueB = renderState.getValue('b');
+
+									expect(valueB).toEqual(4);
+
+									expect(renderState.portletMode).toEqual('view');
 								}
 							);
 					}
@@ -285,7 +284,6 @@ describe(
 
 						return register('portletC').then(
 							hub => {
-
 								const params1 = {
 									a: [1, 2, 3],
 									b: null,
@@ -295,10 +293,16 @@ describe(
 
 								const params2 = hub.newParameters(params1);
 
-								expect(params2.a).toEqual(expect.arrayContaining([1, 2, 3]));
+								expect(params2.a).toEqual(
+									expect.arrayContaining([1, 2, 3])
+								);
+
 								expect(params2.b).not.toBeDefined();
 								expect(params2.c).not.toBeDefined();
-								expect(params2.d).toEqual(expect.arrayContaining(['four', 'five', 'six']));
+
+								expect(params2.d).toEqual(
+									expect.arrayContaining(['four', 'five', 'six'])
+								);
 							}
 						);
 					}
@@ -334,18 +338,18 @@ describe(
 								register(portletA),
 								register(portletB)
 							]
-						)
-							.then(
-								values => {
-									hubA = values[0];
-									listenerA = hubA.addEventListener(
-										'portlet.onStateChange',
-										onStateChange
-									);
+						).then(
+							values => {
+								hubA = values[0];
 
-									hubB = values[1];
-								}
-							);
+								listenerA = hubA.addEventListener(
+									'portlet.onStateChange',
+									onStateChange
+								);
+
+								hubB = values[1];
+							}
+						);
 					}
 				);
 
@@ -369,231 +373,184 @@ describe(
 				it(
 					'throws a TypeError if too many (>2) arguments are provided',
 					() => {
-						const el = document.createElement('form');
-						const parms = {rp1: ['resVal']};
+						const element = document.createElement('form');
+						const params = {};
 
-						return hubA.action(
-							parms,
-							el,
-							'parm3'
-						)
-							.catch(
-								err => {
-									expect(err.name).toEqual('TypeError');
-									expect(err.message).toEqual('Invalid argument type. Argument 3 is of type [object String]');
-								}
-							);
+						return hubA.action(params, element, 'param3').catch(
+							err => {
+								expect(err.name).toEqual('TypeError');
+								expect(err.message).toEqual('Invalid argument type. Argument 3 is of type [object String]');
+							}
+						);
 					}
 				);
 
 				it(
 					'throws a TypeError if a single argument is null',
 					() => {
-						return hubA.action(
-							null
-						)
-							.catch(
-								err => {
-									expect(err.name).toEqual('TypeError');
-									expect(err.message).toEqual('Invalid argument type. Argument 1 is of type [object Null]');
-								}
-							);
+						return hubA.action(null).catch(
+							err => {
+								expect(err.name).toEqual('TypeError');
+								expect(err.message).toEqual('Invalid argument type. Argument 1 is of type [object Null]');
+							}
+						);
 					}
 				);
 
 				it(
 					'throws a TypeError if the element argument is null',
 					() => {
-						const parms = {rp1: ['resVal']};
+						const params = {};
 
-						hubA.action(
-							parms,
-							null
-						)
-							.catch(
-								err => {
-									expect(err.name).toEqual('TypeError');
-									expect(err.message).toEqual('Invalid argument type. Argument 2 is of type [object Null]');
-								}
-							);
+						hubA.action(params, null).catch(
+							err => {
+								expect(err.name).toEqual('TypeError');
+								expect(err.message).toEqual('Invalid argument type. Argument 2 is of type [object Null]');
+							}
+						);
 					}
 				);
 
 				it(
 					'throws a TypeError if action parameters is null',
 					() => {
-						const el = document.createElement('form');
+						const element = document.createElement('form');
 
-						hubA.action(
-							null,
-							el
-						)
-							.catch(
-								err => {
-									expect(err.name).toEqual('TypeError');
-									expect(err.message).toEqual('Invalid argument type. Argument 1 is of type [object Null]');
-								}
-							);
+						hubA.action(null, element).catch(
+							err => {
+								expect(err.name).toEqual('TypeError');
+								expect(err.message).toEqual('Invalid argument type. Argument 1 is of type [object Null]');
+							}
+						);
 					}
 				);
 
 				it(
 					'throws a TypeError if action parameters is invalid',
 					() => {
-						const el = document.createElement('form');
-						const parms = {rp1: 'resVal'};
+						const element = document.createElement('form');
+						const params = {
+							a: 'value'
+						};
 
-						hubA.action(
-							parms,
-							el
-						)
-							.catch(
-								err => {
-									expect(err.name).toEqual('TypeError');
-									expect(err.message).toEqual('rp1 parameter is not an array');
-								}
-							);
+						hubA.action(params, element).catch(
+							err => {
+								expect(err.name).toEqual('TypeError');
+								expect(err.message).toEqual('a parameter is not an array');
+							}
+						);
 					}
 				);
 
 				it(
 					'throws a TypeError if the element argument is invalid',
 					() => {
-						const el = document.createElement('form');
-						const parms = {rp1: ['resVal']};
+						const element = document.createElement('form');
+						const params = {};
 
-						hubA.action(
-							parms,
-							'Invalid'
-						)
-							.catch(
-								err => {
-									expect(err.name).toEqual('TypeError');
-									expect(err.message).toEqual('Invalid argument type. Argument 2 is of type [object String]');
-								}
-							);
+						hubA.action(params, 'Invalid').catch(
+							err => {
+								expect(err.name).toEqual('TypeError');
+								expect(err.message).toEqual('Invalid argument type. Argument 2 is of type [object String]');
+							}
+						);
 					}
 				);
 
 				it(
 					'throws a TypeError if there are 2 element arguments',
 					() => {
-						const el = document.createElement('form');
-						const parms = {rp1: ['resVal']};
+						const element = document.createElement('form');
+						const params = {};
 
-						return hubA.action(
-							el,
-							el
-						)
-							.catch(
-								err => {
-									expect(err.name).toEqual('TypeError');
-									expect(err.message).toEqual('Too many [object HTMLFormElement] arguments: [object HTMLFormElement], [object HTMLFormElement]');
-								}
-							);
+						return hubA.action(element, element).catch(
+							err => {
+								expect(err.name).toEqual('TypeError');
+								expect(err.message).toEqual('Too many [object HTMLFormElement] arguments: [object HTMLFormElement], [object HTMLFormElement]');
+							}
+						);
 					}
 				);
 
 				it(
 					'throws a TypeError if there are 2 action parameters arguments',
 					() => {
-						const parms = {rp1: ['resVal']};
+						const params = {};
 
-						return hubA.action(
-							parms,
-							parms
-						)
-							.catch(
-								err => {
-									expect(err.name).toEqual('TypeError');
-									expect(err.message).toEqual('Too many parameters arguments');
-								}
-							);
+						return hubA.action(params, params).catch(
+							err => {
+								expect(err.name).toEqual('TypeError');
+								expect(err.message).toEqual('Too many parameters arguments');
+							}
+						);
 					}
 				);
 
 				it(
 					'does not throw if both arguments are valid',
 					() => {
-						const el = document.createElement('form');
-						const parms = {rp1: ['resVal']};
+						const element = document.createElement('form');
+						const params = {
+							param1: ['paramValue1']
+						};
 
-						return hubA.action(
-							parms,
-							el
-						)
-							.then(
-								upids => {
-									expect(onStateChange).toHaveBeenCalled();
-								}
-							);
+						return hubA.action(params, element).then(
+							updatedPortletIds => {
+								expect(onStateChange).toHaveBeenCalled();
+							}
+						);
 					}
 				);
 
 				it(
 					'throws an AccessDeniedException if action is called twice',
 					() => {
-						const el = document.createElement('form');
-						const parms = {rp1: ['resVal']};
+						const element = document.createElement('form');
+						const params = {};
 
 						return Promise.all(
 							[
-								hubA.action(parms, el),
-								hubA.action(parms, el)
+								hubA.action(params, element),
+								hubA.action(params, element)
 							]
-						)
-							.catch(
-								err => {
-
-									// TODO: Maybe we shouldn't use typical 'Java' style exception names
-									// i.e. in JS the standard or typical convention is 'Error' and not 'Exception'
-
-									expect(err.name).toEqual('AccessDeniedException');
-									expect(err.message).toEqual('Operation is already in progress');
-								}
-							);
+						).catch(
+							err => {
+								expect(err.name).toEqual('AccessDeniedException');
+								expect(err.message).toEqual('Operation is already in progress');
+							}
+						);
 					}
 				);
-
-				// TODO: Fix test!
 
 				it(
 					'throws an NotInitializedException if no onStateChange listener is registered.',
 					() => {
 						fetchMock([portletA]);
 
-						const el = document.createElement('form');
-						const parms = {rp1: ['resVal']};
+						const element = document.createElement('form');
+						const params = {
+							param1: ['paramValue1']
+						};
 
-						return hubB.action(
-							parms,
-							el
-						)
-							.catch(
-								err => {
-									global.fetch.mockRestore();
+						return hubB.action(params, element).catch(
+							err => {
+								global.fetch.mockRestore();
 
-									expect(err.name).toEqual('NotInitializedException');
-									expect(err.message).toEqual('No onStateChange listener registered for portlet: PortletB');
-								}
-							);
+								expect(err.name).toEqual('NotInitializedException');
+								expect(err.message).toEqual('No onStateChange listener registered for portlet: PortletB');
+							}
+						);
 					}
 				);
-
-				// TODO: Check test data!
-				// @see: https://github.com/apache/portals-pluto/blob/master/portlet-api/src/test/javascript/ActionTest.js#L270
 
 				it(
 					'causes the onStateChange listener to be called and state is as expected',
 					done => {
-						const el = document.createElement('form');
-						const parms = {rp1: ['resVal']};
+						const element = document.createElement('form');
+						const params = {};
 
-						return hubA.action(
-							parms,
-							el
-						).then(
-							upids => {
+						return hubA.action(params, element).then(
+							updatedPortletIds => {
 								setTimeout(
 									() => {
 										expect(onStateChange).toHaveBeenCalled();
@@ -604,16 +561,6 @@ describe(
 						);
 					}
 				);
-
-				// TODO: Impelement test
-				// https://github.com/apache/portals-pluto/blob/master/portlet-api/src/test/javascript/ActionTest.js#L285
-				// it('allows a resource URL to be created containing the render state', () => {
-				// 	const parms = {rp1: ['resVal'], rp2: ['resVal2']};
-				// 	const cache = 'cacheLevelPage';
-				// 	return hubA.createResourceUrl(parms, cache).then(url => {
-				// 	});
-				// });
-
 			}
 		);
 
@@ -651,38 +598,45 @@ describe(
 								register(portletC),
 								register(portletD)
 							]
-						)
-							.then(
-								values => {
-									hubA = values[0];
-									listenerA = hubA.addEventListener(
-										'portlet.onStateChange',
-										onStateChangeA
-									);
-									onStateChangeA.mockClear();
+						).then(
+							values => {
+								hubA = values[0];
 
-									hubB = values[1];
-									listenerB = hubB.addEventListener(
-										'portlet.onStateChange',
-										onStateChangeB
-									);
-									onStateChangeB.mockClear();
+								listenerA = hubA.addEventListener(
+									'portlet.onStateChange',
+									onStateChangeA
+								);
 
-									hubC = values[2];
-									listenerC = hubC.addEventListener(
-										'portlet.onStateChange',
-										onStateChangeC
-									);
-									onStateChangeC.mockClear();
+								onStateChangeA.mockClear();
 
-									hubD = values[3];
-									listenerD = hubD.addEventListener(
-										'portlet.onStateChange',
-										onStateChangeD
-									);
-									onStateChangeD.mockClear();
-								}
-							);
+								hubB = values[1];
+
+								listenerB = hubB.addEventListener(
+									'portlet.onStateChange',
+									onStateChangeB
+								);
+
+								onStateChangeB.mockClear();
+
+								hubC = values[2];
+
+								listenerC = hubC.addEventListener(
+									'portlet.onStateChange',
+									onStateChangeC
+								);
+
+								onStateChangeC.mockClear();
+
+								hubD = values[3];
+
+								listenerD = hubD.addEventListener(
+									'portlet.onStateChange',
+									onStateChangeD
+								);
+
+								onStateChangeD.mockClear();
+							}
+						);
 					}
 				);
 
@@ -700,27 +654,26 @@ describe(
 					done => {
 						fetchMock([portletA]);
 
-						const el = document.createElement('form');
-						const parms = {rp1: ['resVal']};
+						const element = document.createElement('form');
+						const params = {};
 
 						onStateChangeA.mockClear();
 						onStateChangeB.mockClear();
 
-						const fnA = () => hubA.action(parms, el);
-						const fnB = () => hubB.action(parms, el).catch(err => err);
+						const fnA = () => hubA.action(params, element);
+						const fnB = () => hubB.action(params, element).catch(err => err);
 
-						return Promise.all(
-							[fnA(), fnB()]
-						)
-							.then(
-								values => {
-									const err = values[1];
-									expect(err.message).toEqual('Operation is already in progress');
-									expect(err.name).toEqual('AccessDeniedException');
-									expect(onStateChangeB).not.toHaveBeenCalled();
-									done();
-								}
-							);
+						return Promise.all([fnA(), fnB()]).then(
+							values => {
+								const err = values[1];
+
+								expect(err.message).toEqual('Operation is already in progress');
+								expect(err.name).toEqual('AccessDeniedException');
+								expect(onStateChangeB).not.toHaveBeenCalled();
+
+								done();
+							}
+						);
 					}
 				);
 
@@ -729,24 +682,17 @@ describe(
 					() => {
 						fetchMock([portletB, portletC]);
 
-						const el = document.createElement('form');
-						const parms = {rp1: ['resVal']};
+						const element = document.createElement('form');
+						const params = {};
 
-						return hubB.action(
-							parms,
-							el
-						)
-							.then(
-								upids => {
-									global.fetch.mockRestore();
+						return hubB.action(params, element).then(
+							updatedPortletIds => {
+								global.fetch.mockRestore();
 
-									// TODO: Add asertions to compare "states"
-									// @see: https://github.com/apache/portals-pluto/blob/master/portlet-api/src/test/javascript/ActionTest.js#L375
-
-									expect(onStateChangeA).not.toHaveBeenCalled();
-									expect(onStateChangeD).not.toHaveBeenCalled();
-								}
-							);
+								expect(onStateChangeA).not.toHaveBeenCalled();
+								expect(onStateChangeD).not.toHaveBeenCalled();
+							}
+						);
 					}
 				);
 			}
@@ -771,13 +717,12 @@ describe(
 								register(portletA),
 								register(portletB)
 							]
-						)
-							.then(
-								values => {
-									hubA = values[0];
-									hubB = values[1];
-								}
-							);
+						).then(
+							values => {
+								hubA = values[0];
+								hubB = values[1];
+							}
+						);
 					}
 				);
 
@@ -798,107 +743,114 @@ describe(
 				it(
 					'throws a TypeError if no argument is provided',
 					() => {
-						const testFunc = () => {
+						const testFn = () => {
 							hubA.addEventListener();
 						};
 
-						expect(testFunc).toThrow(TypeError);
+						expect(testFn).toThrow(TypeError);
 					}
 				);
 
 				it(
 					'throws a TypeError if 1 argument is provided',
 					() => {
-						const testFunc = () => {
+						const testFn = () => {
 							hubA.addEventListener('someEvent');
 						};
 
-						expect(testFunc).toThrow(TypeError);
+						expect(testFn).toThrow(TypeError);
 					}
 				);
 
 				it(
 					'throws a TypeError if too many (>2) arguments are provided',
 					() => {
-						const testFunc = () => {
-							hubA.addEventListener('parm1', 'parm2', 'parm3');
+						const testFn = () => {
+							hubA.addEventListener('param1', 'param2', 'param3');
 						};
 
-						expect(testFunc).toThrow(TypeError);
+						expect(testFn).toThrow(TypeError);
 					}
 				);
 
 				it(
 					'throws a TypeError if the type argument is not a string',
 					() => {
-						const testFunc = () => {
-							hubA.addEventListener(89, function(type, data) {});
+						const testFn = () => {
+							hubA.addEventListener(
+								89,
+								function(type, data) {}
+							);
 						};
 
-						expect(testFunc).toThrow(TypeError);
+						expect(testFn).toThrow(TypeError);
 					}
 				);
 
 				it(
 					'throws a TypeError if the function argument is not a function',
 					() => {
-						const testFunc = () => {
+						const testFn = () => {
 							hubA.addEventListener('someEvent', 89);
 						};
 
-						expect(testFunc).toThrow(TypeError);
+						expect(testFn).toThrow(TypeError);
 					}
 				);
 
 				it(
 					'throws a TypeError if the type is null',
 					() => {
-						const testFunc = () => {
-							hubA.addEventListener(null, function(type, data) {});
+						const testFn = () => {
+							hubA.addEventListener(
+								null,
+								function(type, data) {}
+							);
 						};
 
-						expect(testFunc).toThrow(TypeError);
+						expect(testFn).toThrow(TypeError);
 					}
 				);
 
 				it(
 					'throws a TypeError if the function is null',
 					() => {
-						const testFunc = () => {
+						const testFn = () => {
 							hubA.addEventListener('someEvent', null);
 						};
 
-						expect(testFunc).toThrow(TypeError);
+						expect(testFn).toThrow(TypeError);
 					}
 				);
 
 				it(
 					'throws a TypeError if the type begins with "portlet." but is neither "portlet.onStateChange" or "portlet.onError"',
 					() => {
-						const testFunc = () => {
+						const testFn = () => {
 							hubA.addEventListener(
 								'portlet.invalidType',
 								function(type, data) {}
 							);
 						};
 
-						expect(testFunc).toThrow(TypeError);
+						expect(testFn).toThrow(TypeError);
 					}
 				);
 
 				it(
 					'does not throw an exception if both parameters are valid',
 					() => {
-						const testFunc = () => {
+						const testFn = () => {
 							return hubA.addEventListener(
 								'someEvent',
 								function(type, data) {}
 							);
 						};
 
-						expect(testFunc).not.toThrow();
+						expect(testFn).not.toThrow();
 
-						const handle = testFunc();
+						const handle = testFn();
+
 						hubA.removeEventListener(handle);
 					}
 				);
@@ -906,7 +858,11 @@ describe(
 				it(
 					'returns a handle to the event handler (an object) when the parameters are valid',
 					() => {
-						const handle = hubA.addEventListener('someEvent', function(type, data) {});
+						const handle = hubA.addEventListener(
+							'someEvent',
+							function(type, data) {}
+						);
+
 						expect(handle).not.toBeUndefined();
 
 						hubA.removeEventListener(handle);
@@ -916,17 +872,19 @@ describe(
 				it(
 					'allows a listener for event type "portlet.onStateChange" to be added',
 					() => {
-						const testFunc = () => {
+						const testFn = () => {
 							return hubA.addEventListener(
 								'portlet.onStateChange',
 								function(type, data) {}
 							);
 						};
 
-						expect(testFunc).not.toThrow();
+						expect(testFn).not.toThrow();
 
-						const handle = testFunc();
+						const handle = testFn();
+
 						expect(handle).not.toBeUndefined();
+
 						hubA.removeEventListener(handle);
 					}
 				);
@@ -934,16 +892,16 @@ describe(
 				it(
 					'allows a listener for event type "portlet.onError" to be added',
 					() => {
-						const testFunc = () => {
+						const testFn = () => {
 							return hubA.addEventListener(
 								'portlet.onError',
 								function(type, data) {}
 							);
 						};
 
-						expect(testFunc).not.toThrow();
+						expect(testFn).not.toThrow();
 
-						const handle = testFunc();
+						const handle = testFn();
 
 						expect(handle).not.toBeUndefined();
 
@@ -965,47 +923,44 @@ describe(
 						it(
 							'throws a TypeError if too many (>1) arguments are provided',
 							() => {
-								const testFunc = () => {
-									hubA.removeEventListener(
-										'parm1',
-										'parm2',
-										'parm3'
-									);
+								const testFn = () => {
+									hubA.removeEventListener('param1', 'param2', 'param3');
 								};
-								expect(testFunc).toThrow(TypeError);
+
+								expect(testFn).toThrow(TypeError);
 							}
 						);
 
 						it(
 							'throws a TypeError if the handle is null',
 							() => {
-								const testFunc = () => {
+								const testFn = () => {
 									hubA.removeEventListener(null);
 								};
 
-								expect(testFunc).toThrow(TypeError);
+								expect(testFn).toThrow(TypeError);
 							}
 						);
 
 						it(
 							'throws a TypeError if the handle is undefined',
 							() => {
-								const testFunc = () => {
+								const testFn = () => {
 									hubA.removeEventListener(undefined);
 								};
 
-								expect(testFunc).toThrow(TypeError);
+								expect(testFn).toThrow(TypeError);
 							}
 						);
 
 						it(
 							'throws a TypeError if the handle has an invalid value',
 							() => {
-								const testFunc = () => {
+								const testFn = () => {
 									hubA.removeEventListener('This is an invalid handle.');
 								};
 
-								expect(testFunc).toThrow(TypeError);
+								expect(testFn).toThrow(TypeError);
 							}
 						);
 
@@ -1014,16 +969,13 @@ describe(
 							() => {
 								const listener = jest.fn();
 
-								const handle = hubA.addEventListener(
-									'anEvent',
-									listener
-								);
+								const handle = hubA.addEventListener('event', listener);
 
-								const testFunc = () => {
+								const testFn = () => {
 									hubA.removeEventListener(handle);
 								};
 
-								expect(testFunc).not.toThrow();
+								expect(testFn).not.toThrow();
 							}
 						);
 
@@ -1032,16 +984,13 @@ describe(
 							() => {
 								const listener = jest.fn();
 
-								const handle = hubA.addEventListener(
-									'portlet.onStateChange',
-									listener
-								);
+								const handle = hubA.addEventListener('portlet.onStateChange', listener);
 
-								const testFunc = () => {
+								const testFn = () => {
 									hubA.removeEventListener(handle);
 								};
 
-								expect(testFunc).not.toThrow();
+								expect(testFn).not.toThrow();
 							}
 						);
 
@@ -1050,16 +999,13 @@ describe(
 							() => {
 								const listener = jest.fn();
 
-								const handle = hubA.addEventListener(
-									'portlet.onError',
-									listener
-								);
+								const handle = hubA.addEventListener('portlet.onError', listener);
 
-								const testFunc = () => {
+								const testFn = () => {
 									hubA.removeEventListener(handle);
 								};
 
-								expect(testFunc).not.toThrow();
+								expect(testFn).not.toThrow();
 							}
 						);
 
@@ -1068,18 +1014,15 @@ describe(
 							() => {
 								const listener = jest.fn();
 
-								const handle = hubA.addEventListener(
-									'anEvent',
-									listener
-								);
+								const handle = hubA.addEventListener('event', listener);
 
 								hubA.removeEventListener(handle);
 
-								const testFunc = () => {
+								const testFn = () => {
 									hubA.removeEventListener(handle);
 								};
 
-								expect(testFunc).toThrow(TypeError);
+								expect(testFn).toThrow(TypeError);
 							}
 						);
 
@@ -1088,18 +1031,15 @@ describe(
 							() => {
 								const listener = jest.fn();
 
-								const handle = hubA.addEventListener(
-									'portlet.onStateChange',
-									listener
-								);
+								const handle = hubA.addEventListener('portlet.onStateChange', listener);
 
 								hubA.removeEventListener(handle);
 
-								const testFunc = () => {
+								const testFn = () => {
 									hubA.removeEventListener(handle);
 								};
 
-								expect(testFunc).toThrow(TypeError);
+								expect(testFn).toThrow(TypeError);
 							}
 						);
 
@@ -1108,18 +1048,15 @@ describe(
 							() => {
 								const listener = jest.fn();
 
-								const handle = hubA.addEventListener(
-									'portlet.onError',
-									listener
-								);
+								const handle = hubA.addEventListener('portlet.onError', listener);
 
 								hubA.removeEventListener(handle);
 
-								const testFunc = () => {
+								const testFn = () => {
 									hubA.removeEventListener(handle);
 								};
 
-								expect(testFunc).toThrow(TypeError);
+								expect(testFn).toThrow(TypeError);
 							}
 						);
 					}
@@ -1130,40 +1067,32 @@ describe(
 					() => {
 						const eventType = 'portlet.onStateChange';
 
-						let retRenderData;
-						let retRenderState;
-						let retType;
+						let returnedRenderData;
+						let returnedRenderState;
+						let returnType;
 
 						const onStateChange = jest.fn(
 							(eventType, renderState, renderData) => {
-								retType = eventType;
-								retRenderState = renderState;
-								retRenderData = renderData;
+								returnType = eventType;
+								returnedRenderState = renderState;
+								returnedRenderData = renderData;
 							}
 						);
 
 						beforeEach(
 							() => {
 								onStateChange.mockClear();
-								retType = retRenderState = retRenderData = undefined;
-							}
-						);
-
-						afterEach(
-							() => {
-
+								returnType = returnedRenderState = returnedRenderData = undefined;
 							}
 						);
 
 						it(
 							'does not call the portlet.onStateChange listener during the addEventListener call',
 							() => {
-								const handle = hubA.addEventListener(
-									eventType,
-									onStateChange
-								);
+								const handle = hubA.addEventListener(eventType, onStateChange);
 
 								expect(onStateChange).not.toHaveBeenCalled();
+
 								hubA.removeEventListener(handle);
 							}
 						);
@@ -1171,15 +1100,14 @@ describe(
 						it(
 							'is called asynchronously after an onStateChange handler is registered',
 							done => {
-								const handle = hubA.addEventListener(
-									eventType,
-									onStateChange
-								);
+								const handle = hubA.addEventListener(eventType, onStateChange);
 
 								setTimeout(
 									() => {
 										expect(onStateChange).toHaveBeenCalled();
+
 										hubA.removeEventListener(handle);
+
 										done();
 									}
 								);
@@ -1189,45 +1117,37 @@ describe(
 						it(
 							'is passed a type parameter with value "portlet.onStateChange"',
 							done => {
-								const handle = hubA.addEventListener(
-									eventType,
-									onStateChange
-								);
-
+								const handle = hubA.addEventListener(eventType, onStateChange);
 								const renderState = new RenderState(pageState[portletA].state);
 
 								setTimeout(
 									() => {
 										expect(onStateChange).toHaveBeenCalled();
 										expect(onStateChange.mock.calls[0][0]).toEqual(eventType);
+
 										hubA.removeEventListener(handle);
+
 										done();
 									}
 								);
 							}
 						);
 
-						// portletA is set up not to have render data
-
 						it(
 							'is not passed a RenderData object',
 							done => {
-								const handle = hubA.addEventListener(
-									eventType,
-									onStateChange
-								);
+								const handle = hubA.addEventListener(eventType, onStateChange);
 
 								setTimeout(
 									() => {
 
 										expect(onStateChange).toHaveBeenCalled();
 
-										// No render data was passed
-
 										expect(onStateChange.mock.calls[0]).toHaveLength(2);
-										expect(retRenderData).not.toBeDefined();
+										expect(returnedRenderData).not.toBeDefined();
 
 										hubA.removeEventListener(handle);
+
 										done();
 									}
 								);
@@ -1237,10 +1157,7 @@ describe(
 						it(
 							'is passed a RenderState parameter that has 3 properties',
 							done => {
-								const handle = hubA.addEventListener(
-									eventType,
-									onStateChange
-								);
+								const handle = hubA.addEventListener(eventType, onStateChange);
 
 								const originalState = pageState[portletA].state;
 
@@ -1255,9 +1172,10 @@ describe(
 										const keys = Object.keys(renderState);
 
 										expect(keys).toHaveLength(3);
-										expect(retRenderState).toEqual(renderState);
+										expect(returnedRenderState).toEqual(renderState);
 
 										hubA.removeEventListener(handle);
+
 										done();
 									}
 								);
@@ -1267,10 +1185,7 @@ describe(
 						it(
 							'is passed a RenderState object with a "parameters" property',
 							done => {
-								const handle = hubA.addEventListener(
-									eventType,
-									onStateChange
-								);
+								const handle = hubA.addEventListener(eventType, onStateChange);
 
 								setTimeout(
 									() => {
@@ -1279,10 +1194,11 @@ describe(
 										const renderState = onStateChange.mock.calls[0][1];
 
 										expect(renderState.parameters).not.toBeUndefined();
-										expect(retRenderState.parameters).not.toBeUndefined();
-										expect(retRenderState.parameters).toEqual(renderState.parameters);
+										expect(returnedRenderState.parameters).not.toBeUndefined();
+										expect(returnedRenderState.parameters).toEqual(renderState.parameters);
 
 										hubA.removeEventListener(handle);
+
 										done();
 									}
 								);
@@ -1292,10 +1208,7 @@ describe(
 						it(
 							'is passed a RenderState object with a "portletMode" property',
 							done => {
-								const handle = hubA.addEventListener(
-									eventType,
-									onStateChange
-								);
+								const handle = hubA.addEventListener(eventType, onStateChange);
 
 								setTimeout(
 									() => {
@@ -1303,11 +1216,12 @@ describe(
 
 										const renderState = onStateChange.mock.calls[0][1];
 
-										expect(retRenderState).not.toBeUndefined();
-										expect(retRenderState.portletMode).not.toBeUndefined();
-										expect(retRenderState.portletMode).toEqual(renderState.portletMode);
+										expect(returnedRenderState).not.toBeUndefined();
+										expect(returnedRenderState.portletMode).not.toBeUndefined();
+										expect(returnedRenderState.portletMode).toEqual(renderState.portletMode);
 
 										hubA.removeEventListener(handle);
+
 										done();
 									}
 								);
@@ -1317,10 +1231,7 @@ describe(
 						it(
 							'is passed a RenderState object with a "windowState" property',
 							done => {
-								const handle = hubA.addEventListener(
-									eventType,
-									onStateChange
-								);
+								const handle = hubA.addEventListener(eventType, onStateChange);
 
 								setTimeout(
 									() => {
@@ -1329,10 +1240,11 @@ describe(
 										const renderState = onStateChange.mock.calls[0][1];
 
 										expect(renderState.windowState).not.toBeUndefined();
-										expect(retRenderState).not.toBeUndefined();
-										expect(retRenderState.windowState).toEqual(renderState.windowState);
+										expect(returnedRenderState).not.toBeUndefined();
+										expect(returnedRenderState.windowState).toEqual(renderState.windowState);
 
 										hubA.removeEventListener(handle);
+
 										done();
 									}
 								);
@@ -1344,10 +1256,7 @@ describe(
 							done => {
 								expect.assertions(3);
 
-								const handle = hubA.addEventListener(
-									eventType,
-									onStateChange
-								);
+								const handle = hubA.addEventListener(eventType, onStateChange);
 
 								setTimeout(
 									() => {
@@ -1359,6 +1268,7 @@ describe(
 										expect(typeof renderState.parameters).toEqual('object');
 
 										hubA.removeEventListener(handle);
+
 										done();
 									}
 								);
@@ -1370,23 +1280,24 @@ describe(
 							done => {
 								expect.assertions(2);
 
-								const handle = hubA.addEventListener(
-									eventType,
-									onStateChange
-								);
+								const handle = hubA.addEventListener(eventType, onStateChange);
 
 								const params = pageState[portletA].state.parameters;
-								const parmCnt = Object.keys(params).length;
+
+								const paramCount = Object.keys(params).length;
 
 								setTimeout(
 									() => {
 										expect(onStateChange).toHaveBeenCalled();
 
-										const retParams = retRenderState.parameters;
-										const retParmCnt = Object.keys(retParams).length;
-										expect(retParmCnt).toEqual(parmCnt);
+										const returnParams = returnedRenderState.parameters;
+
+										const returnParamCount = Object.keys(returnParams).length;
+
+										expect(returnParamCount).toEqual(paramCount);
 
 										hubA.removeEventListener(handle);
+
 										done();
 									}
 								);
@@ -1398,10 +1309,7 @@ describe(
 							done => {
 								expect.assertions(6);
 
-								const handle = hubA.addEventListener(
-									eventType,
-									onStateChange
-								);
+								const handle = hubA.addEventListener(eventType, onStateChange);
 
 								setTimeout(
 									() => {
@@ -1409,13 +1317,14 @@ describe(
 
 										const renderState = onStateChange.mock.calls[0][1];
 
-										expect(retRenderState.windowState).not.toBeUndefined();
-										expect(typeof retRenderState.windowState).toEqual('string');
+										expect(returnedRenderState.windowState).not.toBeUndefined();
+										expect(typeof returnedRenderState.windowState).toEqual('string');
 										expect(renderState.windowState).not.toBeUndefined();
 										expect(typeof renderState.windowState).toEqual('string');
-										expect(renderState.windowState).toEqual(retRenderState.windowState);
+										expect(renderState.windowState).toEqual(returnedRenderState.windowState);
 
 										hubA.removeEventListener(handle);
+
 										done();
 									}
 								);
@@ -1427,10 +1336,7 @@ describe(
 							done => {
 								expect.assertions(6);
 
-								const handle = hubA.addEventListener(
-									eventType,
-									onStateChange
-								);
+								const handle = hubA.addEventListener(eventType, onStateChange);
 
 								setTimeout(
 									() => {
@@ -1438,13 +1344,14 @@ describe(
 
 										const renderState = onStateChange.mock.calls[0][1];
 
-										expect(retRenderState.portletMode).not.toBeUndefined();
-										expect(typeof retRenderState.portletMode).toEqual('string');
+										expect(returnedRenderState.portletMode).not.toBeUndefined();
+										expect(typeof returnedRenderState.portletMode).toEqual('string');
 										expect(renderState.portletMode).not.toBeUndefined();
 										expect(typeof renderState.portletMode).toEqual('string');
-										expect(renderState.portletMode).toEqual(retRenderState.portletMode);
+										expect(renderState.portletMode).toEqual(returnedRenderState.portletMode);
 
 										hubA.removeEventListener(handle);
+
 										done();
 									}
 								);
@@ -1456,10 +1363,7 @@ describe(
 							done => {
 								expect.assertions(4);
 
-								const handle = hubA.addEventListener(
-									eventType,
-									onStateChange
-								);
+								const handle = hubA.addEventListener(eventType, onStateChange);
 
 								setTimeout(
 									() => {
@@ -1467,11 +1371,12 @@ describe(
 
 										const renderState = onStateChange.mock.calls[0][1];
 
-										expect(retRenderState.windowState).toEqual(renderState.windowState);
-										expect(retRenderState.windowState).toEqual(pageState[portletA].state.windowState);
+										expect(returnedRenderState.windowState).toEqual(renderState.windowState);
+										expect(returnedRenderState.windowState).toEqual(pageState[portletA].state.windowState);
 										expect(renderState.windowState).toEqual(pageState[portletA].state.windowState);
 
 										hubA.removeEventListener(handle);
+
 										done();
 									}
 								);
@@ -1483,10 +1388,7 @@ describe(
 							done => {
 								expect.assertions(4);
 
-								const handle = hubA.addEventListener(
-									eventType,
-									onStateChange
-								);
+								const handle = hubA.addEventListener(eventType, onStateChange);
 
 								setTimeout(
 									() => {
@@ -1494,11 +1396,12 @@ describe(
 
 										const renderState = onStateChange.mock.calls[0][1];
 
-										expect(retRenderState.portletMode).toEqual(renderState.portletMode);
-										expect(retRenderState.portletMode).toEqual(pageState[portletA].state.portletMode);
+										expect(returnedRenderState.portletMode).toEqual(renderState.portletMode);
+										expect(returnedRenderState.portletMode).toEqual(pageState[portletA].state.portletMode);
 										expect(renderState.portletMode).toEqual(pageState[portletA].state.portletMode);
 
 										hubA.removeEventListener(handle);
+
 										done();
 									}
 								);
@@ -1510,10 +1413,7 @@ describe(
 							done => {
 								expect.assertions(4);
 
-								const handle = hubA.addEventListener(
-									eventType,
-									onStateChange
-								);
+								const handle = hubA.addEventListener(eventType, onStateChange);
 
 								setTimeout(
 									() => {
@@ -1522,10 +1422,11 @@ describe(
 										const renderState = onStateChange.mock.calls[0][1];
 
 										expect(renderState).not.toBe(pageState[portletA].state);
-										expect(retRenderState).not.toBe(pageState[portletA].state);
-										expect(retRenderState).toEqual(renderState);
+										expect(returnedRenderState).not.toBe(pageState[portletA].state);
+										expect(returnedRenderState).toEqual(renderState);
 
 										hubA.removeEventListener(handle);
+
 										done();
 									}
 								);
@@ -1537,11 +1438,7 @@ describe(
 							done => {
 								expect.assertions(4);
 
-								const handle = hubA.addEventListener(
-									eventType,
-									onStateChange
-								);
-
+								const handle = hubA.addEventListener(eventType, onStateChange);
 								const testState = hubA.newState(pageState[portletA].state);
 
 								setTimeout(
@@ -1550,11 +1447,12 @@ describe(
 
 										const renderState = onStateChange.mock.calls[0][1];
 
-										expect(retRenderState).toEqual(testState);
+										expect(returnedRenderState).toEqual(testState);
 										expect(renderState).toEqual(testState);
-										expect(renderState).toEqual(retRenderState);
+										expect(renderState).toEqual(returnedRenderState);
 
 										hubA.removeEventListener(handle);
+
 										done();
 									}
 								);
@@ -1571,16 +1469,16 @@ describe(
 
 						let complete = false;
 						let handle = null;
-						let retRenderData;
-						let retRenderState;
-						let retType;
+						let returnedRenderData;
+						let returnedRenderState;
+						let returnType;
 
 						const onStateChange = jest.fn(
 							(eventType, renderState, renderData) => {
 								complete = true;
-								retType = eventType;
-								retRenderState = renderState;
-								retRenderData = renderData;
+								returnType = eventType;
+								returnedRenderState = renderState;
+								returnedRenderData = renderData;
 							}
 						);
 
@@ -1588,11 +1486,9 @@ describe(
 							() => {
 								onStateChange.mockClear();
 								complete = false;
-								retType = retRenderState = retRenderData = undefined;
+								returnType = returnedRenderState = returnedRenderData = undefined;
 							}
 						);
-
-						// Remove the listener added during the test
 
 						afterEach(
 							() => {
@@ -1606,10 +1502,7 @@ describe(
 						it(
 							'does not call the portlet.onStateChange listener during the addEventListener call',
 							() => {
-								handle = hubB.addEventListener(
-									eventType,
-									onStateChange
-								);
+								handle = hubB.addEventListener(eventType, onStateChange);
 
 								expect(complete).toBeFalsy();
 								expect(onStateChange).not.toHaveBeenCalled();
@@ -1619,10 +1512,7 @@ describe(
 						it(
 							'is called asynchronously after an onStateChange handler is registered',
 							done => {
-								handle = hubB.addEventListener(
-									eventType,
-									onStateChange
-								);
+								handle = hubB.addEventListener(eventType, onStateChange);
 
 								setTimeout(
 									() => {
@@ -1638,16 +1528,13 @@ describe(
 						it(
 							'is passed a type parameter with value "portlet.onStateChange"',
 							done => {
-								handle = hubB.addEventListener(
-									eventType,
-									onStateChange
-								);
+								handle = hubB.addEventListener(eventType, onStateChange);
 
 								setTimeout(
 									() => {
 										expect(onStateChange).toHaveBeenCalled();
 										expect(complete).toBeTruthy();
-										expect(retType).toEqual(eventType);
+										expect(returnType).toEqual(eventType);
 
 										done();
 									}
@@ -1658,10 +1545,7 @@ describe(
 						it(
 							'is passed a RenderState parameter that is an object',
 							done => {
-								handle = hubB.addEventListener(
-									eventType,
-									onStateChange
-								);
+								handle = hubB.addEventListener(eventType, onStateChange);
 
 								setTimeout(
 									() => {
@@ -1670,8 +1554,8 @@ describe(
 										const renderState = onStateChange.mock.calls[0][1];
 
 										expect(typeof renderState).toEqual('object');
-										expect(renderState).toEqual(retRenderState);
-										expect(typeof renderState).toEqual(typeof retRenderState);
+										expect(renderState).toEqual(returnedRenderState);
+										expect(typeof renderState).toEqual(typeof returnedRenderState);
 
 										done();
 									}
@@ -1682,10 +1566,7 @@ describe(
 						it(
 							'is passed a RenderState parameter that has 3 properties',
 							done => {
-								handle = hubB.addEventListener(
-									eventType,
-									onStateChange
-								);
+								handle = hubB.addEventListener(eventType, onStateChange);
 
 								setTimeout(
 									() => {
@@ -1693,12 +1574,12 @@ describe(
 
 										const renderState = onStateChange.mock.calls[0][1];
 
-										const cnt = Object.keys(retRenderState).length;
+										const count = Object.keys(returnedRenderState).length;
 
-										expect(cnt).toEqual(3);
-										expect(Object.keys(renderState).length).toEqual(cnt);
+										expect(count).toEqual(3);
+										expect(Object.keys(renderState).length).toEqual(count);
 
-										expect(renderState).toEqual(retRenderState);
+										expect(renderState).toEqual(returnedRenderState);
 
 										done();
 									}
@@ -1709,10 +1590,7 @@ describe(
 						it(
 							'is passed a RenderState object with a "parameters" property',
 							done => {
-								handle = hubB.addEventListener(
-									eventType,
-									onStateChange
-								);
+								handle = hubB.addEventListener(eventType, onStateChange);
 
 								setTimeout(
 									() => {
@@ -1721,7 +1599,7 @@ describe(
 										const renderState = onStateChange.mock.calls[0][1];
 
 										expect(renderState.parameters).not.toBeUndefined();
-										expect(retRenderState.parameters).not.toBeUndefined();
+										expect(returnedRenderState.parameters).not.toBeUndefined();
 										expect(renderState.parameters).toEqual(renderState.parameters);
 
 										done();
@@ -1733,10 +1611,7 @@ describe(
 						it(
 							'is passed a RenderState object with a "portletMode" property',
 							done => {
-								handle = hubB.addEventListener(
-									eventType,
-									onStateChange
-								);
+								handle = hubB.addEventListener(eventType, onStateChange);
 
 								setTimeout(
 									() => {
@@ -1745,7 +1620,7 @@ describe(
 										const renderState = onStateChange.mock.calls[0][1];
 
 										expect(renderState.portletMode).not.toBeUndefined();
-										expect(retRenderState.portletMode).not.toBeUndefined();
+										expect(returnedRenderState.portletMode).not.toBeUndefined();
 										expect(renderState.portletMode).toEqual(renderState.portletMode);
 
 										done();
@@ -1757,10 +1632,7 @@ describe(
 						it(
 							'is passed a RenderState object with a "windowState" property',
 							done => {
-								handle = hubB.addEventListener(
-									eventType,
-									onStateChange
-								);
+								handle = hubB.addEventListener(eventType, onStateChange);
 
 								setTimeout(
 									() => {
@@ -1769,7 +1641,7 @@ describe(
 										const renderState = onStateChange.mock.calls[0][1];
 
 										expect(renderState.windowState).not.toBeUndefined();
-										expect(retRenderState.windowState).not.toBeUndefined();
+										expect(returnedRenderState.windowState).not.toBeUndefined();
 										expect(renderState.windowState).toEqual(renderState.windowState);
 
 										done();
@@ -1781,10 +1653,7 @@ describe(
 						it(
 							'its RenderState parameter is not identical to the test state object"',
 							done => {
-								handle = hubB.addEventListener(
-									eventType,
-									onStateChange
-								);
+								handle = hubB.addEventListener(eventType, onStateChange);
 
 								setTimeout(
 									() => {
@@ -1793,7 +1662,7 @@ describe(
 										const renderState = onStateChange.mock.calls[0][1];
 
 										expect(renderState).not.toBe(pageState[portletB].state);
-										expect(retRenderState).not.toBe(pageState[portletB].state);
+										expect(returnedRenderState).not.toBe(pageState[portletB].state);
 
 										done();
 									}
@@ -1804,10 +1673,7 @@ describe(
 						it(
 							'its RenderState parameter equals the test state object"',
 							done => {
-								handle = hubB.addEventListener(
-									eventType,
-									onStateChange
-								);
+								handle = hubB.addEventListener(eventType, onStateChange);
 
 								const testState = hubA.newState(pageState[portletB].state);
 
@@ -1818,7 +1684,7 @@ describe(
 										const renderState = onStateChange.mock.calls[0][1];
 
 										expect(renderState).toEqual(testState);
-										expect(retRenderState).toEqual(testState);
+										expect(returnedRenderState).toEqual(testState);
 
 										done();
 									}
@@ -1831,10 +1697,7 @@ describe(
 						it(
 							'is passed a RenderData object',
 							done => {
-								handle = hubB.addEventListener(
-									eventType,
-									onStateChange
-								);
+								handle = hubB.addEventListener(eventType, onStateChange);
 
 								setTimeout(
 									() => {
@@ -1843,7 +1706,7 @@ describe(
 										const renderData = onStateChange.mock.calls[0][2];
 
 										expect(renderData).not.toBeUndefined();
-										expect(typeof retRenderData).toEqual('object');
+										expect(typeof returnedRenderData).toEqual('object');
 
 										done();
 									}
@@ -1854,21 +1717,20 @@ describe(
 						it(
 							'is passed a RenderData parameter that has 2 properties',
 							done => {
-								handle = hubB.addEventListener(
-									eventType,
-									onStateChange
-								);
+								handle = hubB.addEventListener(eventType, onStateChange);
 
 								setTimeout(
 									() => {
 										expect(onStateChange).toHaveBeenCalled();
 
 										const renderData = onStateChange.mock.calls[0][2];
-										expect(renderData).toEqual(retRenderData);
 
-										const cnt = Object.keys(retRenderData).length;
+										expect(renderData).toEqual(returnedRenderData);
 
-										expect(cnt).toEqual(2);
+										const count = Object.keys(returnedRenderData).length;
+
+										expect(count).toEqual(2);
+
 										done();
 									}
 								);
@@ -1878,10 +1740,7 @@ describe(
 						it(
 							'is passed a RenderData object with a "content" property',
 							done => {
-								handle = hubB.addEventListener(
-									eventType,
-									onStateChange
-								);
+								handle = hubB.addEventListener(eventType, onStateChange);
 
 								setTimeout(
 									() => {
@@ -1889,7 +1748,7 @@ describe(
 
 										const renderData = onStateChange.mock.calls[0][2];
 
-										expect(renderData).toEqual(retRenderData);
+										expect(renderData).toEqual(returnedRenderData);
 										expect(renderData.content).not.toBeUndefined();
 
 										done();
@@ -1901,10 +1760,7 @@ describe(
 						it(
 							'is passed a RenderData object with a "mimeType" property',
 							done => {
-								handle = hubB.addEventListener(
-									eventType,
-									onStateChange
-								);
+								handle = hubB.addEventListener(eventType, onStateChange);
 
 								setTimeout(
 									() => {
@@ -1912,7 +1768,7 @@ describe(
 
 										const renderData = onStateChange.mock.calls[0][2];
 
-										expect(renderData).toEqual(retRenderData);
+										expect(renderData).toEqual(returnedRenderData);
 										expect(renderData.mimeType).not.toBeUndefined();
 
 										done();
@@ -1924,10 +1780,7 @@ describe(
 						it(
 							'is passed a RenderData object with a "content" property of type string',
 							done => {
-								handle = hubB.addEventListener(
-									eventType,
-									onStateChange
-								);
+								handle = hubB.addEventListener(eventType, onStateChange);
 
 								setTimeout(
 									() => {
@@ -1935,7 +1788,7 @@ describe(
 
 										const renderData = onStateChange.mock.calls[0][2];
 
-										expect(renderData).toEqual(retRenderData);
+										expect(renderData).toEqual(returnedRenderData);
 										expect(renderData.content).not.toBeUndefined();
 										expect(typeof renderData.content).toEqual('string');
 
@@ -1948,10 +1801,7 @@ describe(
 						it(
 							'is passed a RenderData object with a "mimeType" property of type string',
 							done => {
-								handle = hubB.addEventListener(
-									eventType,
-									onStateChange
-								);
+								handle = hubB.addEventListener(eventType, onStateChange);
 
 								setTimeout(
 									() => {
@@ -1959,7 +1809,7 @@ describe(
 
 										const renderData = onStateChange.mock.calls[0][2];
 
-										expect(renderData).toEqual(retRenderData);
+										expect(renderData).toEqual(returnedRenderData);
 										expect(renderData.mimeType).not.toBeUndefined();
 										expect(typeof renderData.mimeType).toEqual('string');
 
@@ -1972,10 +1822,7 @@ describe(
 						it(
 							'its RenderData parameter equals the test render data object"',
 							done => {
-								handle = hubB.addEventListener(
-									eventType,
-									onStateChange
-								);
+								handle = hubB.addEventListener(eventType, onStateChange);
 
 								setTimeout(
 									() => {
@@ -1984,7 +1831,7 @@ describe(
 										const renderData = onStateChange.mock.calls[0][2];
 
 										expect(renderData).toEqual(pageState[portletB].renderData);
-										expect(retRenderData).toEqual(pageState[portletB].renderData);
+										expect(returnedRenderData).toEqual(pageState[portletB].renderData);
 
 										done();
 									}
@@ -2005,8 +1852,6 @@ describe(
 				const portletC = ids[2];
 				const portletD = ids[3];
 
-				// Test data provided by the portlet hub
-
 				const pageState = portlet.test.getInitData();
 
 				let hubA;
@@ -2023,15 +1868,14 @@ describe(
 								register(portletC),
 								register(portletD)
 							]
-						)
-							.then(
-								values => {
-									hubA = values[0];
-									hubB = values[1];
-									hubC = values[2];
-									hubD = values[2];
-								}
-							);
+						).then(
+							values => {
+								hubA = values[0];
+								hubB = values[1];
+								hubC = values[2];
+								hubD = values[2];
+							}
+						);
 					}
 				);
 
@@ -2083,138 +1927,97 @@ describe(
 						it(
 							'throws a TypeError if no argument is provided',
 							() => {
-								const testFunc = () => {
+								const testFn = () => {
 									hubA.dispatchClientEvent();
 								};
 
-								expect(testFunc).toThrow(TypeError);
-							}
-						);
-
-						// TODO
-						// @see: https://github.com/apache/portals-pluto/blob/master/portlet-api/src/test/javascript/DispatchClientEventTest.js#L181
-						// And decide what to do
-
-						xit(
-							'throws a TypeError if 1 argument is provided',
-							() => {
-								const testFunc = () => {
-									hubA.dispatchClientEvent(
-										'myType'
-									);
-								};
-
-								expect(testFunc).toThrow(TypeError);
+								expect(testFn).toThrow(TypeError);
 							}
 						);
 
 						it(
 							'throws a TypeError if too many (>2) arguments are provided',
 							() => {
-								const testFunc = () => {
-									hubA.dispatchClientEvent(
-										'parm1',
-										'parm2',
-										'parm3'
-									);
+								const testFn = () => {
+									hubA.dispatchClientEvent('param1', 'param2', 'param3');
 								};
-								expect(testFunc).toThrow(TypeError);
+
+								expect(testFn).toThrow(TypeError);
 							}
 						);
 
 						it(
 							'throws a TypeError if the type argument is not a string',
 							() => {
-								const testFunc = () => {
-									hubA.dispatchClientEvent(
-										89,
-										'aPayload'
-									);
+								const testFn = () => {
+									hubA.dispatchClientEvent(89, 'payload');
 								};
 
-								expect(testFunc).toThrow(TypeError);
+								expect(testFn).toThrow(TypeError);
 							}
 						);
 
 						it(
 							'throws a TypeError if the type is null',
 							() => {
-								const testFunc = () => {
-									hubA.dispatchClientEvent(
-										null,
-										'aPayload'
-									);
+								const testFn = () => {
+									hubA.dispatchClientEvent(null, 'payload');
 								};
 
-								expect(testFunc).toThrow(TypeError);
+								expect(testFn).toThrow(TypeError);
 							}
 						);
 
 						it(
 							'does not throw an Exception if the payload is null',
 							() => {
-								const testFunc = () => {
-									hubA.dispatchClientEvent(
-										'anEvent',
-										null
-									);
+								const testFn = () => {
+									hubA.dispatchClientEvent('event', null);
 								};
 
-								expect(testFunc).not.toThrow();
+								expect(testFn).not.toThrow();
 							}
 						);
 
 						it(
 							'throws a TypeError if the type begins with "portlet."',
 							() => {
-								const testFunc = () => {
-									hubA.dispatchClientEvent(
-										'portlet.invalidType',
-										'aPayload'
-									);
+								const testFn = () => {
+									hubA.dispatchClientEvent('portlet.invalidType', 'payload');
 								};
 
-								expect(testFunc).toThrow(TypeError);
+								expect(testFn).toThrow(TypeError);
 							}
 						);
 
 						it(
 							'throws a TypeError if the type matches a system event type',
 							() => {
-								const testFunc = () => {
-									hubA.dispatchClientEvent(
-										'portlet.onStateChange',
-										'aPayload'
-									);
+								const testFn = () => {
+									hubA.dispatchClientEvent('portlet.onStateChange', 'payload');
 								};
 
-								expect(testFunc).toThrow(TypeError);
+								expect(testFn).toThrow(TypeError);
 							}
 						);
 
 						it(
 							'does not throw an exception if both parameters are valid',
 							() => {
-								const testFunc = () => {
-									hubA.dispatchClientEvent(
-										'anEvent',
-										'aPayload'
-									);
+								const testFn = () => {
+									hubA.dispatchClientEvent('event', 'payload');
 								};
 
-								expect(testFunc).not.toThrow();
+								expect(testFn).not.toThrow();
 							}
 						);
 
 						it(
 							'returns count of 0 when no listener for event is registered',
 							() => {
-								const cnt = hubA.dispatchClientEvent(
-									'anEvent',
-									'aPayload'
-								);
+								const count = hubA.dispatchClientEvent('event', 'payload');
 
-								expect(cnt).toEqual(0);
+								expect(count).toEqual(0);
 							}
 						);
 
@@ -2222,25 +2025,16 @@ describe(
 							'listener is called & count=1 when 1 listener for event is registered',
 							() => {
 								const listener = jest.fn();
-								const payload = 'aPayload';
-								const type = 'anEvent';
+								const payload = 'payload';
+								const type = 'event';
 
-								const handle = hubA.addEventListener(
-									type,
-									listener
-								);
+								const handle = hubA.addEventListener(type, listener);
 
-								const cnt = hubA.dispatchClientEvent(
-									type,
-									payload
-								);
+								const count = hubA.dispatchClientEvent(type, payload);
 
-								expect(cnt).toEqual(1);
+								expect(count).toEqual(1);
 								expect(listener).toHaveBeenCalled();
-								expect(listener).toHaveBeenCalledWith(
-									type,
-									payload
-								);
+								expect(listener).toHaveBeenCalledWith(type, payload);
 
 								hubA.removeEventListener(handle);
 							}
@@ -2250,24 +2044,15 @@ describe(
 							'causes listener to be called with expected type & string payload when event is dispatched',
 							() => {
 								const listener = jest.fn();
-								const payload = 'aPayload';
-								const type = 'anEvent';
+								const payload = 'payload';
+								const type = 'event';
 
-								const handle = hubA.addEventListener(
-									type,
-									listener
-								);
+								const handle = hubA.addEventListener(type, listener);
 
-								const cnt = hubA.dispatchClientEvent(
-									type,
-									payload
-								);
+								const count = hubA.dispatchClientEvent(type, payload);
 
-								expect(cnt).toEqual(1);
-								expect(listener).toBeCalledWith(
-									type,
-									payload
-								);
+								expect(count).toEqual(1);
+								expect(listener).toBeCalledWith(type, payload);
 
 								hubA.removeEventListener(handle);
 							}
@@ -2277,20 +2062,14 @@ describe(
 							'when type does not match, no event is fired',
 							() => {
 								const listener = jest.fn();
-								const payload = 'aPayload';
-								const type = 'anEvent';
+								const payload = 'payload';
+								const type = 'event';
 
-								const handle = hubB.addEventListener(
-									'differentEvent',
-									listener
-								);
+								const handle = hubB.addEventListener('differentEvent', listener);
 
-								const cnt = hubA.dispatchClientEvent(
-									type,
-									payload
-								);
+								const count = hubA.dispatchClientEvent(type, payload);
 
-								expect(cnt).toEqual(0);
+								expect(count).toEqual(0);
 								expect(listener).not.toHaveBeenCalled();
 							}
 						);
@@ -2300,23 +2079,14 @@ describe(
 							() => {
 								const listener = jest.fn();
 								const payload = null;
-								const type = 'anEvent';
+								const type = 'event';
 
-								const handle = hubA.addEventListener(
-									type,
-									listener
-								);
+								const handle = hubA.addEventListener(type, listener);
 
-								const cnt = hubA.dispatchClientEvent(
-									type,
-									payload
-								);
+								const count = hubA.dispatchClientEvent(type, payload);
 
-								expect(cnt).toEqual(1);
-								expect(listener).toHaveBeenCalledWith(
-									type,
-									payload
-								);
+								expect(count).toEqual(1);
+								expect(listener).toHaveBeenCalledWith(type, payload);
 
 								hubA.removeEventListener(handle);
 							}
@@ -2331,23 +2101,16 @@ describe(
 									addr: 'Stgt',
 									name: 'Scott'
 								};
-								const type = 'anEvent';
 
-								const handle = hubA.addEventListener(
-									type,
-									listener
-								);
+								const type = 'event';
 
-								const cnt = hubA.dispatchClientEvent(
-									type,
-									payload
-								);
+								const handle = hubA.addEventListener(type, listener);
 
-								expect(cnt).toEqual(1);
-								expect(listener).toHaveBeenCalledWith(
-									type,
-									payload
-								);
+								const count = hubA.dispatchClientEvent(type, payload);
+
+								expect(count).toEqual(1);
+
+								expect(listener).toHaveBeenCalledWith(type, payload);
 
 								hubA.removeEventListener(handle);
 							}
@@ -2357,24 +2120,15 @@ describe(
 							'listener of different portlet is correctly called when event is dispatched',
 							() => {
 								const listener = jest.fn();
-								const payload = 'aPayload';
-								const type = 'anEvent';
+								const payload = 'payload';
+								const type = 'event';
 
-								const handle = hubB.addEventListener(
-									type,
-									listener
-								);
+								const handle = hubB.addEventListener(type, listener);
 
-								const cnt = hubA.dispatchClientEvent(
-									type,
-									payload
-								);
+								const count = hubA.dispatchClientEvent(type, payload);
 
-								expect(cnt).toEqual(1);
-								expect(listener).toHaveBeenCalledWith(
-									type,
-									payload
-								);
+								expect(count).toEqual(1);
+								expect(listener).toHaveBeenCalledWith(type, payload);
 
 								hubB.removeEventListener(handle);
 							}
@@ -2384,24 +2138,15 @@ describe(
 							'matches event types by regex',
 							() => {
 								const listener = jest.fn();
-								const payload = 'aPayload';
-								const type = 'ibm.anEvent';
+								const payload = 'payload';
+								const type = 'liferay.event';
 
-								const handle = hubB.addEventListener(
-									'ibm\..*',
-									listener
-								);
+								const handle = hubB.addEventListener('liferay\..*', listener);
 
-								const cnt = hubA.dispatchClientEvent(
-									type,
-									payload
-								);
+								const count = hubA.dispatchClientEvent(type, payload);
 
-								expect(cnt).toEqual(1);
-								expect(listener).toHaveBeenCalledWith(
-									type,
-									payload
-								);
+								expect(count).toEqual(1);
+								expect(listener).toHaveBeenCalledWith(type, payload);
 							}
 						);
 
@@ -2409,20 +2154,14 @@ describe(
 							'when regex does not match, no event is fired',
 							() => {
 								const listener = jest.fn();
-								const payload = 'aPayload';
-								const type = 'anEvent';
+								const payload = 'payload';
+								const type = 'event';
 
-								const handle = hubB.addEventListener(
-									'ibm\..*',
-									listener
-								);
+								const handle = hubB.addEventListener('liferay\..*', listener);
 
-								const cnt = hubA.dispatchClientEvent(
-									type,
-									payload
-								);
+								const count = hubA.dispatchClientEvent(type, payload);
 
-								expect(cnt).toEqual(0);
+								expect(count).toEqual(0);
 								expect(listener).not.toHaveBeenCalled();
 							}
 						);
@@ -2432,33 +2171,18 @@ describe(
 							() => {
 								const listenerB = jest.fn();
 								const listenerD = jest.fn();
-								const payload = 'aPayload';
-								const type = 'anEvent';
+								const payload = 'payload';
+								const type = 'event';
 
-								const handleB = hubB.addEventListener(
-									type,
-									listenerB
-								);
-								const handleD = hubD.addEventListener(
-									type,
-									listenerD
-								);
+								const handleB = hubB.addEventListener(type, listenerB);
 
-								const cnt = hubA.dispatchClientEvent(
-									type,
-									payload
-								);
+								const handleD = hubD.addEventListener(type, listenerD);
 
-								expect(cnt).toEqual(2);
-								expect(listenerB).toHaveBeenCalledWith(
-									type,
-									payload
-								);
+								const count = hubA.dispatchClientEvent(type, payload);
 
-								expect(listenerD).toHaveBeenCalledWith(
-									type,
-									payload
-								);
+								expect(count).toEqual(2);
+								expect(listenerB).toHaveBeenCalledWith(type, payload);
+								expect(listenerD).toHaveBeenCalledWith(type, payload);
 
 								hubB.removeEventListener(handleB);
 								hubD.removeEventListener(handleD);
@@ -2489,18 +2213,15 @@ describe(
 								register(portletA),
 								register(portletB)
 							]
-						)
-							.then(
-								values => {
-									hubA = values[0];
-									listenerA = hubA.addEventListener(
-										'portlet.onStateChange',
-										onStateChange
-									);
+						).then(
+							values => {
+								hubA = values[0];
 
-									hubB = values[1];
-								}
-							);
+								listenerA = hubA.addEventListener('portlet.onStateChange', onStateChange);
+
+								hubB = values[1];
+							}
+						);
 					}
 				);
 
@@ -2522,226 +2243,196 @@ describe(
 				it(
 					'throws a TypeError if too many (>3) arguments are provided',
 					() => {
-						const testFunc = () => {
-							hubA.createResourceUrl(
-								null,
-								'parm1',
-								'parm2',
-								'parm3'
-							);
+						const testFn = () => {
+							hubA.createResourceUrl(null, 'param1', 'param2', 'param3');
 						};
 
-						expect(testFunc).toThrow('Too many arguments. 3 arguments are allowed.');
+						expect(testFn).toThrow('Too many arguments. 3 arguments are allowed.');
 					}
 				);
 
 				it(
 					'throws a TypeError if resource parameters is invalid',
 					() => {
-						const parms = {rp1: 'resVal'};
-						const testFunc = () => {
-							hubA.createResourceUrl(
-								parms,
-								'cacheLevelPortlet'
-							);
+						const params = {
+							param1: 'paramValue1'
 						};
 
-						expect(testFunc).toThrow(TypeError);
+						const testFn = () => {
+							hubA.createResourceUrl(params, 'cacheLevelPortlet');
+						};
+
+						expect(testFn).toThrow(TypeError);
 					}
 				);
 
 				it(
 					'throws a TypeError if the cacheability argument is invalid',
 					() => {
-						const parms = {rp1: ['resVal']};
-						const testFunc = () => {
-							hubA.createResourceUrl(
-								parms,
-								'Invalid'
-							);
+						const params = {
+							param1: ['paramValue1']
 						};
 
-						expect(testFunc).toThrow(TypeError);
+						const testFn = () => {
+							hubA.createResourceUrl(params, 'Invalid');
+						};
+
+						expect(testFn).toThrow(TypeError);
 					}
 				);
 
 				it(
 					'throws a TypeError if there are 2 cacheability arguments',
 					() => {
-						const parms = {rp1: ['resVal']};
-						const testFunc = () => {
-							hubA.createResourceUrl(
-								'cacheLevelPage',
-								'cacheLevelFull'
-							);
+						const params = {
+							param1: ['paramValue1']
 						};
 
-						expect(testFunc).toThrow(TypeError);
+						const testFn = () => {
+							hubA.createResourceUrl('cacheLevelPage', 'cacheLevelFull');
+						};
+
+						expect(testFn).toThrow(TypeError);
 					}
 				);
 
 				it(
 					'throws a TypeError if there are 2 res params arguments',
 					() => {
-						const parms = {rp1: ['resVal']};
-						const testFunc = () => {
-							return hubA.createResourceUrl(
-								parms,
-								parms
-							);
+						const params = {
+							param1: ['paramValue1']
 						};
 
-						expect(testFunc).toThrow(TypeError);
+						const testFn = () => {
+							return hubA.createResourceUrl(params, params);
+						};
+
+						expect(testFn).toThrow(TypeError);
 					}
 				);
 
 				it(
 					'does not throw if both arguments are valid',
 					() => {
-						const parms = {rp1: ['resVal']};
-						const testFunc = () => {
-							hubA.createResourceUrl(
-								parms,
-								'cacheLevelPage'
-							);
+						const params = {
+							param1: ['paramValue1']
 						};
 
-						expect(testFunc).not.toThrow();
+						const testFn = () => {
+							hubA.createResourceUrl(params, 'cacheLevelPage');
+						};
+
+						expect(testFn).not.toThrow();
 					}
 				);
 
 				it(
 					'returns a string if both arguments are valid',
 					() => {
-						const parms = {rp1: ['resVal']};
+						const params = {
+							param1: ['paramValue1']
+						};
 
-						return hubA.createResourceUrl(
-							parms,
-							'cacheLevelFull'
-						)
-							.then(
-								url => {
-									expect(typeof url).toEqual('string');
-								}
-							);
+						return hubA.createResourceUrl(params, 'cacheLevelFull').then(
+							url => {
+								expect(typeof url).toEqual('string');
+							}
+						);
 					}
 				);
 
 				it(
 					'Throws an exception if cacheability is specified first',
 					() => {
-						const parms = {rp1: ['resVal']};
-						const testFunc = () => {
-							return hubA.createResourceUrl(
-								'cacheLevelPage',
-								parms
-							);
+						const params = {
+							param1: ['paramValue1']
 						};
 
-						expect(testFunc).toThrow(TypeError);
+						const testFn = () => {
+							return hubA.createResourceUrl('cacheLevelPage', params);
+						};
+
+						expect(testFn).toThrow(TypeError);
 					}
 				);
 
 				it(
 					'returns a string if only cacheability present',
 					() => {
-						const parms = {rp1: ['resVal']};
+						const params = {
+							param1: ['paramValue1']
+						};
 
-						return hubA.createResourceUrl(
-							null,
-							'cacheLevelPortlet'
-						)
-							.then(
-								url => {
-									expect(typeof url).toEqual('string');
-								}
-							);
+						return hubA.createResourceUrl(null, 'cacheLevelPortlet').then(
+							url => {
+								expect(typeof url).toEqual('string');
+							}
+						);
 					}
 				);
 
 				it(
 					'returns a string if only resource parameters present',
 					() => {
-						const parms = {
-							rp1: ['resVal'],
-							rp2: ['resVal2']
+						const params = {
+							param1: ['paramValue1'],
+							param2: ['paramValue2']
 						};
 
-						return hubA.createResourceUrl(
-							parms
-						)
-							.then(
-								url => {
-									expect(typeof url).toEqual('string');
-								}
-							);
+						return hubA.createResourceUrl(params).then(
+							url => {
+								expect(typeof url).toEqual('string');
+							}
+						);
 					}
 				);
 
 				it(
 					'returns a string if no parameters present',
 					() => {
-						const parms = {
-							rp1: ['resVal'],
-							rp2: ['resVal2']
+						const params = {
+							param1: ['paramValue1'],
+							param2: ['paramValue2']
 						};
 
-						return hubA.createResourceUrl()
-							.then(
-								url => {
-									expect(typeof url).toEqual('string');
-								}
-							);
+						return hubA.createResourceUrl().then(
+							url => {
+								expect(typeof url).toEqual('string');
+							}
+						);
 					}
 				);
 
 				it(
 					'returns a URL indicating the initiating portlet A',
 					() => {
-						const parms = {
-							rp1: ['resVal'],
-							rp2: ['resVal2']
+						const params = {
+							param1: ['paramValue1'],
+							param2: ['paramValue2']
 						};
 
-						return hubA.createResourceUrl(
-							parms,
-							'cacheLevelPage'
-						)
-							.then(
-								url => {
-									expect(typeof url).toEqual('string');
-
-									// TODO: This should return "PortletA" not null
-									// console.log(portlet.test.action.getInitiatingPortletId(url));
-
-								}
-							);
+						return hubA.createResourceUrl(params, 'cacheLevelPage').then(
+							url => {
+								expect(typeof url).toEqual('string');
+							}
+						);
 					}
 				);
-
-				// TODO: implement same as above, but for portletB
-				// @see: https://github.com/apache/portals-pluto/blob/master/portlet-api/src/test/javascript/CreateResourceUrlTest.js#L293
-
-				// TODO: fix implementation and test
 
 				it(
 					'returns a resource URL',
 					() => {
 						const cache = 'cacheLevelPage';
-						const parms = {
-							rp1: ['resVal'],
-							rp2: ['resVal2']
+						const params = {
+							param1: ['paramValue1'],
+							param2: ['paramValue2']
 						};
 
-						return hubB.createResourceUrl(
-							parms,
-							cache
-						)
-							.then(
-								url => {
-									expect(portlet.test.resource.isResourceUrl(url)).toBeTruthy();
-								}
-							);
+						return hubB.createResourceUrl(params, cache).then(
+							url => {
+								expect(portlet.test.resource.isResourceUrl(url)).toBeTruthy();
+							}
+						);
 					}
 				);
 
@@ -2749,24 +2440,21 @@ describe(
 					'returns a URL with cacheability set to "cacheLevelPage"',
 					() => {
 						const cache = 'cacheLevelPage';
-						const parms = {
-							rp1: ['resVal'],
-							rp2: ['resVal2']
+						const params = {
+							param1: ['paramValue1'],
+							param2: ['paramValue2']
 						};
 
 						let str;
 						let url;
 
-						return hubB.createResourceUrl(
-							parms,
-							cache
-						)
-							.then(
-								url => {
-									const str = portlet.test.resource.getCacheability(url);
-									expect(str).toEqual(cache);
-								}
-							);
+						return hubB.createResourceUrl(params, cache).then(
+							url => {
+								const str = portlet.test.resource.getCacheability(url);
+
+								expect(str).toEqual(cache);
+							}
+						);
 					}
 				);
 			}
@@ -2780,9 +2468,6 @@ describe(
 				const portletB = ids[1];
 				const portletC = ids[2];
 				const portletD = ids[3];
-
-				// Tests in this module need following portlets. register them.
-				// These variables provide linkage between the "describe" sections
 
 				const pageState = portlet.test.getInitData();
 
@@ -2809,34 +2494,37 @@ describe(
 								register(portletC),
 								register(portletD)
 							]
-						)
-							.then(
-								values => {
-									hubA = values[0];
-									handleA = hubA.addEventListener(
-										'portlet.onStateChange',
-										listenerA
-									);
+						).then(
+							values => {
+								hubA = values[0];
 
-									hubB = values[1];
-									handleB = hubB.addEventListener(
-										'portlet.onStateChange',
-										listenerB
-									);
+								handleA = hubA.addEventListener(
+									'portlet.onStateChange',
+									listenerA
+								);
 
-									hubC = values[2];
-									handleC = hubC.addEventListener(
-										'portlet.onStateChange',
-										listenerC
-									);
+								hubB = values[1];
 
-									hubD = values[3];
-									handleD = hubD.addEventListener(
-										'portlet.onStateChange',
-										listenerD
-									);
-								}
-							);
+								handleB = hubB.addEventListener(
+									'portlet.onStateChange',
+									listenerB
+								);
+
+								hubC = values[2];
+
+								handleC = hubC.addEventListener(
+									'portlet.onStateChange',
+									listenerC
+								);
+
+								hubD = values[3];
+
+								handleD = hubD.addEventListener(
+									'portlet.onStateChange',
+									listenerD
+								);
+							}
+						);
 					}
 				);
 
@@ -2894,142 +2582,146 @@ describe(
 				it(
 					'returns a boolean value',
 					() => {
-						const retval = hubA.isInProgress();
-						expect(typeof retval).toEqual('boolean');
+						const returnValue = hubA.isInProgress();
+
+						expect(typeof returnValue).toEqual('boolean');
 					}
 				);
 
 				it(
 					'returns false if a blocking operation is not in progress',
 					() => {
-						const retval = hubA.isInProgress();
-						expect(retval).toBe(false);
+						const returnValue = hubA.isInProgress();
+
+						expect(returnValue).toBe(false);
 					}
 				);
 
 				it(
 					'returns false through a different hub if a blocking operation is not in progress',
 					() => {
-						const retval = hubD.isInProgress();
-						expect(retval).toBe(false);
+						const returnValue = hubD.isInProgress();
+
+						expect(returnValue).toBe(false);
 					}
 				);
 
 				it(
 					'returns true when a partial action has been started but setPageState has not been called',
 					done => {
-						const parms = {ap1: ['actionVal']};
+						const params = {};
 
-						return hubB.startPartialAction(parms)
-							.then(
-								pageObject => {
-									expect(hubB.isInProgress()).toBeTruthy();
+						return hubB.startPartialAction(params).then(
+							pageObject => {
+								expect(hubB.isInProgress()).toBeTruthy();
 
-									pageObject.setPageState(
-										JSON.stringify({})
-									);
+								pageObject.setPageState(
+									JSON.stringify({})
+								);
 
-									setTimeout(
-										() => {
-											expect(listenerB).toHaveBeenCalled();
-											done();
-										}
-									);
-								}
-							);
+								setTimeout(
+									() => {
+										expect(listenerB).toHaveBeenCalled();
+
+										done();
+									}
+								);
+							}
+						);
 					}
 				);
 
 				it(
 					'returns true through a different hub when a partial action has been started but setPageState has not been called',
 					done => {
-						const parms = {ap1: ['actionVal']};
+						const params = {};
 
-						return hubB.startPartialAction(parms)
-							.then(
-								pageObject => {
-									expect(hubB.isInProgress()).toBeTruthy();
-									expect(hubD.isInProgress()).toBeTruthy();
+						return hubB.startPartialAction(params).then(
+							pageObject => {
+								expect(hubB.isInProgress()).toBeTruthy();
+								expect(hubD.isInProgress()).toBeTruthy();
 
-									pageObject.setPageState(JSON.stringify({}));
+								pageObject.setPageState(JSON.stringify({}));
 
-									setTimeout(
-										() => {
-											expect(listenerB).toHaveBeenCalled();
-											done();
-										}
-									);
-								}
-							);
+								setTimeout(
+									() => {
+										expect(listenerB).toHaveBeenCalled();
+
+										done();
+									}
+								);
+							}
+						);
 					}
 				);
 
 				it(
 					'returns true when setPageState has been called but the updates have not been dispatched',
 					done => {
-						const parms = {ap1: ['actionVal']};
+						const params = {};
 
-						hubB.startPartialAction(parms)
-							.then(
-								pageObject => {
-									pageObject.setPageState(JSON.stringify({}));
-									expect(hubB.isInProgress()).toBeTruthy();
+						hubB.startPartialAction(params).then(
+							pageObject => {
+								pageObject.setPageState(JSON.stringify({}));
 
-									setTimeout(
-										() => {
-											expect(listenerB).toHaveBeenCalled();
-											done();
-										}
-									);
-								}
-							);
+								expect(hubB.isInProgress()).toBeTruthy();
+
+								setTimeout(
+									() => {
+										expect(listenerB).toHaveBeenCalled();
+
+										done();
+									}
+								);
+							}
+						);
 					}
 				);
 
 				it(
 					'returns false after setPageState updates have been dispatched',
 					done => {
-						const parms = {ap1: ['actionVal']};
+						const params = {};
 
-						return hubB.startPartialAction(parms)
-							.then(
-								pageObject => {
-									pageObject.setPageState(JSON.stringify({}));
-									expect(hubD.isInProgress()).toBeTruthy();
+						return hubB.startPartialAction(params).then(
+							pageObject => {
+								pageObject.setPageState(JSON.stringify({}));
+								expect(hubD.isInProgress()).toBeTruthy();
 
-									setTimeout(
-										() => {
-											expect(listenerD).toHaveBeenCalled();
-											expect(hubD.isInProgress()).toBeFalsy();
-											done();
-										}
-									);
-								}
-							);
+								setTimeout(
+									() => {
+										expect(listenerD).toHaveBeenCalled();
+										expect(hubD.isInProgress()).toBeFalsy();
+
+										done();
+									}
+								);
+							}
+						);
 					}
 				);
 
 				it(
 					'returns false through a different hub after setPageState updates have been dispatched',
 					done => {
-						const parms = {ap1: ['actionVal']};
+						const params = {ap1: ['actionVal']};
 
-						hubB.startPartialAction(parms)
-							.then(
-								pageObject => {
-									pageObject.setPageState(JSON.stringify({}));
+						hubB.startPartialAction(params).then(
+							pageObject => {
+								pageObject.setPageState(JSON.stringify({}));
 
-									expect(hubB.isInProgress()).toBeTruthy();
+								expect(hubB.isInProgress()).toBeTruthy();
 
-									setTimeout(
-										() => {
-											expect(listenerC).toHaveBeenCalled();
-											expect(hubB.isInProgress()).toBeFalsy();
-											done();
-										}
-									);
-								}
-							);
+								setTimeout(
+									() => {
+										expect(listenerC).toHaveBeenCalled();
+										expect(hubB.isInProgress()).toBeFalsy();
+
+										done();
+									}
+								);
+							}
+						);
 					}
 				);
 
@@ -3045,11 +2737,12 @@ describe(
 							]
 						);
 
-						const el = document.createElement('form');
-						const parms = {ap1: ['actionVal']};
-						const testFunc = () => hubB.action(parms, el);
+						const element = document.createElement('form');
+						const params = {};
 
-						expect(testFunc).not.toThrow();
+						const testFn = () => hubB.action(params, element);
+
+						expect(testFn).not.toThrow();
 						expect(hubD.isInProgress()).toBeTruthy();
 
 						global.fetch.mockRestore();
@@ -3074,11 +2767,12 @@ describe(
 							]
 						);
 
-						const el = document.createElement('form');
-						const parms = {ap1: ['actionVal']};
-						const testFunc = () => hubB.action(parms, el);
+						const element = document.createElement('form');
+						const params = {};
 
-						expect(testFunc).not.toThrow();
+						const testFn = () => hubB.action(params, element);
+
+						expect(testFn).not.toThrow();
 						expect(hubD.isInProgress()).toBeTruthy();
 
 						global.fetch.mockRestore();
@@ -3086,6 +2780,7 @@ describe(
 						setTimeout(
 							() => {
 								expect(listenerB).toHaveBeenCalled();
+
 								done();
 							}
 						);
@@ -3104,11 +2799,12 @@ describe(
 							]
 						);
 
-						const el = document.createElement('form');
-						const parms = {ap1: ['actionVal']};
-						const testFunc = () => hubB.action(parms, el);
+						const element = document.createElement('form');
+						const params = {};
 
-						expect(testFunc).not.toThrow();
+						const testFn = () => hubB.action(params, element);
+
+						expect(testFn).not.toThrow();
 
 						global.fetch.mockRestore();
 
@@ -3126,19 +2822,20 @@ describe(
 				it(
 					'returns true when setRenderState has been called but the updates have not been dispatched',
 					done => {
-						const parms = {ap1: ['actionVal']};
+						const params = {};
 						const state = pageState.portlets.PortletC.state;
 
-						state.parameters.someparm1 = ['NewVal'];
+						state.parameters.param1 = ['paramValue1'];
 
-						const testFunc = () => hubC.setRenderState(state);
+						const testFn = () => hubC.setRenderState(state);
 
-						expect(testFunc).not.toThrow();
+						expect(testFn).not.toThrow();
 						expect(hubD.isInProgress()).toBeTruthy();
 
 						setTimeout(
 							() => {
 								expect(listenerC).toHaveBeenCalled();
+
 								done();
 							}
 						);
@@ -3148,19 +2845,20 @@ describe(
 				it(
 					'returns true through a different hub when setRenderState has been called but the updates have not been dispatched',
 					done => {
-						const parms = {ap1: ['actionVal']};
+						const params = {};
 						const state = pageState.portlets.PortletC.state;
 
-						state.parameters.someparm1 = ['NewVal'];
+						state.parameters.param1 = ['paramValue1'];
 
-						const testFunc = () => hubC.setRenderState(state);
+						const testFn = () => hubC.setRenderState(state);
 
-						expect(testFunc).not.toThrow();
+						expect(testFn).not.toThrow();
 						expect(hubD.isInProgress()).toBeTruthy();
 
 						setTimeout(
 							() => {
 								expect(listenerC).toHaveBeenCalled();
+
 								done();
 							}
 						);
@@ -3170,14 +2868,14 @@ describe(
 				it(
 					'returns false after setRenderState updates have been dispatched',
 					done => {
-						const parms = {ap1: ['actionVal']};
+						const params = {};
 						const state = pageState.portlets.PortletC.state;
 
-						state.parameters.someparm1 = ['NewVal'];
+						state.parameters.param1 = ['paramValue1'];
 
-						const testFunc = () => hubC.setRenderState(state);
+						const testFn = () => hubC.setRenderState(state);
 
-						expect(testFunc).not.toThrow();
+						expect(testFn).not.toThrow();
 
 						setTimeout(
 							() => {
@@ -3187,6 +2885,7 @@ describe(
 								expect(hubB.isInProgress()).toBeFalsy();
 								expect(hubC.isInProgress()).toBeFalsy();
 								expect(hubD.isInProgress()).toBeFalsy();
+
 								done();
 							}
 						);

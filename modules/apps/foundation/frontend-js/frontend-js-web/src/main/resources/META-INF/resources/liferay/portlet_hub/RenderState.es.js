@@ -20,6 +20,7 @@ class RenderState {
 	 *
 	 * @memberof RenderState
 	 * @return {RenderState} A RenderState instance with same properties.
+	 * @review
 	 */
 
 	clone() {
@@ -28,25 +29,31 @@ class RenderState {
 
 	/**
 	 * Returns an instance of RenderState based on a RenderState
+	 *
+	 * @memberof RenderState
+	 * @param {RenderState} renderState
+	 * @review
 	 */
 
-	from(state) {
+	from(renderState) {
 		this.parameters = {};
 
-		for (let p in state.parameters) {
-			if (state.parameters.hasOwnProperty(p) && Array.isArray(state.parameters[p])) {
-				this.parameters[p] = state.parameters[p].slice(0);
+		for (let name in renderState.parameters) {
+			if (renderState.parameters.hasOwnProperty(name) && Array.isArray(renderState.parameters[name])) {
+				this.parameters[name] = renderState.parameters[name].slice(0);
 			}
 		}
 
-		this.setPortletMode(state.portletMode);
-		this.setWindowState(state.windowState);
+		this.setPortletMode(renderState.portletMode);
+		this.setWindowState(renderState.windowState);
 	}
 
 	/**
 	 * Returns the portletMode for this RenderState.
 	 *
-	 * @returns {String}
+	 * @memberof RenderState
+	 * @return {String} The portletMode for this render state
+	 * @review
 	 */
 
 	getPortletMode() {
@@ -57,28 +64,31 @@ class RenderState {
 	 * Returns the string parameter value for the given name.
 	 * If name designates a multi-valued parameter this function returns
 	 * the first value in the values array. If the parameter is undefined
-	 * this function returns the optional default parameter <code>def</code>.
+	 * this function returns the optional default parameter <code>defaultValue</code>.
 	 *
 	 * @memberof RenderState
 	 * @param {String} name The name of the parameter to retreive.
-	 * @param {?String} def  The default value of the parameter in case it is undefined.
+	 * @param {?String} defaultValue  The default value of the parameter in case it is undefined.
+	 * @return
+	 * @review
 	 */
 
-	getValue(name, def) {
+	getValue(name, defaultValue) {
 		if (!isString(name)) {
 			throw new TypeError('Parameter name must be a string');
 		}
 
-		let res = this.parameters[name];
-		if (Array.isArray(res)) {
-			res = res[0];
+		let value = this.parameters[name];
+
+		if (Array.isArray(value)) {
+			value = value[0];
 		}
 
-		if (res === undefined && def !== undefined) {
-			res = def;
+		if (value === undefined && defaultValue !== undefined) {
+			value = defaultValue;
 		}
 
-		return res;
+		return value;
 	}
 
 	/**
@@ -88,28 +98,27 @@ class RenderState {
 	 *
 	 * @memberof RenderState
 	 * @param {String} name  The name of the parameter to retrieve.
-	 * @param {?Array} def   The default value for the parameter if it is undefined.
-	 * @returns {Array}
+	 * @param {?Array} defaultValue   The default value for the parameter if it is undefined.
+	 * @return {Array}
+	 * @review
 	 */
 
-	getValues(name, def) {
+	getValues(name, defaultValue) {
 		if (!isString(name)) {
 			throw new TypeError('Parameter name must be a string');
 		}
 
-		let res = this.parameters[name];
-		if (res === undefined) {
-			res = def;
-		}
-		return res;
+		const value = this.parameters[name];
+
+		return value ? value : defaultValue;
 	}
 
 	/**
 	 * Returns the windowState for this RenderState.
 	 *
-	 * TODO: This is needed because it's used in the portlet 3 tests
-	 *
-	 * @returns {String}
+	 * @memberof RenderState
+	 * @return {String} the window state for this render state
+	 * @review
 	 */
 
 	getWindowState() {
@@ -121,6 +130,7 @@ class RenderState {
 	 *
 	 * @memberof RenderState
 	 * @param {String} name The name of the parameter to be removed.
+	 * @review
 	 */
 
 	remove(name) {
@@ -137,17 +147,18 @@ class RenderState {
 	 * Sets the portletMode to the specified value.
 	 *
 	 * @memberof RenderState
-	 * @param {String} pm The portlet mode to be set.
-	 * @returns {String}
+	 * @param {String} portletMode The portlet mode to be set.
+	 * @review
 	 * @see {PortletConstants}
 	 */
 
-	setPortletMode(pm) {
-		if (!isString(pm)) {
+	setPortletMode(portletMode) {
+		if (!isString(portletMode)) {
 			throw new TypeError('Portlet Mode must be a string');
 		}
 
-		const mode = pm.toLowerCase();
+		const mode = portletMode.toLowerCase();
+
 		if (mode === PortletConstants.EDIT || mode === PortletConstants.HELP || mode === PortletConstants.VIEW) {
 			this.portletMode = mode;
 		}
@@ -160,6 +171,7 @@ class RenderState {
 	 * @memberof RenderState
 	 * @param {String} name	The name of the parameter.
 	 * @param {Array|String} value  The value of the parameter.
+	 * @review
 	 */
 
 	setValue(name, value) {
@@ -171,11 +183,11 @@ class RenderState {
 			throw new TypeError('Parameter value must be a string, an array or null');
 		}
 
-		let val = value;
 		if (!Array.isArray(value)) {
-			val = [value];
+			value = [value];
 		}
-		this.parameters[name] = val;
+
+		this.parameters[name] = value;
 	}
 
 	/**
@@ -185,6 +197,7 @@ class RenderState {
 	 * @memberof RenderState
 	 * @param {String} name	The name of the parameter.
 	 * @param {Array|String} value  The value of the parameter.
+	 * @review
 	 */
 
 	setValues(name, value) {
@@ -195,17 +208,19 @@ class RenderState {
 	 * Sets the windowState to the specified value.
 	 *
 	 * @memberof RenderState
-	 * @param {String} pm The portlet mode to be set.
-	 * @returns {String}
+	 * @param {String} windowSstate The window state to be set.
+	 * @return {String}
+	 * @review
 	 * @see {PortletConstants}
 	 */
 
-	setWindowState(ws) {
-		if (!isString(ws)) {
+	setWindowState(windowState) {
+		if (!isString(windowState)) {
 			throw new TypeError('Window State must be a string');
 		}
 
-		const state = ws.toLowerCase();
+		const state = windowState.toLowerCase();
+
 		if (state === PortletConstants.MAXIMIZED || state === PortletConstants.MINIMIZED || state === PortletConstants.NORMAL) {
 			this.windowState = state;
 		}
