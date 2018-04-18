@@ -12,7 +12,7 @@ import PortletInit from './PortletInit.es';
  * @review
  */
 
-function register(portletId) {
+const register = function(portletId) {
 	return new Promise(
 		(resolve, reject) => {
 			if (!portletId) {

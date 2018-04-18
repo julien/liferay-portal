@@ -5,14 +5,14 @@ import {
 	isString
 } from 'metal';
 
-import PortletConstants from './PortletConstants.es';
+import PortletConstants from './portlet_constants.es';
 
 import {
 	encodeFormAsString,
 	encodeParameter,
 	isParmEqual,
 	validateForm
-} from './PortletUtil.es';
+} from './portlet_util.es';
 
 import RenderState from './RenderState.es';
 
@@ -1548,4 +1548,5 @@ PortletInit._systemEventListeners = [];
 
 PortletInit._updateQueue = [];
 
+export {PortletInit};
 export default PortletInit;

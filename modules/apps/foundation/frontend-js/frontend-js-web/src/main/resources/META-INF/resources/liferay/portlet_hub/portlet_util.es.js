@@ -14,7 +14,7 @@ const VALUE_NULL = '';
  * @private
  */
 
-export function	encodeFormAsString(pid, form) {
+const encodeFormAsString = function(pid, form) {
 	const params = [];
 
 	const l = form.elements.length;
@@ -56,7 +56,7 @@ export function	encodeFormAsString(pid, form) {
  * Helper for encoding a multivalued parameter
  */
 
-export function encodeParameter(name, vals) {
+const encodeParameter = function(name, vals) {
 	let str = '';
 	if (Array.isArray(vals)) {
 		if (vals.length === 0) {
@@ -87,7 +87,7 @@ export function encodeParameter(name, vals) {
  * @returns {boolean} true if the new parm value is equal to the current value
  */
 
-export function isParmEqual(param1, param2) {
+const isParmEqual = function(param1, param2) {
 	let ret = true;
 
 	if (param1 === undefined && param2 === undefined) {
@@ -112,7 +112,7 @@ export function isParmEqual(param1, param2) {
 	return ret;
 }
 
-export function validateForm(form) {
+const validateForm = function(form) {
 	if (!(form instanceof HTMLFormElement)) {
 		throw new TypeError('Element must be an HTMLFormElement');
 	}
@@ -142,3 +142,10 @@ export function validateForm(form) {
 		}
 	}
 }
+
+export {
+	encodeFormAsString,
+	encodeParameter,
+	isParmEqual,
+	validateForm
+};

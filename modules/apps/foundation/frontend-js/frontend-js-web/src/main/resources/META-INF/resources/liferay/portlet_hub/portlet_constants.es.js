@@ -19,4 +19,5 @@ const PortletConstants = {
 	PORTLET: 'cacheLevelPortlet'
 };
 
+export {PortletConstants};
 export default PortletConstants;

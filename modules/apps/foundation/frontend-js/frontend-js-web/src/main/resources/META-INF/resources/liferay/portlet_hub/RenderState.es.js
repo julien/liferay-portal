@@ -1,6 +1,6 @@
 import {isObject, isString} from 'metal';
 
-import PortletConstants from './PortletConstants.es';
+import PortletConstants from './portlet_constants.es';
 
 class RenderState {
 
@@ -212,4 +212,5 @@ class RenderState {
 	}
 }
 
+export {RenderState};
 export default RenderState;
