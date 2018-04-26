@@ -24,8 +24,7 @@ import com.liferay.portal.url.builder.AbsolutePortalURLBuilderFactory;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -53,20 +52,15 @@ public class IETopHeadDynamicInclude extends BaseDynamicInclude {
 				_absolutePortalURLBuilderFactory.getAbsolutePortalURLBuilder(
 					request);
 
-			List<String> urls = new ArrayList<>();
+			for (String url :
+					Arrays.asList("object-assign-auto.js", "fetch.js")) {
 
-			urls.add("object-assign-auto.js");
-			urls.add("fetch.js");
-
-			final String modulePath = "/o/frontend-compatibility-ie/";
-
-			for (String url : urls) {
 				printWriter.print(
 					"<script data-senna-track=\"permanent\" src=\"");
 
 				printWriter.print(
 					absolutePortalURLBuilder.forResource(
-						modulePath + url
+						"/o/frontend-compatibility-ie/" + url
 					).build());
 
 				printWriter.println("\" type=\"text/javascript\"></script>");
