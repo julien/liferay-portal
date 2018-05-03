@@ -1,24 +1,188 @@
-'use strict';
+import {
+	isDefAndNotNull,
+	isFunction,
+	isObject,
+	isString
+} from 'metal';
 
-import {isDefAndNotNull, isFunction, isString} from 'metal';
+import PortletConstants from './portlet_constants.es';
+
+import {
+	encodeFormAsString,
+	encodeParameter,
+	validateForm,
+	validateParams,
+	validateState
+} from './portlet_util.es';
+
+import RenderState from './RenderState.es';
+
+const CACHE_LEVEL = 'p_p_cacheability';
+
+const HUB = 'p_p_hub';
+
+const HUB_ACTION = '0';
+
+const HUB_PARTIAL_ACTION = '1';
+
+const HUB_RESOURCE = '2';
+
+const PORTLET_MODE = 'p_p_mode';
+
+const PUBLIC_RENDER_PARAM = 'p_r_p_';
+
+const RENDER_PARAM = 'priv_r_p_';
+
+const RESOURCE_ID = 'p_p_resource_id';
+
+const TOKEN_DELIM = '&';
+
+const VALUE_DELIM = '=';
+
+const WINDOW_STATE = 'p_p_state';
+
+/**
+ * Flag specifying whether history is to be processed
+ * (true if browser supports HTML5 session history APIs)
+ *
+ * @property {boolean} doHistory
+ */
+
+const doHistory = (window.history && window.history.pushState);
 
 const portletRegex = '^portlet[.].*';
 
 /**
  * PortletInit
- * @review
  */
 
 class PortletInit {
+	constructor(portletId) {
+		this._portletId = portletId;
+
+		this.constants = Object.assign({}, PortletConstants);
+
+		if (!PortletInit._initialized) {
+			PortletInit._renderState = global.portlet.impl.getInitData();
+
+			this.updateHistory(true);
+
+			PortletInit._initialized = true;
+		}
+
+		PortletInit._registeredPortlets[portletId] = this;
+	}
 
 	/**
-	 * Constructor for PortletInit
-	 * @param {string} portletId
+	 * Adds a client event listener.
+	 *
+	 * @param {string} type The type of listener
+	 * @param {function} handler Function called when event occurs
+	 * @private
+	 * @return {Object} A handle that can be used to remove the event listener
 	 * @review
 	 */
 
-	constructor(portletId) {
-		this._portletId = portletId;
+	_addClientEventListener(type, handler) {
+		const listener = {
+			handler,
+			type
+		};
+
+		PortletInit._clientEventListeners.push(listener);
+
+		return listener;
+	}
+
+	/**
+	 * Adds a system event listener.
+	 *
+	 * @param {string} type The name of the event to listen to
+	 * @param {Function} handler The function called when the event is emitted
+	 * @private
+	 * @return {Object} A handle that can be used to remove the event listener
+	 * @review
+	 */
+
+	_addSystemEventListener(type, handler) {
+		if (type !== 'portlet.onStateChange' && type !== 'portlet.onError') {
+			throw new TypeError(`The system event type is invalid: ${type}`);
+		}
+
+		const id = this._portletId;
+
+		const listener = {
+			handler,
+			id,
+			type
+		};
+
+		PortletInit._systemEventListeners.push(listener);
+
+		return listener;
+	}
+
+	/**
+	 * Calls the portlet onStateChange method in an asynchronous manner in order
+	 * to decouple the public API. This method is intended for use after
+	 * portlet client registers an onStateChange listener.
+	 *
+	 * @param {string} portletId The portlet ID
+	 * @private
+	 * @review
+	 */
+
+	_updateStateForPortlet(portletId) {
+		let dup = false;
+		const listeners = PortletInit._systemEventListeners.slice();
+		const updateQueue = PortletInit._updateQueue;
+
+		const l = listeners.length;
+
+		for (let i = 0; i < l; i++) {
+			const qdata = listeners[i];
+			if (qdata.id === portletId) {
+
+				const k = updateQueue.length;
+
+				for (let j = 0; j < k; j++) {
+					if (updateQueue[j].id == qdata.id) {
+						dup = true;
+						break;
+					}
+				}
+				if (!dup) {
+					updateQueue.push(qdata);
+				}
+			}
+		}
+
+		if (updateQueue.length > 0) {
+			setTimeout(
+				() => {
+					PortletInit._busy = true;
+
+					while (updateQueue.length > 0) {
+						const qdata = PortletInit._updateQueue.shift();
+
+						const handler = qdata.handler;
+						const id = qdata.id;
+
+						const data = PortletInit._renderState.portlets[id].renderData;
+						const state = new RenderState(PortletInit._renderState.portlets[id].state);
+
+						if (!!data && !!data.content) {
+							handler('portlet.onStateChange', state, data);
+						}
+						else {
+							handler('portlet.onStateChange', state);
+						}
+					}
+
+					PortletInit._busy = false;
+				}
+			);
+		}
 	}
 
 	/**
@@ -26,21 +190,61 @@ class PortletInit {
 	 * element arguments.
 	 *
 	 * @memberof PortletInit
-	 * @param {PortletParameters} params Action parameters to be added to the
-	 * URL
+	 * @param {PortletParameters} params Action parameters to be added to the URL
 	 * @param {HTMLFormElement} element DOM element of form to be submitted
-	 * @returns {Promise} A Promise object that is resolved with no argument
-	 * when the action request has completed.
-	 * @review
+	 * @return {Promise} A Promise object that is resolved with no argument
+	 *                    when the action request has completed.
 	 * @throws {TypeError} Thrown if the input parameters are invalid
-	 * @throws {AccessDeniedException} Thrown if a blocking operation is
-	 * already in progress.
-	 * @throws {NotInitializedException} Thrown if a portlet ID is provided,
-	 * but no onStateChange listener has been registered.
+	 * @throws {AccessDeniedException}   Thrown if a blocking operation is already in progress.
+	 * @throws {NotInitializedException} Thrown if a portlet ID is provided, but no onStateChange listener has been registered.
 	 */
 
 	action(params, element) {
-		throw new Error('"action" is not yet implemented');
+		return new Promise((resolve, reject) => {
+			let el = null;
+			let i = arguments.length;
+			let parms = null;
+			while (--i >= 0) {
+				const arg = arguments[i];
+				const type = Object.prototype.toString.call(arg);
+
+				if (arg instanceof HTMLFormElement) {
+					if (el !== null) {
+						throw new TypeError(`Too many [object HTMLFormElement] arguments: ${arg}, ${el}`);
+					}
+					el = arg;
+				}
+				else if (isObject(arg)) {
+					validateParams(arg);
+					if (parms !== null) {
+						throw new TypeError('Too many parameters arguments');
+					}
+					parms = arg;
+				}
+				else if (arg !== undefined) {
+					throw new TypeError(`Invalid argument type. Argument ${i + 1} is of type ${type}`);
+				}
+			}
+
+			if (el) {
+				validateForm(el);
+			}
+
+			this.setupAction(
+				parms,
+				el
+			)
+				.then(
+					val => {
+						resolve(val);
+					}
+				)
+				.catch(
+					err => {
+						reject(err);
+					}
+				);
+		});
 	}
 
 	/**
@@ -49,8 +253,7 @@ class PortletInit {
 	 * @memberof PortletInit
 	 * @param {string} type The type of listener
 	 * @param {function} handler Function called when event occurs
-	 * @returns {object} A handle that can be used to remove the event listener
-	 * @review
+	 * @return {Object} A handle that can be used to remove the event listener
 	 * @throws {TypeError} Thrown if the input parameters are invalid
 	 */
 
@@ -67,12 +270,20 @@ class PortletInit {
 			);
 		}
 
+		let listener = null;
+
 		if (type.startsWith('portlet.')) {
-			throw new Error('System event listeners are not yet implemented');
+			listener = this._addSystemEventListener(type, handler);
+
+			if (type === 'portlet.onStateChange') {
+				this._updateStateForPortlet(this._portletId);
+			}
 		}
 		else {
-			return this._addClientEventListener(type, handler);
+			listener = this._addClientEventListener(type, handler);
 		}
+
+		return listener;
 	}
 
 	/**
@@ -81,38 +292,104 @@ class PortletInit {
 	 * option, and resource ID provided.
 	 *
 	 * @memberof   PortletInit
-	 * @param {PortletParameters} params Resource parameters to be added to
-	 * the URL
-	 * @param {string} cache Cacheability option. The strings defined under
-	 * {@link PortletConstants} should be used to specifiy cacheability.
-	 * @param {string} resourceId Resource ID.
-	 * @returns {Promise} A Promise object. Returns a string representing the
-	 * resource URL on successful resolution. Returns an Error object containing
-	 * a descriptive message on failure.
-	 * @review
+	 * @param {PortletParameters} params      Resource parameters to be added to the URL
+	 * @param {string}            cache       Cacheability option. The strings defined under
+	 *                                        {@link PortletConstants} should be used to specifiy cacheability.
+	 * @param {string}            resourceId  Resource ID.
+	 * @return {Promise}  A Promise object. Returns a string representing the
+	 *                     resource URL on successful resolution. Returns an Error object containing
+	 *                     a descriptive message on failure.
 	 * @throws {TypeError} Thrown if the input parameters are invalid
 	 */
 
 	createResourceUrl(params, cache, resourceId) {
-		throw new Error('"createResourceUrl" is not yet implemented');
+		if (arguments.length > 3) {
+			throw new TypeError('Too many arguments. 3 arguments are allowed.');
+		}
+
+		if (params) {
+			if (isObject(params)) {
+				validateParams(params);
+			}
+			else {
+				throw new TypeError('Invalid argument type. Resource parameters must be a parameters object.');
+			}
+		}
+
+		let cacheability = null;
+
+		if (cache) {
+			if (isString(cache)) {
+				if (cache === 'cacheLevelPage' || cache === 'cacheLevelPortlet' || cache === 'cacheLevelFull') {
+					cacheability = cache;
+				}
+				else {
+					throw new TypeError(`Invalid cacheability argument: ${cache}`);
+				}
+			}
+			else {
+				throw new TypeError('Invalid argument type. Cacheability argument must be a string.');
+			}
+		}
+
+		if (!cacheability) {
+			cacheability = 'cacheLevelPage';
+		}
+
+		let rid = null;
+
+		if (resourceId) {
+			if (isString(resourceId)) {
+				rid = resourceId;
+			}
+			else {
+				throw new TypeError('Invalid argument type. Resource ID argument must be a string.');
+			}
+		}
+
+		return this.getUrl('RESOURCE', this._portletId, params, cacheability, rid);
+	}
+
+	// decodes the update strings. The update string is
+	// a JSON object containing the entire page state. This decoder
+	// returns an object containing the portlet data for portlets whose
+	// state has changed as compared to the current page state.
+
+	decodeUpdateString(ustr) {
+		const portlets = {};
+		const ps = JSON.parse(ustr);
+
+		for (let pid in ps.portlets) {
+			if (ps.portlets.hasOwnProperty(pid)) {
+				const nstate = ps.portlets[pid].state;
+				const ostate = PortletInit._renderState.portlets[pid].state;
+
+				if (!nstate || !ostate) {
+					throw new Error('Invalid update string. ostate=', ostate, ', nstate=', nstate);
+				}
+
+				if (this.stateChanged(nstate, pid)) {
+					portlets[pid] = ps.portlets[pid];
+				}
+			}
+		}
+
+		return portlets;
 	}
 
 	/**
 	 * Dispatches a client event.
 	 *
 	 * @memberof PortletInit
-	 * @param {string} type The type of listener
-	 * @param {any} payload The payload to be delivered
-	 * @returns {number} The number of events queued for delivery
-	 * @review
-	 * @throws {TypeError} Thrown if the type is a system event type
+	 * @param {string} type The type of listener.
+	 * @param {any} payload The payload to be delivered.
+	 * @return {number} The number of events queued for delivery.
+	 * @throws {TypeError} Thrown if the type is a system event type.
 	 */
 
 	dispatchClientEvent(type, payload) {
 		if (arguments.length > 2) {
-			throw new TypeError(
-				'Too many arguments passed to dispatchClientEvent'
-			);
+			throw new TypeError('Too many arguments passed to dispatchClientEvent');
 		}
 
 		if (!isString(type)) {
@@ -126,11 +403,9 @@ class PortletInit {
 		return PortletInit._clientEventListeners.reduce(
 			(amount, listener) => {
 				if (type.match(listener.type)) {
-					listener.handler(payload);
-
+					listener.handler(type, payload);
 					amount++;
 				}
-
 				return amount;
 			},
 			0
@@ -138,11 +413,325 @@ class PortletInit {
 	}
 
 	/**
+	 * Performs the actual action
+	 *
+	 * @param {Object} params Additional params
+	 * @param {HTMLFormElement} element Form to be submitted. May be <code>null</code>
+	 * @private
+	 */
+
+	executeAction(params, element) {
+		return new Promise((resolve, reject) => {
+			this.getUrl(
+				'ACTION',
+				this._portletId,
+				params
+			)
+				.then(
+					url => {
+						const method = 'POST';
+						let xhr;
+
+						if (element) {
+							const enctype = element.enctype;
+							if (enctype === 'multipart\/form-data') {
+								const formData = new FormData(element);
+
+								xhr = fetch(
+									url,
+									{
+										body: formData,
+										method: method
+									}
+								);
+							}
+							else {
+								const fstr = encodeFormAsString(this._portletId, element);
+								const method = element.method ? element.method.toUpperCase() : 'GET';
+								if (method === 'GET') {
+									if (url.indexOf('?') >= 0) {
+										url += `&${fstr}`;
+									}
+									else {
+										url += `?${fstr}`;
+									}
+
+									xhr = fetch(
+										url,
+										{
+											method: method
+										}
+									);
+								}
+								else {
+									const headers = new Headers();
+									headers.append('Content-Type', 'applicacion/x-www-form-urlencoded');
+									headers.append('Content-Length', fstr.length);
+
+									xhr = fetch(
+										url,
+										{
+											headers: headers,
+											method: method
+										}
+									);
+								}
+							}
+						}
+						else {
+							xhr = fetch(
+								url,
+								{
+									method: method
+								}
+							);
+						}
+
+						xhr
+							.then(
+								res => {
+									return res.text();
+								}
+							)
+							.then(
+								text => {
+									const updatedIds = this.updatePageStateFromString(text, this._portletId);
+									resolve(updatedIds);
+								}
+							)
+							.catch(
+								err => {
+									reject(err);
+								}
+							);
+					}
+				);
+		}
+		);
+	}
+
+	/**
+	 * Helper for generating portlet mode & window state strings for the URL
+	 */
+
+	genPMWSString(pid) {
+		const state = PortletInit._renderState.portlets[pid].state;
+
+		const pm = state.portletMode;
+		const ws = state.windowState;
+
+		let str = '';
+
+		str += TOKEN_DELIM + PORTLET_MODE + VALUE_DELIM + encodeURIComponent(pm);
+		str += TOKEN_DELIM + WINDOW_STATE + VALUE_DELIM + encodeURIComponent(ws);
+
+		return str;
+	}
+
+	/**
+	 * Helper for generating parameter strings for the URL
+	 */
+
+	genParmString(pid, name, type, group) {
+		let str = '';
+
+		const data = PortletInit._renderState.portlets[pid];
+		if (data && data.state && data.state.parameters) {
+			const vals = data.state.parameters[name];
+			if (vals !== undefined) {
+
+				// If values are present, encode the mutlivalued parameter string
+
+				if (type === PUBLIC_RENDER_PARAM) {
+					str += encodeParameter(group, vals);
+				}
+				else if (type === RENDER_PARAM) {
+					str += encodeParameter(RENDER_PARAM + name, vals);
+				}
+				else {
+					str += encodeParameter(pid + name, vals);
+				}
+			}
+		}
+		return str;
+	}
+
+	/**
+	 * Gets the updated public parameters for the given portlet
+	 * ID and new render state.
+	 * Returns an object whose properties are the gruop indexes of the
+	 * updated public parameters. The values are the new public
+	 * parameter values.
+	 *
+	 * @param      {string}       pid      The portlet ID
+	 * @param      {RenderState} state    The new render state
+	 * @return    {Object}                object containing the updated PRPs
+	 */
+
+	getUpdatedPRPs(pid, state) {
+		const prpNames = PortletInit._renderState.portlets[pid].pubParms;
+		const prps = {};
+
+		for (let name in prpNames) {
+			if (prpNames.hasOwnProperty(name)) {
+				if (!this.isParamInStateEqual(pid, state, name)) {
+					const group = prpNames[name];
+					prps[group] = state.parameters[name];
+				}
+			}
+		}
+
+		return prps;
+	}
+
+	/**
+	 * Returns a URL of the specified type.
+	 *
+	 * @memberof PortletInit
+	 * @param {string} type   The URL type
+	 * @param {string} pid		The portlet ID
+	 * @param {Object} params Additional parameters.
+	 *                        May be <code>null</code>
+	 * @param {string} cache  Cacheability.
+	 *                        Must be present if  type = "RESOURCE".
+	 *                        May be <code>null</code>
+	 * @param {string} resid  Resource ID.
+	 *                        May be present if type = "RESOURCE".
+	 *                        May be <code>null</code>
+	 */
+
+	getUrl(type, pid, params, cache, resid) {
+		const renderState = PortletInit._renderState;
+
+		let cacheability = 'cacheLevelPage';
+
+		// let isAction = false;
+
+		let url = '';
+
+		// If target portlet not defined for render URL, set it to null
+
+		if (type === 'RENDER' && pid === undefined) {
+			pid = null;
+		}
+
+		if (type === 'RESOURCE') {
+			url = decodeURIComponent(renderState.portlets[pid].encodedResourceURL);
+
+			if (cache) {
+				cacheability = cache;
+			}
+
+			url += TOKEN_DELIM + HUB + VALUE_DELIM + encodeURIComponent(HUB_RESOURCE);
+			url += TOKEN_DELIM + CACHE_LEVEL + VALUE_DELIM + encodeURIComponent(cacheability);
+
+			if (resid) {
+				url += TOKEN_DELIM + RESOURCE_ID + VALUE_DELIM + encodeURIComponent(resid);
+			}
+		}
+		else if (type === 'RENDER' && pid !== null) {
+			url = decodeURIComponent(renderState.portlets[pid].encodedRenderURL);
+		}
+		else if (type === 'RENDER') {
+			url = decodeURIComponent(renderState.encodedCurrentURL);
+		}
+		else if (type === 'ACTION') {
+			url = decodeURIComponent(renderState.portlets[pid].encodedActionURL);
+			url += TOKEN_DELIM + HUB + VALUE_DELIM + encodeURIComponent(HUB_ACTION);
+		}
+		else if (type === 'PARTIAL_ACTION') {
+			url = decodeURIComponent(renderState.portlets[pid].encodedActionURL);
+			url += TOKEN_DELIM + HUB + VALUE_DELIM + encodeURIComponent(HUB_PARTIAL_ACTION);
+		}
+
+		// Now add the state to the URL, taking into account cacheability if
+		// we're dealing with a resource URL.
+
+		// Put the private & public parameters on the URL if cacheability != FULL
+
+		if (type !== 'RESOURCE' || cacheability !== 'cacheLevelFull') {
+
+			// Add the state for the target portlet, if there is one.
+			// (for the render URL, pid can be null, and the state will have
+			// been added previously)
+
+			if (pid) {
+				const names = renderState.portlets[pid].state.parameters;
+				let str = '';
+				for (let name in names) {
+					if (names.hasOwnProperty(name) && !this.isPRP(pid, name)) {
+						str += this.genParmString(pid, name, RENDER_PARAM);
+					}
+				}
+				url += str;
+			}
+
+			// Add the public render parameters for all portlets
+
+			const prpstrings = {};
+			let str = '';
+			for (let group in renderState.prpMap) {
+				if (renderState.prpMap.hasOwnProperty(group)) {
+					for (let tpid in renderState.prpMap[group]) {
+						if (renderState.prpMap[group].hasOwnProperty(tpid)) {
+							const name = renderState.prpMap[group][tpid];
+							const parts = name.split('|');
+
+							// Only need to add parameter once, since it is shared
+
+							if (!prpstrings.hasOwnProperty(group)) {
+								prpstrings[group] = this.genParmString(parts[0], parts[1], PUBLIC_RENDER_PARAM, group);
+								str += prpstrings[group];
+							}
+						}
+					}
+				}
+			}
+			url += str;
+		}
+
+		if (params) {
+			let str = '';
+
+			for (let param in params) {
+				if (params.hasOwnProperty(param)) {
+					str += encodeParameter(pid + param, params[param]);
+				}
+			}
+
+			url += str;
+		}
+
+		return Promise.resolve(url);
+	}
+
+	/**
+	 * Returns true if an onStateChange listener is registered for the portlet
+	 *
+	 * @memberOf PortletInit
+	 * @param {string} pid The portletID
+	 * @return {boolean} <code>true</code> if a listener is registered
+	 */
+
+	hasListener(portletId) {
+		const listeners = PortletInit._systemEventListeners.slice();
+
+		let found = false;
+
+		const l = listeners.length;
+		for (let i = 0; i < l; i++) {
+			if (listeners[i].type === 'portlet.onStateChange' && listeners[i].id === portletId) {
+				found = true;
+			}
+		}
+		return found;
+	}
+
+	/**
 	 * Tests whether a blocking operation is in progress.
 	 *
 	 * @memberof PortletInit
-	 * @returns {boolean} true if a blocking
-	 * @review
+	 * @return {boolean} true if a blocking
 	 */
 
 	isInProgress() {
@@ -150,17 +739,61 @@ class PortletInit {
 	}
 
 	/**
+	 * Function for checking if the parameter is public
+	 */
+
+	isPRP(pid, name) {
+		let result = false;
+
+		const prps = PortletInit._renderState.portlets[pid].pubParams;
+		for (let prp in prps) {
+			if (prps.hasOwnProperty(prp)) {
+				if (name === prp) {
+					result = true;
+				}
+			}
+		}
+
+		return result;
+	}
+
+	/**
+	 * Compares the values of the named parameter in the new render state
+	 * with the values of that parameter in the current state.
+	 *
+	 * @param {string} pid The portlet ID.
+	 * @param {RenderState} state The new render state.
+	 * @param {string} name The parameter name to check.
+	 * @return {boolean} true if the new parm value is different from the current value.
+	 * @private
+	 */
+
+	isParamInStateEqual(pid, state, name) {
+		const newVal = state.parameters[name];
+		const oldVal = PortletInit._renderState.portlets[pid].state.parameters[name];
+
+		return isParmEqual(newVal, oldVal);
+	}
+
+	/**
 	 * Creates and returns a new PortletParameters object.
 	 *
 	 * @memberof PortletInit
-	 * @param {PortletParameters} param An optional PortletParameters object to
-	 * be copied
-	 * @returns {PortletParameters} The new parameters object
+	 * @param {Object} params An optional object to be copied
+	 * @return {Object} The new parameters object
 	 * @review
 	 */
 
-	newParameters(param) {
-		throw new Error('"newParameters" is not yet implemented');
+	newParameters(params) {
+		const newParams = {};
+
+		for (let param in params) {
+			if (params.hasOwnProperty(param) && Array.isArray(params[param])) {
+				newParams[param] = params[param].slice(0);
+			}
+		}
+
+		return newParams;
 	}
 
 	/**
@@ -168,12 +801,11 @@ class PortletInit {
 	 *
 	 * @memberof PortletInit
 	 * @param {RenderState} state An optional RenderState object to be copied
-	 * @returns {RenderState} The new RenderState object
-	 * @review
+	 * @return {RenderState} The new RenderState object
 	 */
 
-	newState(state) {
-		throw new Error('"newState" is not yet implemented');
+	newState(opts) {
+		return new RenderState(opts);
 	}
 
 	/**
@@ -182,8 +814,7 @@ class PortletInit {
 	 * addEventListener function.
 	 *
 	 * @memberof PortletInit
-	 * @param {object} handle The handle of the listener to be removed
-	 * @review
+	 * @param {Object} handle The handle of the listener to be removed
 	 * @throws {TypeError} Thrown if the input parameters are invalid
 	 * @throws {AccessDeniedException} Thrown if the event listener associated
 	 * with this handle was registered by a different portlet
@@ -202,19 +833,167 @@ class PortletInit {
 			);
 		}
 
-		// Currently only checking for client events, eventually system events
-		// will need to be checked as well.
+		let found = false;
 
-		const index = PortletInit._clientEventListeners.indexOf(handle);
-
-		if (index !== -1) {
-			PortletInit._clientEventListeners.splice(index, 1);
+		const clientEventListeners = PortletInit._clientEventListeners;
+		for (let i = clientEventListeners.length - 1; i >= 0; i--) {
+			const listener = clientEventListeners[i];
+			if (listener.id === handle.id && listener.type === handle.type) {
+				found = true;
+				clientEventListeners.splice(i, 1);
+				break;
+			}
 		}
-		else {
+
+		const systemEventListeners = PortletInit._systemEventListeners;
+		for (let i = systemEventListeners.length - 1; i >= 0; i--) {
+			const listener = systemEventListeners[i];
+			if (listener.id === handle.id && listener.type === handle.type) {
+				found = true;
+				systemEventListeners.splice(i, 1);
+				break;
+			}
+		}
+
+		if (!found) {
 			throw new TypeError(
 				'The event listener handle doesn\'t match any listeners.'
 			);
 		}
+	}
+
+	/**
+	 * Sends an onError event to all registered error event handlers for a given
+	 * portlet.
+	 *
+	 * @param {string} pid The portletID
+	 * @param {string} err The error message
+	 */
+
+	reportError(pid, err) {
+		const listeners = PortletInit._systemEventListeners.slice();
+		listeners.map(
+			listener => {
+				if (listener.type === 'portlet.onError' && listener.id === pid) {
+					setImmediate(
+						() => {
+							listener.handler('portlet.onError', err);
+						}
+					);
+				}
+
+				// The following line is only to make 'csf' happy
+
+				return false;
+			}
+		);
+	}
+
+	/**
+	* Callback function that must be called after a partial action has been
+	* started.
+	*
+	* The page state is generated by the portal and transmitted to the client by
+	* the portlet. The portlet client that initiated the partial action must
+	* pass the page state string to this function.
+	*
+	* The callback should only be called once to conclude a partial action sequence.
+	*
+	* @param {string} pid  The portlet ID for operation
+	* @param {string} ustr The new page state in string form
+	* @throws {TypeError}  Thrown if the parameter is not a string
+	* @name setPageState
+	* @callback setPageState
+	*/
+
+	setPageState(pid, ustr) {
+		if (!isString(ustr)) {
+			throw new TypeError(`Invalid update string: ${ustr}`);
+		}
+
+		this._updatePageState(
+			ustr,
+			pid
+		)
+			.then(
+				updatedIds => {
+					this.updatePageState(updatedIds);
+				},
+				err => {
+					PortletInit._busy = false;
+					this.reportError(pid, err);
+				}
+			);
+	}
+
+	/**
+		* Update page state passed in after partial action. The list of
+		* ID's of updated portlets is passed back through a promise in order
+		* to decouple the layers.
+		*
+		* @param   {string}    ustr     The
+		* @param   {string}    pid      The portlet ID
+		* @private
+		*/
+
+	updatePageStateForPortlet(ustr, pid) {
+		return new Promise((resolve, reject) => {
+			try {
+				const updatedIds = this.updatePageStateFromString(ustr, pid);
+				resolve(updatedIds);
+			}
+			catch (e) {
+				reject(new Error(`Partial Action decode status: ${e.message}`));
+			}
+		});
+	}
+
+	/**
+	 * Sets up for the action.
+	 *
+	 * @param {PortletParameters} parms Additional parameters. May be <code>null</code>
+	 * @param {HTMLFormElement}  element Form to be submitted May be <code>null</code>
+	 * @throws {AccessDeniedException} Thrown if a blocking operation is already in progress.
+	 * @throws {NotInitializedException} Thrown if a portlet ID is provided, but no onStateChange listener has been registered.
+	 */
+
+	setupAction(params, element) {
+		return new Promise((resolve, reject) => {
+			if (this.isInProgress()) {
+				throw {
+					message: 'Operation is already in progress',
+					name: 'AccessDeniedException'
+				};
+			}
+
+			if (!this.hasListener(this._portletId)) {
+				throw {
+					message: `No onStateChange listener registered for portlet: ${this._portletId}`,
+					name: 'NotInitializedException'
+				};
+			}
+
+			PortletInit._busy = true;
+
+			this.executeAction(
+				params,
+				element
+			)
+				.then(
+					updatedIds => {
+						return this.updatePageState(updatedIds)
+							.then(
+								updatedIds => {
+									resolve(updatedIds);
+								}
+							);
+					},
+					err => {
+						PortletInit._busy = false;
+						this.reportError(this._portletId, err);
+					}
+				);
+		});
 	}
 
 	/**
@@ -225,14 +1004,143 @@ class PortletInit {
 	 * @param {RenderState} state The new state to be set
 	 * @review
 	 * @throws {TypeError} Thrown if the input parameters are invalid
-	 * @throws {AccessDeniedException} Thrown if a blocking operation is
-	 * already in progress.
-	 * @throws {NotInitializedException} Thrown if a portlet ID is provided, but
-	 * no onStateChange listener has been registered.
+	 * @throws {AccessDeniedException} Thrown if a blocking operation is already in progress.
+	 * @throws {NotInitializedException} Thrown if a portlet ID is provided, but no onStateChange listener has been registered.
 	 */
 
 	setRenderState(state) {
-		throw new Error('"setRenderState" is not yet implemented');
+		if (!isObject(state)) {
+			throw new TypeError('State must be an object');
+		}
+
+		validateState(state, PortletInit._renderState.portlets[this._portletId]);
+
+		this.updateState(state);
+	}
+
+	/**
+	 * Sets state for the portlet.
+	 * returns array of IDs for portlets that were affected by the change,
+	 * taking into account the public render parameters.
+	 *
+	 * @param {Object} state The state to be set.
+	 * @return {Array}
+	 */
+
+	setState(state) {
+		const prps = this.getUpdatedPRPs(this._portletId, state);
+		const updatedIds = [];
+
+		for (let group in prps) {
+			if (prps.hasOwnProperty(group)) {
+				const newVal = prps[group];
+
+				// Access the PRP map to get affected portlets
+
+				const groupMap = PortletInit._renderState.prpMap[group];
+				for (let tpid in groupMap) {
+					if (groupMap.hasOwnProperty(tpid) && tpid !== this._portletId) {
+						const parts = groupMap[tpid].split('|');
+						const pid = parts[0];
+						const prpName = parts[1];
+
+						if (newVal === undefined) {
+							delete PortletInit._renderState.portlets[pid].state.parameters[prpName];
+						}
+						else {
+							PortletInit._renderState.portlets[pid].state.parameters[prpName] = newVal.slice(0);
+						}
+						updatedIds.push(pid);
+					}
+				}
+			}
+		}
+
+		// Update state for the initiating portlet.
+
+		const pid = this._portletId;
+		PortletInit._renderState.portlets[pid].state = state;
+		updatedIds.push(pid);
+
+		// Delete render data for all affected portlets in order to avoid dispatching
+		// stale render data
+
+		const l = updatedIds.length;
+		for (let i = 0; i < l; i++) {
+			const tpid = updatedIds[i];
+			PortletInit._renderState.portlets[tpid].renderData.content = null;
+		}
+
+		// Update history for back-button support
+
+		this.updateHistory();
+
+		return new Promise((resolve, reject) => {
+
+			// TODO: This is just for the reference implementation example, remove it.
+
+			let simval = '';
+			if (pid === 'SimulateCommError' && state.parameters.SimulateError !== undefined) {
+				simval = state.parameters.SimulateError[0];
+			}
+
+			// TODO: This is just for the reference implementation example, remove it.
+			// Reject promise if an error is to be simulated
+
+			if (simval === 'reject') {
+				reject(new Error('Simulated error occured when setting state!'));
+			}
+			else {
+				resolve(updatedIds);
+			}
+		});
+	}
+
+	/**
+	 * Returns true if input state differs from the current page state.
+	 * Throws exception if input state is malformed.
+	 */
+
+	stateChanged(nstate, pid) {
+		const ostate = PortletInit._renderState.portlets[pid].state;
+
+		if (!nstate.portletMode || !nstate.windowState || !nstate.parameters) {
+			throw new Error('Error decoding state:', nstate);
+		}
+
+		let result = false;
+		if (nstate.porletMode !== ostate.portletMode) {
+			result = true;
+		}
+		else if (nstate.windowState !== ostate.windowState) {
+			result = true;
+		}
+		else {
+
+			// Has a parameter changed or been added?
+
+			for (let pname in nstate.parameters) {
+				if (nstate.parameters.hasOwnProperty(pname)) {
+					const nparm = nstate.parameters[pname];
+					const oparm = ostate.parameters[pname];
+					if (!isParmEqual(nparm, oparm)) {
+						result = true;
+					}
+				}
+			}
+
+			// Make sure no parameter was deleted
+
+			for (let pname in ostate.parameters) {
+				if (ostate.parameters.hasOwnProperty(pname)) {
+					if (!nstate.parameters[name]) {
+						result = true;
+					}
+				}
+			}
+		}
+
+		return result;
 	}
 
 	/**
@@ -240,13 +1148,11 @@ class PortletInit {
 	 * {@link PartialActionInit} object to the caller.
 	 *
 	 * @memberof PortletInit
-	 * @param {PortletParameters} params Action parameters to be added to the
-	 * URL
-	 * @returns {Promise} A Promise object. Returns a {PortletActionInit} object
+	 * @param {PortletParameters} params Action parameters to be added to the URL
+	 * @return {Promise} A Promise object. Returns a {PortletActionInit} object
 	 * containing a partial action URL and the setPageState callback function on
 	 * successful resolution. Returns an Error object containing a descriptive
 	 * message on failure.
-	 * @review
 	 * @throws {TypeError} Thrown if the input parameters are invalid
 	 * @throws {AccessDeniedException} Thrown if a blocking operation is already
 	 * in progress.
@@ -254,28 +1160,206 @@ class PortletInit {
 	 * no onStateChange listener has been registered.
 	 */
 
-	startPartialAction(params) {
-		throw new Error('"startPartialAction" is not yet implemented');
+	startPartialAction(actParams) {
+		const instance = this;
+
+		let parms = null;
+
+		if (arguments.length > 1) {
+			throw new TypeError('Too many arguments. 1 argument is allowed');
+		}
+		else if (isDefAndNotNull(actParams)) {
+			if (isObject(actParams)) {
+				validateParams(actParams);
+
+				parms = actParams;
+			}
+			else {
+				throw new TypeError(`Invalid argument type. Argument is of type ${typeof actParams}`);
+			}
+		}
+
+		if (PortletInit._busy === true) {
+			throw {
+				message: 'Operation in progress',
+				name: 'AccessDeniedException'
+			};
+		}
+		else if (!this.hasListener(this._portletId)) {
+			throw {
+				message: `No onStateChange listener registered for portlet: ${this._portletId}`,
+				name: 'NotInitializedException'
+			};
+		}
+
+		PortletInit._busy = true;
+
+		const paObj = {
+			setPageState(ustr) {
+				instance.setPageState(instance._portletId, ustr);
+			},
+			url: ''
+		};
+
+		return this.getUrl(
+			'PARTIAL_ACTION',
+			this._portletId,
+			parms
+		).then(
+			url => {
+				paObj.url = url;
+				return paObj;
+			}
+		);
 	}
 
 	/**
-	 * Adds a client event listener.
+	 * Called when the page state has been updated to allow the browser history to be taken care of.
 	 *
-	 * @param {string} type The type of listener
-	 * @param {function} handler Function called when event occurs
-	 * @returns {object} A handle that can be used to remove the event listener
-	 * @review
+	 * @param {boolean} replace Replace the state rather than pushing
 	 */
 
-	_addClientEventListener(type, handler) {
-		const listener = {
-			handler,
-			type
-		};
+	updateHistory(replace) {
+		if (doHistory) {
+			this.getUrl(
+				'RENDER',
+				null,
+				{}
+			).then(
+				url => {
+					const token = JSON.stringify(PortletInit._renderState);
 
-		PortletInit._clientEventListeners.push(listener);
+					if (replace) {
+						history.replaceState(token, '');
+					}
+					else {
+						try {
+							history.pushState(token, '', url);
+						}
+						catch (e) {
+						}
+					}
+				}
+			);
+		}
+	}
 
-		return listener;
+	updateState(state) {
+		if (PortletInit._busy) {
+			throw {
+				message: 'Operation in progress',
+				name: 'AccessDeniedException'
+			};
+		}
+		else if (!this.hasListener(this._portletId)) {
+			throw {
+				message: `No onStateChange listener registered for portlet: ${this._portletId}`,
+				name: 'NotInitializedException'
+			};
+		}
+
+		PortletInit._busy = true;
+
+		this.setState(state)
+			.then(
+				updatedIds => {
+					this.updatePageState(updatedIds);
+				}
+			)
+			.catch(
+				err => {
+					PortletInit._busy = false;
+					this.reportError(this._portletId, err);
+				}
+			);
+	}
+
+	// TODO: Rename this function since it's pretty confusing to have
+	//       2 function with the same name that do something different
+	// @see: updatePageState
+
+	_updatePageState(ustr) {
+		return new Promise(
+			(resolve, reject) => {
+				try {
+					const updatedIds = this.updatePageStateFromString(ustr, this._portletId);
+					resolve(updatedIds);
+				}
+				catch (e) {
+					reject(new Error(`Partial Action decode status: ${e.message}`));
+				}
+			}
+		);
+	}
+
+	/**
+	 *
+	 * Accepts an object containing changed render states.
+	 * Updates the state for each portlet present.
+	 *
+	 * @param {Array} updatedIds Array of portlet IDs to be updated
+	 *
+	 * TODO: Note that two <code>updatePageState</code> methods are defined:
+	 * One in <code>portlet.js</code> and the other in <code>portletHubImpl.js.</code>
+	 * They both do different things, so make sure both
+	 * are implemented and correctly invoked.
+	 *
+	 * @see:
+	 * https://github.com/apache/portals-pluto/blob/master/pluto-portal/src/main/webapp/javascript/portlet.js#L892-L911
+	 * https://github.com/apache/portals-pluto/blob/master/pluto-portal/src/main/webapp/javascript/portletHubImpl.js#L711-L725
+	 * https://github.com/apache/portals-pluto/blob/master/pluto-portal/src/main/webapp/javascript/portletHubImpl.js#L936
+	 */
+
+	updatePageState(updatedIds) {
+		return new Promise((resolve, reject) => {
+			if (updatedIds.length === 0) {
+				PortletInit._busy = false;
+			}
+			else {
+				const l = updatedIds.length;
+
+				for (let i = 0; i < l; i++) {
+					this._updateStateForPortlet(updatedIds[i]);
+				}
+			}
+			resolve(updatedIds);
+		});
+	}
+
+	/**
+	 * Updates page state from string and returns array of portlet IDs
+	 * to be updated.
+	 *
+	 * @param {string} ustr The update string.
+	 * @param {string} pid  The portlet ID.
+	 */
+
+	updatePageStateFromString(ustr, pid) {
+		const portlets = this.decodeUpdateString(ustr);
+		const updatedIds = [];
+
+		let stateUpdated = false;
+
+		// Update portlets and collect IDs of affected portlets.
+
+		for (let tpid in portlets) {
+			if (portlets.hasOwnProperty(tpid)) {
+				const portlet = portlets[tpid];
+
+				PortletInit._renderState.portlets[tpid] = portlet;
+				updatedIds.push(tpid);
+				stateUpdated = true;
+			}
+		}
+
+		// pid will be null or undefined when called from onpopstate routine.
+		// In that case, don't update history.
+
+		if (stateUpdated && pid) {
+			this.updateHistory();
+		}
+
+		return updatedIds;
 	}
 }
 
@@ -291,14 +1375,88 @@ class PortletInit {
 PortletInit._busy = false;
 
 /**
+ * A flag indicating if an event listener has been
+ * added for the <code>window.popstate</code> event
+ *
+ * @memberof PortletInit
+ * @review
+ * @static
+ * @type {boolean}
+ */
+
+PortletInit._hasWindowPopStateListener = false;
+
+/**
  * Contains client event listeners added from all instances of PortletInit.
  *
  * @memberof PortletInit
  * @review
  * @static
- * @type {array}
+ * @type {Array}
  */
 
 PortletInit._clientEventListeners = [];
 
+/**
+ * A flag indicating if the PortletInit has been initialized
+ *
+ * @memberof PortletInit
+ * @review
+ * @static
+ * @type {Array}
+ */
+
+PortletInit._initialized = false;
+
+/**
+ * The render state containing the all portlets and public parameters map.
+ *
+ * @memberof PortletInit
+ * @review
+ * @static
+ * @type {Object}
+ */
+
+PortletInit._renderState = {
+	encodedCurrentURL: '',
+	portlets: {},
+	prpMap: {}
+};
+
+/**
+ * The currently registered portlets.
+ *
+ * @memberof PortletInit
+ * @review
+ * @static
+ * @type {Object}
+ */
+
+PortletInit._registeredPortlets = {};
+
+/**
+ * An array containing the system event listeners
+ * (For <code>'portlet.onStateChange'</code> and
+ * <code>'portlet.onError'</code> events).
+ *
+ * @memberof PortletInit
+ * @review
+ * @static
+ * @type {Array}
+ */
+
+PortletInit._systemEventListeners = [];
+
+/**
+ * An array containing the event listeners currently queued for being dispatched.
+ *
+ * @memberof PortletInit
+ * @review
+ * @static
+ * @type {Array}
+ */
+
+PortletInit._updateQueue = [];
+
+export {PortletInit};
 export default PortletInit;
