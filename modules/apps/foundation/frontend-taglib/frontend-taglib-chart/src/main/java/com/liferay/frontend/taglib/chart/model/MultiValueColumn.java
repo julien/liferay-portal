@@ -39,7 +39,7 @@ public class MultiValueColumn extends Column {
 	}
 
 	public void addValue(Number value) {
-		List<Number> data = getData();
+		List<Object> data = getData();
 
 		data.add(value);
 	}

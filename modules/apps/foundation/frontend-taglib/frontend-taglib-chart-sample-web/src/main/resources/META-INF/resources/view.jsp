@@ -154,6 +154,18 @@
 	</div>
 </div>
 
+<div class="container-fluid">
+	<div class="row">
+		<div class="col predictive">
+			<chart:predictive
+				componentId="predictive-chart"
+				config="<%= chartSampleDisplayContext.getPredictiveChartConfig() %>"
+				id="predictive-chart"
+			/>
+		</div>
+	</div>
+</div>
+
 <aui:script>
 	Liferay.componentReady('polling-interval-line-chart').then(
 		function(chart) {

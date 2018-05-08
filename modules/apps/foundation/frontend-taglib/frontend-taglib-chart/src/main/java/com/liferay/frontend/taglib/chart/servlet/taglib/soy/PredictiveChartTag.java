@@ -12,33 +12,17 @@
  * details.
  */
 
-package com.liferay.frontend.taglib.chart.model;
+package com.liferay.frontend.taglib.chart.servlet.taglib.soy;
 
-import com.liferay.portal.kernel.json.JSON;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.liferay.frontend.taglib.chart.servlet.taglib.soy.base.BaseChartTag;
 
 /**
- * @author Iván Zaera Avellón
+ * @author Julien Castelain
  */
-public abstract class Column extends ChartObject {
+public class PredictiveChartTag extends BaseChartTag {
 
-	public Column(String id) {
-		setId(id);
-	}
-
-	public void setId(String id) {
-		set("id", id);
-	}
-
-	public void setName(String name) {
-		set("name", name);
-	}
-
-	@JSON(include = false)
-	protected List<Object> getData() {
-		return get("data", ArrayList.class);
+	public PredictiveChartTag() {
+		super("PredictiveChart", "ClayPredictiveChart.render");
 	}
 
 }

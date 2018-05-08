@@ -32,7 +32,7 @@ public class SingleValueColumn extends Column {
 	}
 
 	public void setValue(Number value) {
-		List<Number> data = getData();
+		List<Object> data = getData();
 
 		if (data.isEmpty()) {
 			data.add(value);

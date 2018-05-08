@@ -14,31 +14,33 @@
 
 package com.liferay.frontend.taglib.chart.model;
 
-import com.liferay.portal.kernel.json.JSON;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
- * @author Iván Zaera Avellón
+ * @author Julien Castelain
  */
-public abstract class Column extends ChartObject {
+public class MixedDataColumn extends Column {
 
-	public Column(String id) {
-		setId(id);
+	public MixedDataColumn(String id, Object... values) {
+		super(id);
+
+		for (Object value : values) {
+			addValues(value);
+		}
 	}
 
-	public void setId(String id) {
-		set("id", id);
+	public void addValues(Map<String, Object> value) {
+		List<Object> data = get("data", ArrayList.class);
+
+		data.add(value);
 	}
 
-	public void setName(String name) {
-		set("name", name);
-	}
+	public void addValues(Object value) {
+		List<Object> data = get("data", ArrayList.class);
 
-	@JSON(include = false)
-	protected List<Object> getData() {
-		return get("data", ArrayList.class);
+		data.add(value);
 	}
 
 }
