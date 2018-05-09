@@ -15,6 +15,7 @@
 package com.liferay.frontend.taglib.chart.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -23,24 +24,64 @@ import java.util.Map;
  */
 public class MixedDataColumn extends Column {
 
+	/**
+	 *
+	 * @param id
+	 * @param values each value can be an instance, array, or {@link java.util.Collection} of {@link Number}s
+	 * @review
+	 */
 	public MixedDataColumn(String id, Object... values) {
 		super(id);
 
-		for (Object value : values) {
-			addValues(value);
+		addValues(values);
+	}
+
+	/**
+	 *
+	 * @param id
+	 * @param values each value can be an instance, array, or {@link java.util.Collection} of {@link Number}s
+	 * @review
+	 */
+	public MixedDataColumn(String id, Collection<?> values) {
+		super(id);
+
+		addValues(values);
+	}
+
+	/**
+	 *
+	 * @param value can be an instance, array, or {@link java.util.Collection} of {@link Number}s
+	 * @review
+	 */
+	public void addValue(Object value) {
+		List<Object> data = getData();
+
+		if(value instanceof Number) {
+			data.add(value);
+		}
+		else if(value instanceof Collection) {
+			data.add(((Collection) value).toArray());
+		}
+		else if(value.getClass().isArray()){
+			data.add(value);
+		}
+		else {
+			throw new IllegalArgumentException(
+				"Value can only be an instance, array, or Collection of "+
+					"Numbers");
 		}
 	}
 
-	public void addValues(Map<String, Object> value) {
-		List<Object> data = get("data", ArrayList.class);
-
-		data.add(value);
+	public void addValues(Collection<?> values) {
+		for (Object value : values) {
+			addValue(value);
+		}
 	}
 
-	public void addValues(Object value) {
-		List<Object> data = get("data", ArrayList.class);
-
-		data.add(value);
+	public void addValues(Object... values) {
+		for (Object value : values) {
+			addValue(value);
+		}
 	}
 
 }
