@@ -1,3 +1,5 @@
+import Resizer from './Resizer.es';
+
 if (!CKEDITOR.plugins.get('embedurl')) {
 	const REGEX_HTTP = /^https?/;
 
@@ -45,6 +47,19 @@ if (!CKEDITOR.plugins.get('embedurl')) {
 		}
 	];
 
+	const usingFirefox = ('MozAppearance' in document.documentElement.style);
+
+	const usingWebKit = ('WebkitAppearance' in document.documentElement.style);
+
+	const enablePlugin = usingWebKit || usingFirefox;
+
+	if (enablePlugin) {
+
+		// CSS is added in a compressed form
+
+		CKEDITOR.addCss('img::selection{color:rgba(0,0,0,0)}img.ckimgrsz{outline:1px dashed #000}#ckimgrsz{position:absolute;width:0;height:0;cursor:default;z-index:10001}#ckimgrsz span{display:none;position:absolute;top:0;left:0;width:0;height:0;background-size:100% 100%;opacity:.65;outline:1px dashed #000}#ckimgrsz i{position:absolute;display:block;width:5px;height:5px;background:#fff;border:1px solid #000}#ckimgrsz i.active,#ckimgrsz i:hover{background:#000}#ckimgrsz i.br,#ckimgrsz i.tl{cursor:nwse-resize}#ckimgrsz i.bm,#ckimgrsz i.tm{cursor:ns-resize}#ckimgrsz i.bl,#ckimgrsz i.tr{cursor:nesw-resize}#ckimgrsz i.lm,#ckimgrsz i.rm{cursor:ew-resize}body.dragging-br,body.dragging-br *,body.dragging-tl,body.dragging-tl *{cursor:nwse-resize!important}body.dragging-bm,body.dragging-bm *,body.dragging-tm,body.dragging-tm *{cursor:ns-resize!important}body.dragging-bl,body.dragging-bl *,body.dragging-tr,body.dragging-tr *{cursor:nesw-resize!important}body.dragging-lm,body.dragging-lm *,body.dragging-rm,body.dragging-rm *{cursor:ew-resize!important}');
+	}
+
 	/**
 	 * Retrieves the alignment value of an embed element.
 	 *
@@ -52,7 +67,7 @@ if (!CKEDITOR.plugins.get('embedurl')) {
 	 * @return {String} The alignment value
 	 */
 
-	const getEmbedAlignment = function(embed) {
+	const getEmbedAlignment = embed => {
 		let embedAlignment = embed.getStyle('float');
 
 		if (!embedAlignment || embedAlignment === 'inherit' || embedAlignment === 'none') {
@@ -87,7 +102,7 @@ if (!CKEDITOR.plugins.get('embedurl')) {
 	 * @param {String} embedAlignment The embed alignment value to be removed
 	 */
 
-	const removeEmbedAlignment = function(embed, embedAlignment) {
+	const removeEmbedAlignment = (embed, embedAlignment) => {
 		if (embedAlignment === EMBED_ALIGNMENT.LEFT || embedAlignment === EMBED_ALIGNMENT.RIGHT) {
 			embed.removeStyle('float');
 
@@ -117,7 +132,7 @@ if (!CKEDITOR.plugins.get('embedurl')) {
 	 * @param {String} embedAlignment The embed alignment value to be set
 	 */
 
-	const setEmbedAlignment = function(embed, embedAlignment) {
+	const setEmbedAlignment = (embed, embedAlignment) => {
 		removeEmbedAlignment(
 			embed,
 			getEmbedAlignment(embed)
@@ -141,6 +156,8 @@ if (!CKEDITOR.plugins.get('embedurl')) {
 		}
 	};
 
+	let resizer = null;
+
 	/**
 	 * CKEditor plugin which adds the infrastructure to embed urls as media objects
 	 *
@@ -155,10 +172,10 @@ if (!CKEDITOR.plugins.get('embedurl')) {
 		{
 			requires: 'widget',
 
-			init: function(editor) {
-				var LFR_EMBED_WIDGET_TPL = new CKEDITOR.template(editor.config.embedWidgetTpl || CKEDITOR.DEFAULT_LFR_EMBED_WIDGET_TPL);
+			init: editor => {
+				const LFR_EMBED_WIDGET_TPL = new CKEDITOR.template(editor.config.embedWidgetTpl || CKEDITOR.DEFAULT_LFR_EMBED_WIDGET_TPL);
 
-				var providers = editor.config.embedProviders || [];
+				let providers = editor.config.embedProviders || [];
 
 				providers = providers.map(
 					provider => {
@@ -171,7 +188,7 @@ if (!CKEDITOR.plugins.get('embedurl')) {
 					}
 				);
 
-				var generateEmbedContent = function(url, content) {
+				const generateEmbedContent = (url, content) => {
 					return LFR_EMBED_WIDGET_TPL.output(
 						{
 							content: content,
@@ -182,8 +199,8 @@ if (!CKEDITOR.plugins.get('embedurl')) {
 					);
 				};
 
-				var defaultEmbedWidgetUpcastFn = function(element, data) {
-					var upcastWidget = false;
+				const defaultEmbedWidgetUpcastFn = (element, data) => {
+					let upcastWidget = false;
 
 					if (element.name === 'div' && element.attributes['data-embed-url']) {
 						data.url = element.attributes['data-embed-url'];
@@ -191,13 +208,13 @@ if (!CKEDITOR.plugins.get('embedurl')) {
 						upcastWidget = true;
 					}
 					else if (element.name === 'div' && element.attributes['data-embed-id']) {
-						var iframe = element.children[0];
+						const iframe = element.children[0];
 
 						data.url = iframe.attributes.src;
 
-						var embedContent = generateEmbedContent(data.url, element.getOuterHtml());
+						const embedContent = generateEmbedContent(data.url, element.getOuterHtml());
 
-						var widgetFragment = new CKEDITOR.htmlParser.fragment.fromHtml(embedContent);
+						const widgetFragment = new CKEDITOR.htmlParser.fragment.fromHtml(embedContent);
 
 						upcastWidget = widgetFragment.children[0];
 
@@ -209,11 +226,11 @@ if (!CKEDITOR.plugins.get('embedurl')) {
 					return upcastWidget;
 				};
 
-				var showError = function(errorMsg) {
+				const showError = errorMsg => {
 					editor.fire('error', errorMsg);
 
 					setTimeout(
-						function() {
+						() => {
 							editor.getSelection().removeAllRanges();
 							editor.focus();
 						},
@@ -224,26 +241,24 @@ if (!CKEDITOR.plugins.get('embedurl')) {
 				editor.addCommand(
 					'embedUrl',
 					{
-						exec: function(editor, data) {
-							var type = data.type;
-							var url = data.url;
-							var content;
+						exec: (editor, data) => {
+							const type = data.type;
+							const url = data.url;
+							let content;
 
 							if (REGEX_HTTP.test(url)) {
-								var validProvider = providers.filter(
+								const validProvider = providers.filter(
 									provider => {
 										return type ? provider.type === type : true;
 									}
 								).some(
 									provider => {
-										var scheme = provider.urlSchemes.find(
-											function(scheme) {
-												return scheme.test(url);
-											}
+										const scheme = provider.urlSchemes.find(
+											scheme => scheme.test(url)
 										);
 
 										if (scheme) {
-											var embedId = scheme.exec(url)[1];
+											const embedId = scheme.exec(url)[1];
 
 											content = provider.tpl.output(
 												{
@@ -259,7 +274,7 @@ if (!CKEDITOR.plugins.get('embedurl')) {
 								if (validProvider) {
 									editor._selectEmbedWidget = url;
 
-									var embedContent = generateEmbedContent(url, content);
+									const embedContent = generateEmbedContent(url, content);
 
 									editor.insertHtml(embedContent);
 								}
@@ -281,7 +296,7 @@ if (!CKEDITOR.plugins.get('embedurl')) {
 						mask: true,
 						requiredContent: 'div[data-embed-url]',
 
-						data: function(event) {
+						data(event) {
 							const instance = this;
 
 							// Sync dimensions and alignment with editor wrapper
@@ -301,7 +316,7 @@ if (!CKEDITOR.plugins.get('embedurl')) {
 
 							if (editor._selectEmbedWidget === event.data.url) {
 								setTimeout(
-									function() {
+									() => {
 										editor.getSelection().selectElement(instance.wrapper);
 
 										editor._selectEmbedWidget = null;
@@ -311,7 +326,7 @@ if (!CKEDITOR.plugins.get('embedurl')) {
 							}
 						},
 
-						downcast: function(widget) {
+						downcast(widget) {
 							const embedContent = widget.children[0];
 
 							embedContent.attributes.style = CKEDITOR.tools.writeCssText(widget.parent.styles);
@@ -319,8 +334,8 @@ if (!CKEDITOR.plugins.get('embedurl')) {
 							return embedContent;
 						},
 
-						upcast: function(element, data) {
-							var embedWidgetUpcastFn = editor.config.embedWidgetUpcastFn || defaultEmbedWidgetUpcastFn;
+						upcast(element, data) {
+							const embedWidgetUpcastFn = editor.config.embedWidgetUpcastFn || defaultEmbedWidgetUpcastFn;
 
 							return embedWidgetUpcastFn(element, data);
 						}
@@ -329,19 +344,19 @@ if (!CKEDITOR.plugins.get('embedurl')) {
 
 				editor.on(
 					'selectionChange',
-					function(event) {
-						var selection = editor.getSelection();
+					event => {
+						const selection = editor.getSelection();
 
 						if (selection) {
-							var element = selection.getSelectedElement();
+							const element = selection.getSelectedElement();
 
 							if (element) {
-								var widgetElement = element.findOne('[data-widget="embedurl"]');
+								const widgetElement = element.findOne('[data-widget="embedurl"]');
 
 								if (widgetElement) {
-									var scrollPosition = new CKEDITOR.dom.window(window).getScrollPosition();
+									const scrollPosition = new CKEDITOR.dom.window(window).getScrollPosition();
 
-									var region = element.getClientRect();
+									let region = element.getClientRect();
 
 									region.direction = CKEDITOR.SELECTION_BOTTOM_TO_TOP;
 									region.left -= scrollPosition.x;
@@ -358,18 +373,62 @@ if (!CKEDITOR.plugins.get('embedurl')) {
 										}
 									);
 								}
+
+								const imageElement = element.findOne('img.cke_widget_mask');
+								if (imageElement) {
+									resizer.show(imageElement.$);
+								}
 							}
 						}
 					}
 				);
 
+				editor.on(
+					'destroy',
+					() => {
+						const resizeElement = document.getElementById('ckimgrsz');
+
+						if (resizeElement) {
+							resizeElement.remove();
+						}
+
+						if (usingFirefox) {
+							document.execCommand('enableObjectResizing', false, true);
+						}
+
+						document.removeEventListener('mousedown', mouseDownListener);
+					}
+				);
+
+				editor.on(
+					'blur',
+					event => {
+						resizer.hide();
+					}
+				);
+
 				editor.filter.addElementCallback(
-					function(element) {
+					element => {
 						if ('data-embed-url' in element.attributes) {
 							return CKEDITOR.FILTER_SKIP_TREE;
 						}
 					}
 				);
+
+				const mouseDownListener = event => {
+					if (resizer.isHandle(event.target)) {
+						resizer.initDrag(event);
+					}
+				};
+
+				resizer = new Resizer(
+					editor,
+					{
+						imageScaleResize: editor.config.imageScaleResize
+					}
+				);
+
+				document.addEventListener('mousedown', mouseDownListener, false);
 			},
 
 			afterInit: function(editor) {
