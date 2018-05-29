@@ -25,7 +25,8 @@
 		}
 	},
 	"dependencies": {
-		"alloyeditor": "1.5.3"
+		"alloyeditor": "1.5.3",
+		"metal-cli": "^4.4.0"
 	},
 	"devDependencies": {
 		"babel-core": "^6.26.0",
