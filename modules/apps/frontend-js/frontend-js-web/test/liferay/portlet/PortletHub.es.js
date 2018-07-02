@@ -1,24 +1,5 @@
 import PortletInit from '../../../src/main/resources/META-INF/resources/liferay/portlet/PortletInit.es';
-import RenderState from '../../../src/main/resources/META-INF/resources/liferay/portlet/RenderState.es';
 import register from '../../../src/main/resources/META-INF/resources/liferay/portlet/register.es';
-import {portlet} from './mock/portlet_data.es';
-
-function fetchMock(data) {
-	global.fetch = jest.fn().mockImplementation(
-		() => {
-			return Promise.resolve(
-				{
-					json: jest.fn().mockImplementation(() => Promise.resolve(data)),
-					text: jest.fn().mockImplementation(() => Promise.resolve(JSON.stringify(data)))
-				}
-			);
-		}
-	);
-}
-
-global.portlet = {
-	getInitData: portlet.test.getInitData
-};
 
 describe(
 	'Portlet Hub',
@@ -333,9 +314,9 @@ describe(
 		describe(
 			'the action function',
 			() => {
-				const ids = portlet.test.getIds();
+				const ids = portlet.getIds();
 				const onStateChange = jest.fn();
-				const pageState = portlet.test.getInitData();
+				const pageState = portlet.getInitData();
 				const portletA = ids[0];
 				const portletB = ids[1];
 				const portletC = ids[2];
@@ -375,8 +356,6 @@ describe(
 
 				afterEach(
 					() => {
-						global.fetch.mockRestore();
-
 						hubA.removeEventListener(listenerA);
 						hubA = null;
 						hubB = null;
@@ -559,8 +538,6 @@ describe(
 
 						return hubB.action(parameters, element).catch(
 							err => {
-								global.fetch.mockRestore();
-
 								expect(err.name).toEqual('NotInitializedException');
 								expect(err.message).toEqual('No onStateChange listener registered for portlet: PortletB');
 							}
@@ -597,8 +574,8 @@ describe(
 				const onStateChangeC = jest.fn();
 				const onStateChangeD = jest.fn();
 
-				const ids = portlet.test.getIds();
-				const pageState = portlet.test.getInitData();
+				const ids = portlet.getIds();
+				const pageState = portlet.getInitData();
 				const portletA = ids[0];
 				const portletB = ids[1];
 				const portletC = ids[2];
@@ -713,8 +690,6 @@ describe(
 
 						return hubB.action(parameters, element).then(
 							updatedPortletIds => {
-								global.fetch.mockRestore();
-
 								expect(onStateChangeA).not.toHaveBeenCalled();
 								expect(onStateChangeD).not.toHaveBeenCalled();
 							}
@@ -727,8 +702,8 @@ describe(
 		describe(
 			'provides the ability to add and remove event listeners',
 			() => {
-				const ids = portlet.test.getIds();
-				const pageState = portlet.test.getInitData().portlets;
+				const ids = portlet.getIds();
+				const pageState = portlet.getInitData().portlets;
 				const portletA = ids[0];
 				const portletB = ids[3];
 				const portletC = ids[1];
@@ -940,8 +915,8 @@ describe(
 			'the removeEventListener function',
 			() => {
 
-				const ids = portlet.test.getIds();
-				const pageState = portlet.test.getInitData().portlets;
+				const ids = portlet.getIds();
+				const pageState = portlet.getInitData().portlets;
 				const portletA = ids[0];
 
 				let hubA;
@@ -1110,8 +1085,8 @@ describe(
 			'onStateChange without render data',
 			() => {
 				const eventType = 'portlet.onStateChange';
-				const ids = portlet.test.getIds();
-				const pageState = portlet.test.getInitData().portlets;
+				const ids = portlet.getIds();
+				const pageState = portlet.getInitData().portlets;
 				const portletA = ids[0];
 
 				let hubA;
@@ -1150,11 +1125,10 @@ describe(
 					}
 				);
 
-				xit(
+				it(
 					'is passed a type parameter with value "portlet.onStateChange"',
 					done => {
 						const handle = hubA.addEventListener(eventType, onStateChange);
-						const renderState = new RenderState(pageState[portletA].state);
 
 						setTimeout(
 							() => {
@@ -1170,7 +1144,7 @@ describe(
 					}
 				);
 
-				xit(
+				it(
 					'is not passed a RenderData object',
 					done => {
 						const handle = hubA.addEventListener(eventType, onStateChange);
@@ -1505,8 +1479,8 @@ describe(
 			'onStateChange with render data',
 			() => {
 				const eventType = 'portlet.onStateChange';
-				const ids = portlet.test.getIds();
-				const pageState = portlet.test.getInitData().portlets;
+				const ids = portlet.getIds();
+				const pageState = portlet.getInitData().portlets;
 				const portletA = ids[0];
 				const portletB = ids[3];
 
@@ -1902,13 +1876,13 @@ describe(
 		describe(
 			'allows the portlet client to dispatch events',
 			() => {
-				const ids = portlet.test.getIds();
+				const ids = portlet.getIds();
 				const portletA = ids[0];
 				const portletB = ids[1];
 				const portletC = ids[2];
 				const portletD = ids[3];
 
-				const pageState = portlet.test.getInitData();
+				const pageState = portlet.getInitData();
 
 				let hubA;
 				let hubB;
@@ -2253,12 +2227,12 @@ describe(
 		describe(
 			'the portlet hub createResourceUrl function',
 			() => {
-				const ids = portlet.test.getIds();
+				const ids = portlet.getIds();
 				const portletA = ids[0];
 				const portletB = ids[1];
 
 				const onStateChange = jest.fn();
-				const pageState = portlet.test.getInitData();
+				const pageState = portlet.getInitData();
 				let hubA;
 				let hubB;
 				let listenerA;
@@ -2489,7 +2463,7 @@ describe(
 
 						return hubB.createResourceUrl(parameters, cache).then(
 							url => {
-								expect(portlet.test.resource.isResourceUrl(url)).toBeTruthy();
+								expect(portlet.resource.isResourceUrl(url)).toBeTruthy();
 							}
 						);
 					}
@@ -2509,7 +2483,7 @@ describe(
 
 						return hubB.createResourceUrl(parameters, cache).then(
 							url => {
-								const str = portlet.test.resource.getCacheability(url);
+								const str = portlet.resource.getCacheability(url);
 
 								expect(str).toEqual(cache);
 							}
@@ -2522,13 +2496,13 @@ describe(
 		describe(
 			'allows the portlet client test for a blocking operation',
 			() => {
-				const ids = portlet.test.getIds();
+				const ids = portlet.getIds();
 				const portletA = ids[0];
 				const portletB = ids[1];
 				const portletC = ids[2];
 				const portletD = ids[3];
 
-				const pageState = portlet.test.getInitData();
+				const pageState = portlet.getInitData();
 
 				const listenerA = jest.fn();
 				const listenerB = jest.fn();
@@ -2804,8 +2778,6 @@ describe(
 						expect(testFn).not.toThrow();
 						expect(hubD.isInProgress()).toBeTruthy();
 
-						global.fetch.mockRestore();
-
 						setTimeout(
 							() => {
 								done();
@@ -2834,7 +2806,6 @@ describe(
 						expect(testFn).not.toThrow();
 						expect(hubD.isInProgress()).toBeTruthy();
 
-						global.fetch.mockRestore();
 
 						setTimeout(
 							() => {
@@ -2865,7 +2836,6 @@ describe(
 
 						expect(testFn).not.toThrow();
 
-						global.fetch.mockRestore();
 
 						setTimeout(
 							() => {
