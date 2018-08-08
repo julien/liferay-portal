@@ -225,8 +225,8 @@ name = HtmlUtil.escapeJS(name);
 					onInitMethod: '<%= HtmlUtil.escapeJS(namespace + onInitMethod) %>',
 				</c:if>
 
-				portletId: '<%= portletId %>',
 				plugins: plugins,
+				portletId: '<%= portletId %>',
 				textMode: <%= (editorOptions != null) ? editorOptions.isTextMode() : Boolean.FALSE.toString() %>,
 
 				<%
