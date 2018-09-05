@@ -790,16 +790,37 @@ AUI.add(
 					},
 
 					_isSameState: function(state1, state2) {
-						var instance = this;
-
-						return AUI._.isEqual(
-							state1,
-							state2,
-							function(value1, value2, key) {
-								return (key === 'instanceId') || undefined;
-							}
-						);
+						
+						return this.isEqualExcept(state1,state2, "instanceId");
 					},
+
+					_isEqualExcept:function (object1, object2, propertyToIgnore) {
+						function removePropertyDeep(object, property) {
+						  var newObject = {};
+
+						  for (var key in object) {
+							  if (!object.hasOwnProperty(key)) continue;
+
+							  if (key === property) {
+								 continue;
+							  }
+							  else if(typeof(object[key]) === 'object' && !Array.isArray(object[key])) {
+								newObject[key] = removePropertyDeep(object[key], property);
+							  }
+							  else {
+								newObject[key] = object[key];
+							  }
+						  }
+
+						  return newObject;
+						}
+
+						object1 = removePropertyDeep(object1, propertyToIgnore);
+						object2 = removePropertyDeep(object2, propertyToIgnore);
+
+						return JSON.stringify(object1)===JSON.stringify(object2);
+
+					  },
 
 					_onBack: function(event) {
 						var instance = this;
