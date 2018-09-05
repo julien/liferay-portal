@@ -920,9 +920,11 @@
 		},
 
 		selectFolder: function(folderData, namespace) {
+
+			var instance = this;
 			$('#' + namespace + folderData.idString).val(folderData.idValue);
 
-			var name = _.unescape(folderData.nameValue);
+			var name = Liferay.Util.unescape(folderData.nameValue);
 
 			$('#' + namespace + folderData.nameString).val(name);
 
