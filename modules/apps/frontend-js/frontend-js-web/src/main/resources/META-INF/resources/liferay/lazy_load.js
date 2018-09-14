@@ -4,13 +4,10 @@
 		var modules;
 		var successCallback;
 
-
-		if (Array.isArray(arguments[0])) {
+		if (_.isArray(arguments[0])) {
 			modules = arguments[0];
-
 			successCallback = Liferay.Util.isFunction(arguments[1]) ? arguments[1] : null;
 			failureCallback = Liferay.Util.isFunction(arguments[2]) ? arguments[2] : null;
-
 		}
 		else {
 			modules = [];
