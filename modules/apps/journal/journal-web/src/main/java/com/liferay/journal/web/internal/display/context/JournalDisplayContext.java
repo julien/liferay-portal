@@ -94,6 +94,7 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PrefsParamUtil;
+import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -107,11 +108,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import javax.portlet.PortletPreferences;
@@ -280,6 +283,22 @@ public class JournalDisplayContext {
 		}
 
 		return availableLocales;
+	}
+
+	public Set<Locale> getAvailableLocales() throws PortalException {
+		Set<Locale> locales = new HashSet<>();
+
+		locales.addAll(getAvailableArticleLocales());
+
+		ThemeDisplay themeDisplay = (ThemeDisplay)_request.getAttribute(
+			WebKeys.THEME_DISPLAY);
+
+		if (SetUtil.isEmpty(locales)) {
+			locales = LanguageUtil.getAvailableLocales(
+				themeDisplay.getScopeGroupId());
+		}
+
+		return locales;
 	}
 
 	public String[] getCharactersBlacklist() throws PortalException {
@@ -567,6 +586,19 @@ public class JournalDisplayContext {
 		_ddmTemplateKey = ParamUtil.getString(_request, "ddmTemplateKey");
 
 		return _ddmTemplateKey;
+	}
+
+	public String getDefaultLanguageId() throws PortalException {
+		JournalArticle article = getArticle();
+
+		ThemeDisplay themeDisplay = (ThemeDisplay)_request.getAttribute(
+			WebKeys.THEME_DISPLAY);
+
+		if (article != null) {
+			return article.getDefaultLanguageId();
+		}
+
+		return LocaleUtil.toLanguageId(themeDisplay.getSiteDefaultLocale());
 	}
 
 	public String getDisplayStyle() {
