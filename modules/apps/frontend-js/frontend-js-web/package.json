@@ -20,7 +20,6 @@
 		"clay-alert": "2.3.4",
 		"jquery": "^3.3.1",
 		"liferay-amd-loader": "3.1.2",
-		"lodash": "4.17.4",
 		"metal": "^2.16.2",
 		"metal-anim": "^2.0.0",
 		"metal-component": "^2.5.13",
