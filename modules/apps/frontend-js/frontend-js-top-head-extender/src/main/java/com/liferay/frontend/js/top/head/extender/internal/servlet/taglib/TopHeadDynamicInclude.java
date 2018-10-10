@@ -210,6 +210,10 @@ public class TopHeadDynamicInclude implements DynamicInclude {
 							topHeadResources.
 								getAuthenticatedJsResourcePaths()) {
 
+						if (jsResourcePath.equals(StringPool.BLANK)) {
+							continue;
+						}
+
 						_allJsResourceURLs.add(
 							servletContextPath.concat(jsResourcePath));
 					}
