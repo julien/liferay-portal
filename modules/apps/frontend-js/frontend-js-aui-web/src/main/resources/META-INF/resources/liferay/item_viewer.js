@@ -387,11 +387,19 @@ AUI.add(
 							}
 						);
 
+						var editEntityBaseZIndex = Liferay.zIndex.WINDOW;
+
+						var iframeModalEl = window.parent.document.getElementsByClassName('dialog-iframe-modal');
+
+						if (iframeModalEl) {
+							editEntityBaseZIndex = window.getComputedStyle(iframeModalEl[0]).getPropertyValue('z-index');
+						}
+
 						Liferay.Util.editEntity(
 							{
 								dialog: {
 									destroyOnHide: true,
-									zIndex: Liferay.zIndex.TOOLTIP + 100
+									zIndex: editEntityBaseZIndex + 100
 								},
 								id: instance.get('id'),
 								stack: false,
