@@ -613,10 +613,13 @@ MapBase.get = function(id, callback) {
  * callbacks associated with the id. Then it clears the list of callbacks.
  * @param {string} id Id of the map that has been created
  * @param {Object} map Map that has been created
+ * @param {string} portletId Id of the portlet that registers the map
  * @review
  */
-MapBase.register = function(id, map) {
-	Liferay.component(id, map);
+MapBase.register = function(id, map, portletId) {
+	const destroyConfig = portletId ? {portletId} : {destroyOnNavigate: true};
+
+	Liferay.component(id, map, destroyConfig);
 
 	const idPendingCallbacks = pendingCallbacks[id];
 

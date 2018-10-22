@@ -72,25 +72,10 @@ name = namespace + name;
 		</c:if>
 	};
 
-	var destroyMap = function(event, map) {
-		if (event.portletId === '<%= portletDisplay.getId() %>') {
-			map.destructor();
-
-			Liferay.detach('destroyPortlet', destroyMap);
-		}
-	};
-
 	var createMap = function() {
 		var map = new MapOpenStreetMap.default(mapConfig);
 
-		Liferay.MapBase.register('<%= HtmlUtil.escapeJS(name) %>', map);
-
-		Liferay.on(
-			'destroyPortlet',
-			function(event) {
-				destroyMap(event, map);
-			}
-		);
+		Liferay.MapBase.register('<%= HtmlUtil.escapeJS(name) %>', map, '<%= portletDisplay.getId() %>');
 	};
 
 	createMap();
