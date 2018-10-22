@@ -179,6 +179,7 @@ public class FragmentEntryLinkRichTextEditorConfigContributor
 		jsonArray.put("ol");
 		jsonArray.put("ul");
 		jsonArray.put("linkBrowse");
+		jsonArray.put("color");
 
 		jsonObject.put("buttons", jsonArray);
 

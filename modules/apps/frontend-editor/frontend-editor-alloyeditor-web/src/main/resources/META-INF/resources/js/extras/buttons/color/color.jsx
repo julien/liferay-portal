@@ -17,7 +17,7 @@ const Color = React.createClass({
 		 * The editor instance where the component is being used.
 		 *
 		 * @instance
-		 * @memberof ButtonStyles
+		 * @memberof Color
 		 * @property {Object} editor
 		 */
 		editor: React.PropTypes.object.isRequired,
@@ -26,7 +26,7 @@ const Color = React.createClass({
 		 * Indicates whether the styles list is expanded or not.
 		 *
 		 * @instance
-		 * @memberof ButtonStyles
+		 * @memberof Color
 		 * @property {Boolean} expanded
 		 */
 		expanded: React.PropTypes.bool,
@@ -35,7 +35,7 @@ const Color = React.createClass({
 		 * The label that should be used for accessibility purposes.
 		 *
 		 * @instance
-		 * @memberof ButtonStyles
+		 * @memberof Color
 		 * @property {String} label
 		 */
 		label: React.PropTypes.string,
@@ -44,7 +44,7 @@ const Color = React.createClass({
 		 * Indicates whether the remove styles item should appear in the styles list.
 		 *
 		 * @instance
-		 * @memberof ButtonStyles
+		 * @memberof Color
 		 * @property {Boolean} showRemoveStylesItem
 		 */
 		showRemoveStylesItem: React.PropTypes.bool,
@@ -53,7 +53,7 @@ const Color = React.createClass({
 		 * List of the styles the button is able to handle.
 		 *
 		 * @instance
-		 * @memberof ButtonStyles
+		 * @memberof Color
 		 * @property {Array} styles
 		 */
 		styles: React.PropTypes.arrayOf(React.PropTypes.object),
@@ -63,7 +63,7 @@ const Color = React.createClass({
 		 * means that the button has focus and is the active element.
 		 *
 		 * @instance
-		 * @memberof ButtonStyles
+		 * @memberof Color
 		 * @property {Number} tabIndex
 		 */
 		tabIndex: React.PropTypes.number,
@@ -72,7 +72,7 @@ const Color = React.createClass({
 		 * Callback provided by the button host to notify when the styles list has been expanded.
 		 *
 		 * @instance
-		 * @memberof ButtonStyles
+		 * @memberof Color
 		 * @property {Function} toggleDropdown
 		 */
 		toggleDropdown: React.PropTypes.func
@@ -107,7 +107,7 @@ const Color = React.createClass({
 		var buttonStylesList;
 
 		if (this.props.expanded) {
-			buttonStylesList = React.createElement(AlloyEditor.ButtonStylesList, { activeStyle: activeColor, editor: this.props.editor, onDismiss: this.props.toggleDropdown, showRemoveStylesItem: this.props.showRemoveStylesItem, styles: colors });
+			buttonStylesList = React.createElement(AlloyEditor.ButtonStylesList, { activeStyle: activeColor, editor: this.props.editor, onDismiss: this.props.toggleDropdown, showRemoveStylesItem: false, styles: colors });
 		}
 
 		return React.createElement(
