@@ -46,7 +46,7 @@ String rowBreak = (String)request.getAttribute("liferay-ui:error:rowBreak");
 			if (document.querySelectorAll('[role="alert"]')) {
 				return;
 			}
-			
+
 			if (!alertContainer) {
 				alertContainer = document.createElement('div');
 				alertContainer.id = 'alertContainer';
