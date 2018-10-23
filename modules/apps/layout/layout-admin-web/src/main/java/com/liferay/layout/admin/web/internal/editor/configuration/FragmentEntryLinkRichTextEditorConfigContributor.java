@@ -180,6 +180,7 @@ public class FragmentEntryLinkRichTextEditorConfigContributor
 		jsonArray.put("ul");
 		jsonArray.put("linkBrowse");
 		jsonArray.put("color");
+		jsonArray.put("backgroundColor");
 
 		jsonObject.put("buttons", jsonArray);
 
