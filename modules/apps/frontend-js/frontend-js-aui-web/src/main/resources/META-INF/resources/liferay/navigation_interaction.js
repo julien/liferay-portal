@@ -7,6 +7,8 @@ AUI.add(
 
 		var DIRECTION_RIGHT = 'right';
 
+		var DEBOUNCED;
+
 		var NAME = 'liferaynavigationinteraction';
 
 		var NavigationInteraction = A.Component.create(
@@ -44,6 +46,8 @@ AUI.add(
 
 								var menu = event.menu;
 
+								clearTimeout(instance.DEBOUNCED);
+
 								if (menu) {
 									instance._lastShownMenu = null;
 
@@ -51,8 +55,10 @@ AUI.add(
 										instance._lastShownMenu = menu;
 									}
 
-									menu.toggleClass('hover', showMenu);
-									menu.toggleClass('open', showMenu);
+									instance.DEBOUNCED = setTimeout(function () {
+										menu.toggleClass('hover', showMenu);
+										menu.toggleClass('open', showMenu);
+									}, 200);
 								}
 							}
 						);
