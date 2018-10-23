@@ -43,7 +43,7 @@ String rowBreak = (String)request.getAttribute("liferay-ui:error:rowBreak");
 		<aui:script require="metal-dom/src/all/dom as dom,clay-alert/src/ClayToast as ClayToast">
 			let alertContainer = document.getElementById('alertContainer');
 
-			if (AUI().one('.inline-alert-container.lfr-alert-container')) {
+			if (document.querySelectorAll('[role="alert"]')) {
 				return;
 			}
 			
