@@ -605,7 +605,7 @@ AUI.add(
 												event.domEvent.preventDefault();
 												instance._host.extend();
 											}
-											else if (event.domEvent.target.test('.close')){
+											else if (event.domEvent.target.test('.close')) {
 												instance._destroyBanner();
 												instance._alertClosed = true;
 											}
@@ -665,7 +665,7 @@ AUI.add(
 
 						remainingTime = instance._formatTime(remainingTime);
 
-						if (!instance._alertClosed){
+						if (!instance._alertClosed) {
 							var banner = instance._getBanner();
 
 							banner.set(
