@@ -16,11 +16,13 @@
 	overflow: auto;
 	padding-left: 15px;
 	padding-right: 15px;
+	padding-top: 15px;
 	position: fixed;
 	width: 100%;
 	z-index: 5000;
 
 	.lfr-notification-wrapper {
+		margin-bottom: 5px;
 		overflow: hidden;
 		overflow-wrap: break-word;
 		word-wrap: break-word;
