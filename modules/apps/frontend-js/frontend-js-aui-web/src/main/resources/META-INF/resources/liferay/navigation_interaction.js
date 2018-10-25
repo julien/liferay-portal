@@ -7,8 +7,6 @@ AUI.add(
 
 		var DIRECTION_RIGHT = 'right';
 
-		var DEBOUNCED;
-
 		var NAME = 'liferaynavigationinteraction';
 
 		var NavigationInteraction = A.Component.create(
@@ -46,7 +44,7 @@ AUI.add(
 
 								var menu = event.menu;
 
-								clearTimeout(instance.DEBOUNCED);
+								clearTimeout(instance._debounced);
 
 								if (menu) {
 									instance._lastShownMenu = null;
@@ -55,7 +53,7 @@ AUI.add(
 										instance._lastShownMenu = menu;
 									}
 
-									instance.DEBOUNCED = setTimeout(function () {
+									instance._debounced = setTimeout(function () {
 										menu.toggleClass('hover', showMenu);
 										menu.toggleClass('open', showMenu);
 									}, 200);
@@ -289,7 +287,7 @@ AUI.add(
 						if (event.type == 'mouseenter') {
 							eventType = 'showNavigationMenu';
 
-							var dropdown = AUI().one('.hover.open');
+							var dropdown = A.one('.hover.open');
 
 							if (dropdown && mapHover.menu != dropdown) {
 								dropdown.toggleClass('hover', false);
