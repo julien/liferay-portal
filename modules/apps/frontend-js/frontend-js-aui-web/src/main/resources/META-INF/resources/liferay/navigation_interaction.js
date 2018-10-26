@@ -31,6 +31,8 @@ AUI.add(
 
 						var hostULId = '#' + navigation.guid();
 
+						instance._toggleMenuTask = A.debounce(instance._toggleMenu, 200);
+
 						instance._directChildLi = Liferay.Data.NAV_INTERACTION_ITEM_SELECTOR || hostULId + '> li';
 
 						instance._hostULId = hostULId;
@@ -44,8 +46,6 @@ AUI.add(
 
 								var menu = event.menu;
 
-								clearTimeout(instance._debounced);
-
 								if (menu) {
 									instance._lastShownMenu = null;
 
@@ -53,10 +53,7 @@ AUI.add(
 										instance._lastShownMenu = menu;
 									}
 
-									instance._debounced = setTimeout(function () {
-										menu.toggleClass('hover', showMenu);
-										menu.toggleClass('open', showMenu);
-									}, 200);
+									instance._toggleMenuTask(menu, showMenu);
 								}
 							}
 						);
@@ -290,8 +287,7 @@ AUI.add(
 							var dropdown = A.one('.hover.open');
 
 							if (dropdown && mapHover.menu != dropdown) {
-								dropdown.toggleClass('hover', false);
-								dropdown.toggleClass('open', false);
+								instance._toggleMenu(dropdown, false);
 							}
 						}
 
@@ -328,6 +324,12 @@ AUI.add(
 
 							instance.MAP_HOVER = {};
 						}
+					},
+
+					_toggleMenu: function(menu, showMenu) {
+						menu.toggleClass('hover', showMenu);
+
+						menu.toggleClass('open', showMenu);
 					}
 				}
 			}
