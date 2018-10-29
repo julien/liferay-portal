@@ -13,7 +13,28 @@ Liferay = window.Liferay || {};
 
 	var STR_MULTIPART = 'multipart/form-data';
 
-	Liferay.namespace = _.namespace;
+	Liferay.namespace = function namespace(obj, path, defaultValue) {
+		if (path === undefined) {
+			path = obj;
+			obj = this;
+		}
+
+		var parts = path.split('.');
+
+		for (var part; parts.length && (part = parts.shift());) {
+			if (!parts.length && !!defaultValue) {
+				obj[part] = defaultValue;
+			}
+			else if (obj[part] && obj[part] !== Object.prototype[part]) {
+				obj = obj[part];
+			}
+			else {
+				obj = obj[part] = {};
+			}
+		}
+
+		return obj;
+	};
 
 	$.ajaxSetup(
 		{
@@ -90,7 +111,7 @@ Liferay = window.Liferay || {};
 		return Service.invoke.apply(Service, args);
 	};
 
-	_.assign(
+	Object.assign(
 		Service,
 		{
 			URL_INVOKE: themeDisplay.getPathContext() + '/api/jsonws/invoke',
@@ -98,11 +119,15 @@ Liferay = window.Liferay || {};
 			bind: function() {
 				var instance = this;
 
-				var args = _.toArray(arguments);
+				var args = Array.prototype.slice.call(arguments, 0);
 
 				args.unshift(Liferay.Service, Liferay);
 
-				return _.bind.apply(_, args);
+				return function() {
+					var newArgs = Array.prototype.slice.call(arguments, 0);
+
+					return Service.call(Service, args.concat(newArgs));
+				};
 			},
 
 			parseInvokeArgs: function(args) {
@@ -112,22 +137,25 @@ Liferay = window.Liferay || {};
 
 				var ioConfig = instance.parseIOConfig(args);
 
-				if (_.isString(payload)) {
+				if (typeof payload === 'string')	{
 					payload = instance.parseStringPayload(args);
 
 					instance.parseIOFormConfig(ioConfig, args);
 
 					var lastArg = args[args.length - 1];
 
-					if (_.isObject(lastArg) && lastArg.method) {
+					if (typeof lastArg === 'object' && lastArg.method) {
 						ioConfig.method = lastArg.method;
 					}
+
 				}
 
 				return [payload, ioConfig];
 			},
 
 			parseIOConfig: function(args) {
+				args = Array.prototype.slice.call(args, 0);
+
 				var instance = this;
 
 				var payload = args[0];
@@ -137,7 +165,7 @@ Liferay = window.Liferay || {};
 				delete payload.io;
 
 				if (!ioConfig.success) {
-					var callbacks = _.filter(args, isFunction);
+					var callbacks = args.filter(isFunction);
 
 					var callbackException = callbacks[1];
 					var callbackSuccess = callbacks[0];
@@ -149,7 +177,7 @@ Liferay = window.Liferay || {};
 					ioConfig.complete = function(xhr) {
 						var response = xhr.responseJSON;
 
-						if ((response !== null) && !_.has(response, 'exception')) {
+						if ((response !== null) && !('exception' in response)) {
 							if (callbackSuccess) {
 								callbackSuccess.call(this, response);
 							}
@@ -162,7 +190,7 @@ Liferay = window.Liferay || {};
 					};
 				}
 
-				if (!_.has(ioConfig, 'cache') && REGEX_METHOD_GET.test(ioConfig.type)) {
+				if (!ioConfig.hasOwnProperty('cache') && REGEX_METHOD_GET.test(ioConfig.type)) {
 					ioConfig.cache = false;
 				}
 
@@ -214,7 +242,7 @@ Liferay = window.Liferay || {};
 		var cmd = JSON.stringify(payload);
 		var p_auth = Liferay.authToken;
 
-		_.defaults(
+		Object.assign(
 			ioConfig,
 			{
 				data: {
@@ -233,8 +261,7 @@ Liferay = window.Liferay || {};
 				ioConfig.data.append('p_auth', p_auth);
 			}
 			else {
-				_.forEach(
-					$(ioConfig.form).serializeArray(),
+				$(ioConfig.form).serializeArray().forEach(
 					function(item, index) {
 						ioConfig.data[item.name] = item.value;
 					}
@@ -250,8 +277,7 @@ Liferay = window.Liferay || {};
 		);
 	};
 
-	_.forEach(
-		['get', 'delete', 'post', 'put', 'update'],
+	['get', 'delete', 'post', 'put', 'update'].forEach(
 		function(item, index) {
 			var methodName = item;
 
@@ -259,13 +285,16 @@ Liferay = window.Liferay || {};
 				methodName = 'del';
 			}
 
-			Service[methodName] = _.bindKeyRight(
-				Liferay,
-				'Service',
-				{
-					method: item
-				}
-			);
+			Service[methodName] = function(args) {
+				args = Object.assign(
+					args,
+					{
+						method: item
+					}
+				);
+
+				return Service.call(Service, args);
+			};
 		}
 	);
 
