@@ -75,7 +75,7 @@ data.put("qa-id", "customizations");
 			<div class="control-menu-level-2-heading visible-xs">
 				<liferay-ui:message key="customization-options" />
 
-				<button aria-labelledby="Close" class="close" id="<%= portletNamespace %>closeCustomizationOptions" type="button">
+				<button aria-label="<%= LanguageUtil.get(request, "close") %>" class="close" id="<%= portletNamespace %>closeCustomizationOptions" type="button">
 					<aui:icon image="times" markupView="lexicon" />
 				</button>
 			</div>
