@@ -37,7 +37,6 @@ public class JSLodashTopHeadResources implements TopHeadResources {
 	public JSLodashTopHeadResources() {
 		_authenticatedJsResourcePaths = Collections.emptyList();
 		_jsResourcePaths = Collections.emptyList();
-		// TODO: sh
 		_servletContextPath = "/o/frontend-js-lodash-web";
 	}
 
@@ -85,7 +84,6 @@ public class JSLodashTopHeadResources implements TopHeadResources {
 		return _servletContextPath;
 	}
 
-	// TODO: is this needed?
 	public void setServletContextPath(String servletContextPath) {
 		_servletContextPath = servletContextPath;
 	}
@@ -94,5 +92,4 @@ public class JSLodashTopHeadResources implements TopHeadResources {
 	private volatile JSLodashConfiguration _jsLodashConfiguration;
 	private Collection<String> _jsResourcePaths;
 	private String _servletContextPath;
-
 }
