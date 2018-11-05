@@ -31,6 +31,8 @@ AUI.add(
 
 						var hostULId = '#' + navigation.guid();
 
+						instance._toggleMenuTask = A.debounce(instance._toggleMenu, 200);
+
 						instance._directChildLi = Liferay.Data.NAV_INTERACTION_ITEM_SELECTOR || hostULId + '> li';
 
 						instance._hostULId = hostULId;
@@ -51,8 +53,7 @@ AUI.add(
 										instance._lastShownMenu = menu;
 									}
 
-									menu.toggleClass('hover', showMenu);
-									menu.toggleClass('open', showMenu);
+									instance._toggleMenuTask(menu, showMenu);
 								}
 							}
 						);
@@ -317,7 +318,13 @@ AUI.add(
 
 							instance.MAP_HOVER = {};
 						}
-					}
+					},
+
+ 					_toggleMenu: function(menu, showMenu) {
+						menu.toggleClass('hover', showMenu);
+
+ 						menu.toggleClass('open', showMenu);
+ 					}
 				}
 			}
 		);
