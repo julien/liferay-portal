@@ -328,11 +328,11 @@ AUI.add(
 						}
 					},
 
- 					_toggleMenu: function(menu, showMenu) {
+					_toggleMenu: function(menu, showMenu) {
 						menu.toggleClass('hover', showMenu);
 
- 						menu.toggleClass('open', showMenu);
- 					}
+						menu.toggleClass('open', showMenu);
+					}
 				}
 			}
 		);
