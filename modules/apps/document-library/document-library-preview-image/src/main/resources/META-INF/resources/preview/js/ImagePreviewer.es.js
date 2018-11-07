@@ -1,5 +1,6 @@
-import Component from 'metal-component';
 import {Config} from 'metal-state';
+import Component from 'metal-component';
+import debounce from 'metal-debounce';
 import Soy from 'metal-soy';
 
 import templates from './ImagePreviewer.soy';
@@ -48,7 +49,10 @@ class ImagePreviewer extends Component {
 		this.isPreviewFit = true;
 
 		this._updateDimensions();
-		this._updateDimensions = this._updateDimensions.bind(this);
+		this._updateDimensions = debounce(
+			this._updateDimensions.bind(this),
+			100,
+		);
 
 		window.addEventListener('resize', this._updateDimensions);
 	}
