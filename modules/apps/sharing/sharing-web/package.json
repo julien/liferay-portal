@@ -7,7 +7,7 @@
 		"metal-soy": "^2.13.2"
 	},
 	"devDependencies": {
-		"check-source-formatting": "^2.0.12",
+		"check-source-formatting": "^2.0.13",
 		"liferay-module-config-generator": "^1.2.1",
 		"metal-cli": "^4.0.1"
 	},
