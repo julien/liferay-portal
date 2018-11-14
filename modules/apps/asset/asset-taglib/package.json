@@ -3,7 +3,7 @@
 		"liferay-module-config-generator": "^1.3.3"
 	},
 	"devDependencies": {
-		"check-source-formatting": "^2.0.12"
+		"check-source-formatting": "^2.0.13"
 	},
 	"name": "asset-taglib",
 	"scripts": {
