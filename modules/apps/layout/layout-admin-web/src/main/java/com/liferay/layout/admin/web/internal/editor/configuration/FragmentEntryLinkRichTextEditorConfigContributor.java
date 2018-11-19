@@ -295,10 +295,14 @@ public class FragmentEntryLinkRichTextEditorConfigContributor
 		jsonArray.put("ol");
 		jsonArray.put("ul");
 		jsonArray.put("linkBrowse");
+
 		jsonArray.put("paragraphLeft");
 		jsonArray.put("paragraphCenter");
 		jsonArray.put("paragraphRight");
 		jsonArray.put("paragraphJustify");
+
+		jsonArray.put("color");
+		jsonArray.put("backgroundColor");
 
 		jsonObject.put("buttons", jsonArray);
 
