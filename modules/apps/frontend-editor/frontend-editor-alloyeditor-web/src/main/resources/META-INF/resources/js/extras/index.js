@@ -1,5 +1,6 @@
 import AccessibilityImageAlt from './buttons/accessibility/accessibility_image_alt.jsx';
 
+import BackgroundColor from './buttons/color/background_color.jsx';
 import Color from './buttons/color/color.jsx';
 
 import EmbedVideo from './buttons/embed/embed_video.jsx';
@@ -23,6 +24,7 @@ import headingTextSelectionTest from './selections/heading_selection_test.js';
 
 AlloyEditor.Buttons[AccessibilityImageAlt.key] = AlloyEditor.AccessibilityImageAlt = AccessibilityImageAlt;
 
+AlloyEditor.Buttons[BackgroundColor.key] = AlloyEditor.BackgroundColor = BackgroundColor;
 AlloyEditor.Buttons[Color.key] = AlloyEditor.Color = Color;
 
 AlloyEditor.Buttons[AlignImageCenter.key] = AlloyEditor.AlignImageCenter = AlignImageCenter;
