@@ -2,6 +2,7 @@ import {Config} from 'metal-state';
 import Component from 'metal-component';
 import Soy from 'metal-soy';
 import 'clay-button';
+import loadImage from 'image-promise';
 
 import templates from './PdfPreviewer.soy';
 
@@ -38,6 +39,30 @@ class PdfPreviewer extends Component {
 		this.refs.imageContainer.scrollTop = 0;
 		this.previousPageDisabled = currentPage === 1;
 		this.nextPageDisabled = currentPage === this.totalPages;
+
+		this._fetchClosePages(currentPage);
+	}
+
+	/**
+	 * Fetch close pages of the current one
+	 * @param {number|string} currentPage - the current page
+	 * @param {number} [numberOfPages=2] - number of load pages (before and after)
+	 * @private
+	 * @review
+	 */
+	_fetchClosePages(currentPage, numberOfPages = 2) {
+		const pagesUrlToLoad = [];
+
+		for (let i = 1; i <= numberOfPages; i++) {
+			if (currentPage+i <= this.totalPages) {
+				pagesUrlToLoad.push(`${this.baseImageURL}${currentPage+i}`);
+			}
+			if (currentPage-i > 1) {
+				pagesUrlToLoad.push(`${this.baseImageURL}${currentPage-i}`);
+			}
+		}
+
+		loadImage(pagesUrlToLoad);
 	}
 
 	/**
