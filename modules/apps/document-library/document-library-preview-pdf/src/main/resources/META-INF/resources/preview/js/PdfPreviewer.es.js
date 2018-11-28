@@ -1,7 +1,7 @@
+import 'clay-button';
 import {Config} from 'metal-state';
 import Component from 'metal-component';
 import Soy from 'metal-soy';
-import 'clay-button';
 import loadImage from 'image-promise';
 
 import templates from './PdfPreviewer.soy';
@@ -12,10 +12,10 @@ const KEY_CODE_ESC = 27;
 
 /**
  * Valid list of keycodes
- * Includes backspace, tab, enter, escape, arrows, delete and numbers
+ * Includes backspace, tab, arrows, delete and numbers
  * @type {Array<number>}
  */
-const validKeyCodes = [8, 9, 13, 37, 38, 39, 40, 46, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57];
+const VALID_KEY_CODES = [8, 9, 37, 38, 39, 40, 46, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57];
 
 /**
  * Component that create an pdf preview
@@ -54,11 +54,11 @@ class PdfPreviewer extends Component {
 		const pagesUrlToLoad = [];
 
 		for (let i = 1; i <= numberOfPages; i++) {
-			if (currentPage+i <= this.totalPages) {
-				pagesUrlToLoad.push(`${this.baseImageURL}${currentPage+i}`);
+			if (currentPage + i <= this.totalPages) {
+				pagesUrlToLoad.push(`${this.baseImageURL}${currentPage + i}`);
 			}
-			if (currentPage-i > 1) {
-				pagesUrlToLoad.push(`${this.baseImageURL}${currentPage-i}`);
+			if (currentPage - i > 1) {
+				pagesUrlToLoad.push(`${this.baseImageURL}${currentPage - i}`);
 			}
 		}
 
@@ -115,7 +115,7 @@ class PdfPreviewer extends Component {
 		else if (code === KEY_CODE_ESC) {
 			this.showPageInput = false;
 		}
-		else if (validKeyCodes.indexOf(code) == -1) {
+		else if (VALID_KEY_CODES.indexOf(code) === -1) {
 			event.preventDefault();
 		}
 	}
