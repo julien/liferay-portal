@@ -55,10 +55,10 @@ class PdfPreviewer extends Component {
 
 		for (let i = 1; i <= numberOfPages; i++) {
 			if (currentPage + i <= this.totalPages) {
-				pagesUrlToLoad.push(`${this.baseImageURL}${currentPage + i}`);
+				pagesUrlToLoad.push(this.baseImageURL + (currentPage + i));
 			}
 			if (currentPage - i > 1) {
-				pagesUrlToLoad.push(`${this.baseImageURL}${currentPage - i}`);
+				pagesUrlToLoad.push(this.baseImageURL + (currentPage - i));
 			}
 		}
 
