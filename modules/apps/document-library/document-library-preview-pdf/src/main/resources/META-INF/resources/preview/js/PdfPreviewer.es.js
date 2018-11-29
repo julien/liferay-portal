@@ -1,4 +1,3 @@
-import 'clay-button';
 import {Config} from 'metal-state';
 import Component from 'metal-component';
 import Soy from 'metal-soy';
