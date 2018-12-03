@@ -19,6 +19,8 @@
 <%
 FileVersion fileVersion = (FileVersion)request.getAttribute(WebKeys.DOCUMENT_LIBRARY_FILE_VERSION);
 
+String modulePath = (String)request.getAttribute(PDFDLPreviewWebKeys.MODULE_PATH);
+
 String randomNamespace = PortalUtil.generateRandomKey(request, "portlet_document_library_view_file_entry_preview") + StringPool.UNDERLINE;
 
 int previewFileCount = PDFProcessorUtil.getPreviewFileCount(fileVersion);
@@ -54,6 +56,6 @@ context.put("totalPages", previewFileCount);
 <soy:component-renderer
 	componentId='<%= renderResponse.getNamespace() + randomNamespace + "previewFile" %>'
 	context="<%= context %>"
-	module="document-library-preview-pdf@1.0.0/preview/js/PdfPreviewer.es"
+	module="<%= modulePath %>"
 	templateNamespace="com.liferay.document.library.preview.PdfPreviewer.render"
 />
