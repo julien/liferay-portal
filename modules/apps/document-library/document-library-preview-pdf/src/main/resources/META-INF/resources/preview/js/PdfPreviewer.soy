@@ -11,6 +11,7 @@
 	{@param? _handleBlurPageInput: any}
 	{@param? _handleClickToolbar: any}
 	{@param? _handleKeyDownPageInput: any}
+	{@param? currentPageLoading: bool}
 	{@param? id: string}
 	{@param? nextPageDisabled: bool}
 	{@param? previousPageDisabled: bool}
@@ -18,7 +19,11 @@
 
 	<div class="preview-file" id="{$id}">
 		<div class="preview-file-container preview-file-max-height" ref="imageContainer">
-			<img class="preview-file-pdf" src="{$baseImageURL + $currentPage}" />
+			{if $currentPageLoading}
+				<span class="loading-animation preview-file-loader"></span>
+			{else}
+				<img class="preview-file-pdf" src="{$baseImageURL + $currentPage}" />
+			{/if}
 		</div>
 
 		{call .toolbar}

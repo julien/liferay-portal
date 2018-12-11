@@ -5,6 +5,7 @@
 		"image-promise": "^5.0.1",
 		"metal": "^2.16.5",
 		"metal-component": "^2.16.5",
+		"metal-debounce": "^2.0.1",
 		"metal-soy": "^2.16.5",
 		"metal-state": "^2.16.5"
 	},
