@@ -60,7 +60,9 @@ class PdfPreviewer extends Component {
 			!this._loadedPages[currentPage] ||
 			!this._loadedPages[currentPage].loaded
 		) {
-			this.currentPageLoading = true;
+			if(currentPage !== this.initialConfig_.currentPage) {
+				this.currentPageLoading = true;
+			}
 			this._goToPageDebounced(currentPage);
 		}
 		else {
