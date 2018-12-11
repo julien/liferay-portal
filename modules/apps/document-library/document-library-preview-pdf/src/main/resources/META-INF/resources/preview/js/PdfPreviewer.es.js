@@ -60,7 +60,7 @@ class PdfPreviewer extends Component {
 			!this._loadedPages[currentPage] ||
 			!this._loadedPages[currentPage].loaded
 		) {
-			if(currentPage !== this.initialConfig_.currentPage) {
+			if (currentPage !== this.initialConfig_.currentPage) {
 				this.currentPageLoading = true;
 			}
 			this._goToPageDebounced(currentPage);
@@ -124,7 +124,7 @@ class PdfPreviewer extends Component {
 	_goToPage(page) {
 		this._loadPage(page).then(
 			() => {
-				if (this.currentPage === page) {
+				if (page === this.currentPage) {
 					this.currentPageLoading = false;
 					this._loadPages(page);
 				}
