@@ -32,12 +32,11 @@ class PdfPreviewer extends Component {
 	/**
 	 * @inheritDoc
 	 */
-	attached() {
+	created() {
 		this._goToPageDebounced = debounce(
 			this._goToPage.bind(this),
 			WAIT_BETWEEN_GO_TO_PAGE
 		);
-		this._goToPageDebounced(this.currentPage);
 	}
 
 	/**
@@ -56,39 +55,58 @@ class PdfPreviewer extends Component {
 		this.refs.imageContainer.scrollTop = 0;
 		this.previousPageDisabled = currentPage === 1;
 		this.nextPageDisabled = currentPage === this.totalPages;
+
+		if (
+			!this._loadedPages[currentPage] ||
+			!this._loadedPages[currentPage].loaded
+		) {
+			this.currentPageLoading = true;
+			this._goToPageDebounced(currentPage);
+		}
+		else {
+			this.currentPageLoading = false;
+		}
 	}
 
 	/**
-	 * Load close pages of the current one
-	 * @param {number|string} currentPage - the current page
+	 * Load adjacent pages of the initial one
+	 * @param {number|string} initialPage - the initial page
 	 * @param {number} [numberOfPages=2] - number of load pages (before and after)
 	 * @private
 	 * @review
 	 */
-	_loadClosePages(currentPage, numberOfPages = 2) {
+	_loadPages(initialPage, numberOfPages = 2) {
 		for (let i = 1; i <= numberOfPages; i++) {
-			if (currentPage + i <= this.totalPages) {
-				this._loadPage(currentPage + i);
+			if (initialPage + i <= this.totalPages) {
+				this._loadPage(initialPage + i);
 			}
-			if (currentPage - i > 1) {
-				this._loadPage(currentPage - i);
+			if (initialPage - i > 1) {
+				this._loadPage(initialPage - i);
 			}
 		}
 	}
 
 	/**
 	 * Trigger a promise to load the image
-	 * @param {number} pageToLoad
+	 * @param {number} page
 	 * @return {Promise} A promise to be resolved when the image is loaded
 	 * @private
 	 * @review
 	 */
-	_loadPage(pageToLoad) {
-		let pagePromise = this._loadedPages[pageToLoad];
+	_loadPage(page) {
+		let pagePromise = this._loadedPages[page] && this._loadedPages[page].pagePromise;
 
 		if (!pagePromise) {
-			pagePromise = imagePromise(`${this.baseImageURL}${pageToLoad}`);
-			this._loadedPages[pageToLoad] = pagePromise;
+			pagePromise = imagePromise(`${this.baseImageURL}${page}`).then(
+				() => {
+					this._loadedPages[page].loaded = true;
+				}
+			);
+
+			this._loadedPages[page] = {
+				loaded: false,
+				pagePromise
+			};
 		}
 
 		return pagePromise;
@@ -106,7 +124,7 @@ class PdfPreviewer extends Component {
 			() => {
 				if (this.currentPage === page) {
 					this.currentPageLoading = false;
-					this._loadClosePages(page);
+					this._loadPages(page);
 				}
 			}
 		);
@@ -120,7 +138,7 @@ class PdfPreviewer extends Component {
 	 * @review
 	 */
 	_handleBlurPageInput(event) {
-		this._setCurrentPage(event.delegateTarget.value);
+		this.currentPage = event.delegateTarget.value;
 		this.showPageInput = false;
 	}
 
@@ -135,10 +153,10 @@ class PdfPreviewer extends Component {
 		const action = event.currentTarget.value;
 
 		if (action === 'next') {
-			this._setCurrentPage(this.currentPage + 1);
+			this.currentPage++;
 		}
 		else if (action === 'previous') {
-			this._setCurrentPage(this.currentPage - 1);
+			this.currentPage--;
 		}
 		else if (action === 'go') {
 			this.showPageInput = true;
@@ -156,7 +174,7 @@ class PdfPreviewer extends Component {
 		const code = event.keyCode || event.charCode;
 
 		if (code === KEY_CODE_ENTER) {
-			this._setCurrentPage(event.delegateTarget.value);
+			this.currentPage = event.delegateTarget.value;
 			this.showPageInput = false;
 		}
 		else if (code === KEY_CODE_ESC) {
@@ -176,17 +194,12 @@ class PdfPreviewer extends Component {
 	_setCurrentPage(page) {
 		const pageNumber = Number.parseInt(page, 10);
 
-		if (pageNumber) {
-			const currentPage = Math.min(
+		return (pageNumber) ?
+			Math.min(
 				Math.max(1, pageNumber),
 				this.totalPages
-			);
-
-			this.currentPage = currentPage;
-			this.currentPageLoading = true;
-
-			this._goToPageDebounced(currentPage);
-		}
+			) :
+			this.currentPage;
 	}
 }
 
@@ -208,7 +221,9 @@ PdfPreviewer.STATE = {
 	 * Current page
 	 * @type {Number}
 	 */
-	currentPage: Config.number().required(),
+	currentPage: Config.oneOfType(
+		[Config.number(), Config.string()]
+	).required().setter('_setCurrentPage'),
 
 	/**
 	 * Flag that indicate if currentPgae is loading.
