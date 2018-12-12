@@ -60,6 +60,10 @@ AUI.add(
 						value: true
 					},
 
+					autoHighlight: {
+						value: false
+					},
+
 					dataSource: {
 						valueFn: function() {
 							var instance = this;
