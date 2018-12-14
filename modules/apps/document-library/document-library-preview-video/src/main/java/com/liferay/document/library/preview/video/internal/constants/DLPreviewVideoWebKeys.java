@@ -23,6 +23,6 @@ public class DLPreviewVideoWebKeys {
 
 	public static final String PREVIEW_FILE_URLS = "PREVIEW_FILE_URLS";
 
-	public static final String VIDEO_THUMBNAIL_URL = "VIDEO_THUMBNAIL_URL";
+	public static final String VIDEO_POSTER_URL = "VIDEO_POSTER_URL";
 
 }

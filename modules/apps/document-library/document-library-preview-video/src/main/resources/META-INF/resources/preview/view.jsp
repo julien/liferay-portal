@@ -17,11 +17,12 @@
 <%@ include file="/preview/init.jsp" %>
 
 <%
-String videoPosterURL = (String)request.getAttribute(DLPreviewVideoWebKeys.VIDEO_THUMBNAIL_URL);
+String videoPosterURL = (String)request.getAttribute(DLPreviewVideoWebKeys.VIDEO_POSTER_URL);
 
 List<String> previewFileURLs = (List<String>)request.getAttribute(DLPreviewVideoWebKeys.PREVIEW_FILE_URLS);
 
 String randomNamespace = PortalUtil.generateRandomKey(request, "portlet_document_library_view_file_entry_preview") + StringPool.UNDERLINE;
+
 String modulePath = (String)request.getAttribute(DLPreviewVideoWebKeys.MODULE_PATH);
 
 List<Map<String, String>> videoSources = new ArrayList<>();
@@ -38,6 +39,7 @@ for (String previewFileURL : previewFileURLs) {
 }
 
 Map<String, Object> context = new HashMap<>();
+
 context.put("videoSources", videoSources);
 context.put("videoPosterURL", videoPosterURL);
 %>
