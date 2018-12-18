@@ -22,6 +22,7 @@ import com.liferay.document.library.preview.DLPreviewRendererProvider;
 import com.liferay.document.library.preview.exception.DLPreviewGenerationInProcessException;
 import com.liferay.document.library.preview.exception.DLPreviewSizeException;
 import com.liferay.document.library.preview.video.internal.constants.DLPreviewVideoWebKeys;
+import com.liferay.frontend.js.loader.modules.extender.npm.NPMResolver;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -45,8 +46,11 @@ import javax.servlet.http.HttpServletRequest;
 public class VideoDLPreviewRendererProvider
 	implements DLPreviewRendererProvider {
 
-	public VideoDLPreviewRendererProvider(ServletContext servletContext) {
+	public VideoDLPreviewRendererProvider(
+		ServletContext servletContext, NPMResolver npmResolver) {
+
 		_servletContext = servletContext;
+		_npmResolver = npmResolver;
 	}
 
 	@Override
@@ -75,17 +79,21 @@ public class VideoDLPreviewRendererProvider
 				ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
 					WebKeys.THEME_DISPLAY);
 
-				String videoThumbnailURL = _getVideoThumbnailURL(
+				String videoPosterURL = _getVideoPosterURL(
 					fileVersion, themeDisplay);
 
 				request.setAttribute(
 					DLPreviewVideoWebKeys.PREVIEW_FILE_URLS,
-					_getPreviewFileURLs(
-						fileVersion, videoThumbnailURL, request));
+					_getPreviewFileURLs(fileVersion, videoPosterURL, request));
 
 				request.setAttribute(
-					DLPreviewVideoWebKeys.VIDEO_THUMBNAIL_URL,
-					videoThumbnailURL);
+					DLPreviewVideoWebKeys.VIDEO_POSTER_URL, videoPosterURL);
+
+				request.setAttribute(
+					DLPreviewVideoWebKeys.MODULE_PATH,
+					_npmResolver.resolveModuleName(
+						"document-library-preview-video/preview/js" +
+							"/VideoPreviewer.es"));
 
 				requestDispatcher.include(request, response);
 			});
@@ -99,7 +107,7 @@ public class VideoDLPreviewRendererProvider
 	}
 
 	private List<String> _getPreviewFileURLs(
-			FileVersion fileVersion, String videoThumbnailURL,
+			FileVersion fileVersion, String videoPosterURL,
 			HttpServletRequest request)
 		throws PortalException {
 
@@ -147,11 +155,11 @@ public class VideoDLPreviewRendererProvider
 			}
 		}
 		else {
-			return Arrays.asList(videoThumbnailURL);
+			return Arrays.asList(videoPosterURL);
 		}
 	}
 
-	private String _getVideoThumbnailURL(
+	private String _getVideoPosterURL(
 			FileVersion fileVersion, ThemeDisplay themeDisplay)
 		throws PortalException {
 
@@ -160,6 +168,7 @@ public class VideoDLPreviewRendererProvider
 			"&videoThumbnail=1");
 	}
 
+	private final NPMResolver _npmResolver;
 	private final ServletContext _servletContext;
 
 }
