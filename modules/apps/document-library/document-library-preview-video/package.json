@@ -20,7 +20,7 @@
 		"build": "metalsoy --soyDeps \"node_modules/+(clay-*|com.liferay.frontend.js.web)/**/*.soy\" && cross-env NODE_ENV=production babel --source-maps -d classes/META-INF/resources src/main/resources/META-INF/resources && liferay-npm-bundler && npm run cleanSoy",
 		"checkFormat": "npm run csf",
 		"cleanSoy": "rimraf src/**/*.soy.js",
-		"csf": "csf src/**/*.js src/**/*.soy",
+		"csf": "csf src/**/*.{js,soy,scss}",
 		"format": "npm run csf -- -i"
 	},
 	"version": "1.0.0"
