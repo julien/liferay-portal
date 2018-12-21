@@ -1,11 +1,7 @@
 {
 	"dependencies": {
-		"clay-button": "^2.3.2",
-		"clay-icon": "^2.3.2",
-		"image-promise": "^5.0.1",
 		"metal": "^2.16.5",
 		"metal-component": "^2.16.5",
-		"metal-debounce": "^2.0.1",
 		"metal-soy": "^2.16.5",
 		"metal-state": "^2.16.5"
 	},
@@ -19,12 +15,12 @@
 		"metal-tools-soy": "^4.0.0",
 		"rimraf": "^2.6.2"
 	},
-	"name": "document-library-preview-pdf",
+	"name": "document-library-preview-audio",
 	"scripts": {
 		"build": "metalsoy --soyDeps \"node_modules/+(clay-*|com.liferay.frontend.js.web)/**/*.soy\" && cross-env NODE_ENV=production babel --source-maps -d classes/META-INF/resources src/main/resources/META-INF/resources && liferay-npm-bundler && npm run cleanSoy",
 		"checkFormat": "npm run csf",
 		"cleanSoy": "rimraf src/**/*.soy.js",
-		"csf": "csf src/**/*.{js,soy,scss}",
+		"csf": "csf src/**/*.js src/**/*.soy",
 		"format": "npm run csf -- -i"
 	},
 	"version": "1.0.0"
