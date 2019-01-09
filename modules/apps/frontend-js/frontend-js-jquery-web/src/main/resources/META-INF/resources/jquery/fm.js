@@ -44,4 +44,4 @@
 
 		return retVal;
 	};
-})(AUI.$);
+})(window.$);
