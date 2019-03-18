@@ -455,7 +455,7 @@ definition {
 
 		var key_pageName = "${ddlRecordFieldData}";
 
-		RunScript(locator1 = "$('.top-ended').scrollTop(1000)");
+		RunScript(locator1 = "document.querySelector('.top-ended').scrollTop = 1000");
 
 		Click(locator1 = "DDLEditRecord#LINK_TO_PAGE_PAGE_RADIO");
 	}

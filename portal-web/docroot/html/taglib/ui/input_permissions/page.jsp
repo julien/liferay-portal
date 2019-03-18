@@ -237,7 +237,7 @@ String modelName = (String)request.getAttribute("liferay-ui:input-permissions:mo
 			</table>
 		</div>
 
-		<aui:script>
+		<script>
 			function <%= uniqueNamespace %>inputPermissionsHideOptions() {
 				<%= uniqueNamespace %>togglePermissionsOptions(false);
 			}
@@ -247,39 +247,81 @@ String modelName = (String)request.getAttribute("liferay-ui:input-permissions:mo
 			}
 
 			function <%= uniqueNamespace %>togglePermissionsOptions(force) {
-				var $ = AUI.$;
+				var inputPermissionsHideOptionsLink = document.getElementById('<%= uniqueNamespace %>inputPermissionsHideOptionsLink');
 
-				$('#<%= uniqueNamespace %>inputPermissionsHideOptionsLink').toggleClass('hide', !force);
-				$('#<%= uniqueNamespace %>inputPermissionsTable').toggleClass('hide', !force);
+				if (inputPermissionsHideOptionsLink) {
+					if (force) {
+						inputPermissionsHideOptionsLink.classList.remove('hide');
+					}
+					else {
+						inputPermissionsHideOptionsLink.classList.add('hide');
+					}
+				}
 
-				$('#<%= uniqueNamespace %>inputPermissionsShowOptionsLink').toggleClass('hide', force);
-				$('#<%= uniqueNamespace %>inputPermissionsShowOptions').val(force);
+				var inputPermissionsTable = document.getElementById('<%= uniqueNamespace %>inputPermissionsTable');
+
+				if (inputPermissionsTable) {
+					if (force) {
+						inputPermissionsTable.classList.remove('hide');
+					}
+					else {
+						inputPermissionsTable.classList.add('hide');
+					}
+				}
+
+				var inputPermissionsShowOptionsLink = document.getElementById('<%= uniqueNamespace %>inputPermissionsShowOptionsLink');
+
+				if (inputPermissionsShowOptionsLink) {
+					if (force) {
+						inputPermissionsShowOptionsLink.classList.add('hide');
+					}
+					else {
+						inputPermissionsShowOptionsLink.classList.remove('hide');
+					}
+				}
+
+				var inputPermissionsShowOptions = document.getElementById('<%= uniqueNamespace %>inputPermissionsShowOptions');
+
+				if (inputPermissionsShowOptions) {
+					inputPermissionsShowOptions.value = force;
+				}
 			}
 
 			function <%= uniqueNamespace %>updatePermissionsView() {
-				var $ = AUI.$;
+				var permissionsViewRoleInput = document.getElementById('<%= uniqueNamespace %>inputPermissionsViewRole');
 
-				var viewableBy = $('#<%= uniqueNamespace %>inputPermissionsViewRole').val();
+				if (permissionsViewRoleInput) {
+					var viewableBy = permissionsViewRoleInput.value;
 
-				var checkGroupViewPermissions = false;
-				var checkGuestViewPermissions = false;
+					var checkGroupViewPermissions = false;
+					var checkGuestViewPermissions = false;
 
-				if (viewableBy == '<%= RoleConstants.GUEST %>') {
-					checkGuestViewPermissions = true;
-					checkGroupViewPermissions = true;
+					if (viewableBy === '<%= RoleConstants.GUEST %>') {
+						checkGuestViewPermissions = true;
+						checkGroupViewPermissions = true;
+					}
+					else if (viewableBy === '<%= defaultGroupRole.getName() %>') {
+						checkGroupViewPermissions = true;
+					}
+
+					<%= uniqueNamespace %>doUpdateViewValue('<%= uniqueNamespace %>guestPermissions_VIEW', checkGuestViewPermissions);
+					<%= uniqueNamespace %>doUpdateViewValue('<%= uniqueNamespace %>groupPermissions_VIEW', checkGroupViewPermissions);
 				}
-				else if (viewableBy == '<%= defaultGroupRole.getName() %>') {
-					checkGroupViewPermissions = true;
-				}
-
-				<%= uniqueNamespace %>doUpdateViewValue('<%= uniqueNamespace %>guestPermissions_VIEW', checkGuestViewPermissions);
-				<%= uniqueNamespace %>doUpdateViewValue('<%= uniqueNamespace %>groupPermissions_VIEW', checkGroupViewPermissions);
 			}
 
 			function <%= uniqueNamespace %>doUpdateViewValue(id, checkPermission) {
-				$('#' + id).prop('checked', checkPermission);
-				$('#' + id + '_display').prop('checked', checkPermission);
+				var element = document.getElementById(id);
+
+				if (element) {
+					element.checked = checkPermission;
+				}
+
+				var displayElement = document.getElementById(id + '_display');
+
+				if (displayElement) {
+					displayElement.checked = checkPermission;
+				}
 			}
-		</aui:script>
+		</script>
 	</c:otherwise>
 </c:choose>

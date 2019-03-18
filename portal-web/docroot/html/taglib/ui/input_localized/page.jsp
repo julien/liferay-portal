@@ -217,18 +217,24 @@
 </c:if>
 
 <c:if test="<%= Validator.isNotNull(inputAddon) %>">
-	<aui:script sandbox="<%= true %>">
-		var inputAddon = '<%= inputAddon.toString() %>';
+	<script>
+		(function() {
+			var inputAddon = '<%= inputAddon.toString() %>';
 
-		if (inputAddon.length > 40) {
-			$('#<portlet:namespace /><%= id %>InputAddon').on(
-				'mouseenter',
-				function(event) {
-					Liferay.Portal.ToolTip.show(event.currentTarget, inputAddon);
+			if (inputAddon.length > 40) {
+				var inputAddonElement = document.getElementById('<portlet:namespace /><%= id %>InputAddon');
+
+				if (inputAddonElement) {
+					inputAddonElement.addEventListener(
+						'mouseenter',
+						function(event) {
+							Liferay.Portal.ToolTip.show(event.currentTarget, inputAddon);
+						}
+					);
 				}
-			);
-		}
-	</aui:script>
+			}
+		})();
+	</script>
 </c:if>
 
 <c:choose>
