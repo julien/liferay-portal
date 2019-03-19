@@ -45,14 +45,6 @@
 
 						inputLocalized.updateInputLanguage(editor.getHTML());
 					}
-
-					$('#<portlet:namespace /><%= id %>ContentBox').on(
-						'click',
-						'.palette-item-inner',
-						function() {
-							window['<portlet:namespace /><%= HtmlUtil.escapeJS(inputEditorName) %>'].focus();
-						}
-					);
 				</aui:script>
 			</c:when>
 			<c:when test='<%= type.equals("input") %>'>
