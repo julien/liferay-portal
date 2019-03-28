@@ -248,7 +248,8 @@ UnitConverter unitConverter = UnitConverterUtil.getUnitConverter(type, fromId, t
 	var changeUnitType = function(unitTypeSelect, newUnitTypes) {
 		var newUnitTypesOptions = [];
 
-		newUnitTypes.forEach(
+		Array.prototype.forEach.call(
+			newUnitTypes,
 			function(unitType, index) {
 				newUnitTypesOptions.push('<option value="' + index + '">' + unitType + '</option>');
 			}
