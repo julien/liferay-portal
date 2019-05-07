@@ -18,7 +18,7 @@ AUI.add(
 		var REGEX_URL = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(https?\:\/\/|www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))((.*):(\d*)\/?(.*))?)/;
 
 		var acceptFiles = function(val, node, ruleValue) {
-			if (ruleValue == '*') {
+			if (ruleValue && ruleValue.split(',').includes('*')) {
 				return true;
 			}
 
