@@ -142,7 +142,6 @@ Liferay-JS-Resources-Top-Head:\
 	/liferay/portlet.js,\
 	/liferay/workflow.js,\
 	\
-	/liferay/address.js,\
 	/liferay/form.js,\
 	/liferay/form_placeholders.js,\
 	/liferay/icon.js,\
