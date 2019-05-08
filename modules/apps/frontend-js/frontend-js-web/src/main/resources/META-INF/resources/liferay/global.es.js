@@ -8,6 +8,8 @@ import {
 	initComponentCache
 } from './component.es';
 import escape from 'lodash.escape';
+import getCountries from './util/address/get_countries.es';
+import getRegions from './util/address/get_regions.es';
 import getFormElement from './util/form/get_form_element.es';
 import groupBy from 'lodash.groupby';
 import isEqual from 'lodash.isequal';
@@ -27,6 +29,11 @@ Liferay.destroyComponents = destroyComponents;
 Liferay.destroyUnfulfilledPromises = destroyUnfulfilledPromises;
 Liferay.getComponentCache = getComponentCache;
 Liferay.initComponentCache = initComponentCache;
+
+Liferay.Address = {
+	getCountries: getCountries,
+	getRegions: getRegions
+};
 
 Liferay.Util.escape = escape;
 Liferay.Util.getFormElement = getFormElement;
