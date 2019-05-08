@@ -57,6 +57,12 @@
 			}
 		);
 	}
+
+	document.querySelectorAll('a[target="_blank"]').forEach(
+		link => {
+			link.setAttribute('rel', 'noopener noreferrer');
+		}
+	);
 </aui:script>
 
 <aui:script require="metal-dom/src/all/dom as dom" sandbox="<%= true %>">
