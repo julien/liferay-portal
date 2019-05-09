@@ -656,7 +656,7 @@ AUI.add(
 						var minimumRows = instance.minimumRows;
 
 						if (minimumRows) {
-							var deleteRowButtons = instance._contentBox.all('.lfr-form-row:visible .delete-row');
+							var deleteRowButtons = instance._contentBox.all('.lfr-form-row:not(.hide) .delete-row');
 
 							Liferay.Util.toggleDisabled(deleteRowButtons, deleteRowButtons.size() <= minimumRows);
 						}
