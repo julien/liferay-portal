@@ -99,7 +99,17 @@ AUI.add(
 
 						var visibleRows = contentBox.all('.lfr-form-row:visible');
 
-						if (visibleRows.size() > 1) {
+						var visibleRowsSize = visibleRows.size();
+
+						var deleteRow = visibleRowsSize > 1;
+
+						if (visibleRowsSize === 1) {
+							instance.addRow(node);
+
+							deleteRow = true;
+						}
+
+						if (deleteRow) {
 							var form = node.ancestor('form');
 
 							node.hide();
