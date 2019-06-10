@@ -30,6 +30,7 @@
 			"<rootDir>.*(node_modules)(?!.*metal.*).*$"
 		]
 	},
+	"private": true,
 	"name": "document-library-preview-document",
 	"scripts": {
 		"build": "liferay-npm-scripts build",
