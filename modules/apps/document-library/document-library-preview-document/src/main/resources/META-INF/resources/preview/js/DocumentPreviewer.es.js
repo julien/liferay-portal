@@ -263,31 +263,31 @@ DocumentPreviewer.STATE = {
 	 * Flag that indicate if currentPgae is loading.
 	 * @type {Boolean}
 	 */
-	currentPageLoading: Config.bool(),
+	currentPageLoading: Config.bool().internal(),
 
 	/**
 	 * Flag that indicate if pdf is expanded or fit to container.
 	 * @type {Boolean}
 	 */
-	expanded: Config.bool(),
+	expanded: Config.bool().internal(),
 
 	/**
 	 * Flag that indicate if 'next page' is disabled.
 	 * @type {Boolean}
 	 */
-	nextPageDisabled: Config.bool(),
+	nextPageDisabled: Config.bool().internal(),
 
 	/**
 	 * Flag that indicate if 'previous page' is disabled.
 	 * @type {Boolean}
 	 */
-	previousPageDisabled: Config.bool(),
+	previousPageDisabled: Config.bool().internal(),
 
 	/**
 	 * Flag that indicate if 'pageInput' is visible.
 	 * @type {Boolean}
 	 */
-	showPageInput: Config.bool(),
+	showPageInput: Config.bool().internal(),
 
 	/**
 	 * Path to icon images.
