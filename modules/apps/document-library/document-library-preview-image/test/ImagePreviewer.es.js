@@ -1,13 +1,21 @@
 import ImagePreviewer from '../src/main/resources/META-INF/resources/preview/js/ImagePreviewer.es';
 
+let component;
+
 describe('document-library-preview-image', () => {
+	afterEach(() => {
+		if (component) {
+			component.dispose();
+		}
+	});
+
 	it('should render an image previewer', () => {
-		const imagePreviewer = new ImagePreviewer({
+		component = new ImagePreviewer({
 			element: document.body,
 			imageURL: 'image.jpg',
 			spritemap: 'icons.svg'
 		});
 
-		expect(imagePreviewer).toMatchSnapshot();
+		expect(component).toMatchSnapshot();
 	});
 });
