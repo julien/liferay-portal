@@ -252,48 +252,7 @@ JournalEditArticleDisplayContext journalEditArticleDisplayContext = new JournalE
 	</div>
 </aui:form>
 
-<aui:script use="liferay-portlet-journal">
-	var journal = new Liferay.Portlet.Journal(
-		{
-			article: {
-				editUrl: '<%= journalEditArticleDisplayContext.getEditArticleURL() %>',
-				id: '<%= (article != null) ? HtmlUtil.escape(journalEditArticleDisplayContext.getArticleId()) : StringPool.BLANK %>',
-				title: '<%= (article != null) ? HtmlUtil.escapeJS(article.getTitle(locale)) : StringPool.BLANK %>'
-			},
-			namespace: '<portlet:namespace />',
-			'strings.saveAsDraftBeforePreview': '<liferay-ui:message key="in-order-to-preview-your-changes,-the-web-content-is-saved-as-a-draft" />'
-		}
-	);
-
-	var onDestroyPortlet = function(event) {
-		if (event.portletId === '<%= portletDisplay.getRootPortletId() %>') {
-			journal.destroy();
-
-			Liferay.detach('destroyPortlet', onDestroyPortlet);
-		}
-	};
-
-	Liferay.on('destroyPortlet', onDestroyPortlet);
-
-	var contextualSidebarButton = document.getElementById('<portlet:namespace />contextualSidebarButton');
-	var contextualSidebarContainer = document.getElementById('<portlet:namespace />contextualSidebarContainer');
-
-	if (contextualSidebarContainer && (window.innerWidth > Liferay.BREAKPOINTS.PHONE)) {
-		contextualSidebarContainer.classList.add('contextual-sidebar-visible');
-	}
-
-	if (contextualSidebarButton) {
-		contextualSidebarButton.addEventListener(
-			'click',
-			function(event) {
-				if (contextualSidebarContainer.classList.contains('contextual-sidebar-visible')) {
-					contextualSidebarContainer.classList.remove('contextual-sidebar-visible');
-
-				}
-				else {
-					contextualSidebarContainer.classList.add('contextual-sidebar-visible');
-				}
-			}
-		);
-	}
-</aui:script>
+<liferay-frontend:component
+	componentId='<%= renderResponse.getNamespace() + "JournalPortletComponent" %>'
+	module="js/JournalPortlet.es"
+/>
