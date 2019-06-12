@@ -47,6 +47,7 @@
 		]
 	},
 	"name": "frontend-js-web",
+	"main": "index.es.js",
 	"scripts": {
 		"build": "liferay-npm-scripts build",
 		"checkFormat": "liferay-npm-scripts lint",
