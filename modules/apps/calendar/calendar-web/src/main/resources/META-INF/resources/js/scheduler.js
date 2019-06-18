@@ -1011,7 +1011,6 @@ AUI.add(
 			'liferay-calendar-recurrence-converter',
 			'liferay-calendar-recurrence-util',
 			'liferay-calendar-util',
-			'liferay-node',
 			'liferay-scheduler-event-recorder',
 			'liferay-scheduler-models',
 			'liferay-store',

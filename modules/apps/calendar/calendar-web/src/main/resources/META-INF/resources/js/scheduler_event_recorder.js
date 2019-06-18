@@ -770,7 +770,6 @@ AUI.add(
 		requires: [
 			'dd-plugin',
 			'liferay-calendar-util',
-			'liferay-node',
 			'resize-plugin'
 		]
 	}
