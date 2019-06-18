@@ -1,3 +1,10 @@
+/**
+ * The Liferay Node Utility
+ *
+ * @deprecated since 7.3
+ * @module liferay-node
+ */
+
 AUI.add(
 	'liferay-node',
 	function(A) {
