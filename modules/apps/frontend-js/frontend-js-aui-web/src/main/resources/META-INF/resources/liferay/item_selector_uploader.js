@@ -41,9 +41,8 @@ AUI.add(
 
 					instance._createProgressBar();
 
-					var cancelBtn = instance._progressBarNode.oneNS(
-						instance.NS,
-						'#cancel'
+					var cancelBtn = instance._progressBarNode.one(
+						'#' + instance.NS + 'cancel'
 					);
 
 					instance._eventHandles = [
@@ -92,7 +91,7 @@ AUI.add(
 					instance._currentFile = file;
 
 					instance._progressBarNode
-						.oneNS(instance.NS, '#itemName')
+						.one('#' + instance.NS + 'itemName')
 						.html(file.get('name'));
 
 					instance.rootNode.addClass(CSS_UPLOADING);

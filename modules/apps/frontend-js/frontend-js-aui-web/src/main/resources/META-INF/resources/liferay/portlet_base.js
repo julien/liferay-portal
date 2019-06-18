@@ -42,13 +42,15 @@ AUI.add(
 
 				root = A.one(root) || instance.rootNode || A;
 
-				return root.allNS(instance.NS, selector);
+				return root.all(
+					instance._formatSelectorNS(instance.NS, selector)
+				);
 			},
 
 			byId: function(id) {
 				var instance = this;
 
-				return A.byIdNS(instance.NS, id);
+				return A.one('#' + A.Lang.String.prefix(instance.NS, id));
 			},
 
 			ns: function(str) {
@@ -62,7 +64,16 @@ AUI.add(
 
 				root = A.one(root) || instance.rootNode || A;
 
-				return root.oneNS(instance.NS, selector);
+				return root.one(
+					instance._formatSelectorNS(instance.NS, selector)
+				);
+			},
+
+			_formatSelectorNS: function(ns, selector) {
+				return selector.replace(
+					A.DOM._getRegExp('(#|\\[id=(\\"|\\\'))(?!' + ns + ')', 'g'),
+					'$1' + ns
+				);
 			},
 
 			_getNS: function(value) {
@@ -92,6 +103,6 @@ AUI.add(
 	},
 	'',
 	{
-		requires: ['aui-base', 'liferay-node']
+		requires: ['aui-base']
 	}
 );

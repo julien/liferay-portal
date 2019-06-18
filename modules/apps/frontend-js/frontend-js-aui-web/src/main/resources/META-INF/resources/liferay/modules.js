@@ -427,7 +427,7 @@
 					},
 					'liferay-portlet-base': {
 						path: 'portlet_base.js',
-						requires: ['aui-base', 'liferay-node']
+						requires: ['aui-base']
 					},
 					'liferay-portlet-url': {
 						path: 'portlet_url.js',
