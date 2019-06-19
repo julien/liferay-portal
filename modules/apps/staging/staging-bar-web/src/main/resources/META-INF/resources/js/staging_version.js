@@ -88,14 +88,11 @@ AUI.add(
 					)
 				];
 
-				var layoutRevisionDetails = A.byIdNS(
-					namespace,
-					'layoutRevisionDetails'
+				var layoutRevisionDetails = A.one(
+					'#' + namespace + 'layoutRevisionDetails'
 				);
-
-				var layoutRevisionStatus = A.byIdNS(
-					namespace,
-					'layoutRevisionStatus'
+				var layoutRevisionStatus = A.one(
+					'#' + namespace + 'layoutRevisionStatus'
 				);
 
 				if (layoutRevisionDetails) {
@@ -182,11 +179,9 @@ AUI.add(
 
 				var namespace = instance._namespace;
 
-				var layoutRevisionDetails = A.byIdNS(
-					namespace,
-					'layoutRevisionDetails'
+				var layoutRevisionDetails = A.one(
+					'#' + namespace + 'layoutRevisionDetails'
 				);
-
 				var layoutRevisionInfo = layoutRevisionDetails.one(
 					'.layout-revision-info'
 				);
@@ -195,7 +190,7 @@ AUI.add(
 					layoutRevisionInfo.addClass('loading');
 				}
 
-				var submitLink = A.byIdNS(namespace, 'submitLink');
+				var submitLink = A.one('#' + namespace + 'submitLink');
 
 				if (submitLink) {
 					submitLink.html(Liferay.Language.get('loading') + '...');

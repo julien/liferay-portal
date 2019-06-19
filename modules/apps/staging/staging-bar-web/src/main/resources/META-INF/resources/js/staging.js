@@ -17,8 +17,6 @@ AUI.add(
 
 				instance._namespace = namespace;
 
-				instance._stagingBar = A.oneNS(namespace, '#stagingBar');
-
 				instance.viewHistoryURL = config.viewHistoryURL;
 
 				Liferay.publish({
@@ -49,6 +47,6 @@ AUI.add(
 	},
 	'',
 	{
-		requires: ['aui-io-plugin-deprecated', 'aui-modal', 'liferay-node']
+		requires: ['aui-io-plugin-deprecated', 'aui-modal']
 	}
 );
