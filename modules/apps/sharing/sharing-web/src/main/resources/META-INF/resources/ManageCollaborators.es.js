@@ -374,6 +374,7 @@ ManageCollaborators.STATE = {
 	collaborators: Config.arrayOf(
 		Config.shapeOf({
 			fullName: Config.string(),
+			portraitURL: Config.string(),
 			sharingEntryExpirationDate: Config.string(),
 			sharingEntryExpirationDateTooltip: Config.string(),
 			sharingEntryId: Config.string(),
