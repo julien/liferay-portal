@@ -215,50 +215,50 @@ if (portletTitleBasedNavigation) {
 		window,
 		'<portlet:namespace />initRowsChecked',
 		function() {
-			var A = AUI();
-
-			var rowIds = A.all('input[name=<portlet:namespace />rowIds]');
-
-			rowIds.each(
+			[].slice.call(
+				document.querySelectorAll('input[name=<portlet:namespace />rowIds]')
+			).forEach(
 				function(item, index, collection) {
 					if (index >= 2) {
-						item.attr('checked', false);
+						item.checked = false;
 					}
 				}
 			);
-		},
-		['aui-base']
+		}
 	);
 
 	Liferay.provide(
 		window,
 		'<portlet:namespace />updateRowsChecked',
 		function(element) {
-			var A = AUI();
+			var rowsChecked = [].slice.call(
+				document.querySelectorAll('input[name=<portlet:namespace />rowIds]:checked')
+			);
 
-			var rowsChecked = A.all('input[name=<portlet:namespace />rowIds]:checked');
-
-			if (rowsChecked.size() > 2) {
+			if (rowsChecked.length > 2) {
 				var index = 2;
 
-				if (rowsChecked.item(2).compareTo(element)) {
+				if (rowsChecked[2] === element) {
 					index = 1;
 				}
 
-				rowsChecked.item(index).attr('checked', false);
+				rowsChecked[index].checked = false;
 			}
-		},
-		['aui-base', 'selector-css3']
+		}
 	);
-</aui:script>
 
-<aui:script use="aui-base">
 	<portlet:namespace />initRowsChecked();
 
-	A.all('input[name=<portlet:namespace />rowIds]').on(
-		'click',
-		function(event) {
-			<portlet:namespace />updateRowsChecked(event.currentTarget);
+	[].slice.call(
+		document.querySelectorAll('input[name=<portlet:namespace />rowIds]')
+	).forEach(
+		function(rowInput) {
+			rowInput.addEventListener(
+				'click',
+				function(event) {
+					<portlet:namespace />updateRowsChecked(event.currentTarget);
+				}
+			)
 		}
 	);
 </aui:script>
