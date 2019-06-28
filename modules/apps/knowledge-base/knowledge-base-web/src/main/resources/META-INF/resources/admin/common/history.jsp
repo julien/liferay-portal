@@ -182,7 +182,7 @@ if (portletTitleBasedNavigation) {
 	</liferay-ui:search-container>
 </aui:fieldset>
 
-<aui:script>
+<aui:script require="metal-dom/src/dom as dom">
 	var compareVersionsButton = document.getElementById('<portlet:namespace />compare');
 
 	if (compareVersionsButton) {
@@ -211,54 +211,43 @@ if (portletTitleBasedNavigation) {
 		);
 	}
 
-	Liferay.provide(
-		window,
-		'<portlet:namespace />initRowsChecked',
-		function() {
-			[].slice.call(
-				document.querySelectorAll('input[name=<portlet:namespace />rowIds]')
-			).forEach(
-				function(item, index, collection) {
-					if (index >= 2) {
-						item.checked = false;
-					}
+
+	function <portlet:namespace />initRowsChecked() {
+		[].slice.call(
+			document.querySelectorAll('input[name=<portlet:namespace />rowIds]')
+		).forEach(
+			function(item, index, collection) {
+				if (index >= 2) {
+					item.checked = false;
 				}
-			);
-		}
-	);
-
-	Liferay.provide(
-		window,
-		'<portlet:namespace />updateRowsChecked',
-		function(element) {
-			var rowsChecked = [].slice.call(
-				document.querySelectorAll('input[name=<portlet:namespace />rowIds]:checked')
-			);
-
-			if (rowsChecked.length > 2) {
-				var index = 2;
-
-				if (rowsChecked[2] === element) {
-					index = 1;
-				}
-
-				rowsChecked[index].checked = false;
 			}
+		);
+	}
+
+	function <portlet:namespace />updateRowsChecked(element) {
+		var rowsChecked = [].slice.call(
+			document.querySelectorAll('input[name=<portlet:namespace />rowIds]:checked')
+		);
+
+		if (rowsChecked.length > 2) {
+			var index = 2;
+
+			if (rowsChecked[2] === element) {
+				index = 1;
+			}
+
+			rowsChecked[index].checked = false;
 		}
-	);
+	}
 
 	<portlet:namespace />initRowsChecked();
 
-	[].slice.call(
-		document.querySelectorAll('input[name=<portlet:namespace />rowIds]')
-	).forEach(
-		function(rowInput) {
-			rowInput.addEventListener(
-				'click',
-				function(event) {
-					<portlet:namespace />updateRowsChecked(event.currentTarget);
-				}
-			)
+	dom.delegate(
+		document.body,
+		'click',
+		'input[name=<portlet:namespace />rowIds]',
+		function(event) {
+			<portlet:namespace />updateRowsChecked(event.delegateTarget);
 		}
 	);
 </aui:script>
