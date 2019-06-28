@@ -211,7 +211,6 @@ if (portletTitleBasedNavigation) {
 		);
 	}
 
-
 	function <portlet:namespace />initRowsChecked() {
 		[].slice.call(
 			document.querySelectorAll('input[name=<portlet:namespace />rowIds]')
