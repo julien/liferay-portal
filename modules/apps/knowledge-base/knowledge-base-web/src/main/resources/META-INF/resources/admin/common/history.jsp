@@ -212,7 +212,7 @@ if (portletTitleBasedNavigation) {
 	}
 
 	function <portlet:namespace />initRowsChecked() {
-		[].slice.call(
+		Array.from(
 			document.querySelectorAll('input[name=<portlet:namespace />rowIds]')
 		).forEach(
 			function(item, index, collection) {
@@ -224,7 +224,7 @@ if (portletTitleBasedNavigation) {
 	}
 
 	function <portlet:namespace />updateRowsChecked(element) {
-		var rowsChecked = [].slice.call(
+		var rowsChecked = Array.from(
 			document.querySelectorAll('input[name=<portlet:namespace />rowIds]:checked')
 		);
 
