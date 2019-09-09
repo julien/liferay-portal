@@ -170,14 +170,14 @@ AUI.add(
 					);
 
 					if (moveButtonsColumn) {
-						instance._moveToolbar = new A.Toolbar({
+						var moveToolbar = new A.Toolbar({
 							children: [
 								[
 									'normal',
 									'vertical',
 									{
 										cssClass: 'move-right',
-										icon: 'icon-circle-arrow-right',
+										icon: 'angle-right',
 										on: {
 											click(event) {
 												event.domEvent.preventDefault();
@@ -187,7 +187,7 @@ AUI.add(
 									},
 									{
 										cssClass: 'move-left',
-										icon: 'icon-circle-arrow-left',
+										icon: 'angle-left',
 										on: {
 											click(event) {
 												event.domEvent.preventDefault();
@@ -197,7 +197,17 @@ AUI.add(
 									}
 								]
 							]
-						}).render(moveButtonsColumn);
+						});
+
+						moveToolbar.get(
+							'toolbarRenderer'
+						).TEMPLATES.icon = Liferay.Util.getLexiconIconTpl(
+							'{cssClass}'
+						);
+
+						moveToolbar.render(moveButtonsColumn);
+
+						instance._moveToolbar = moveToolbar;
 					}
 
 					var config_reorder = {
@@ -205,7 +215,7 @@ AUI.add(
 							[
 								{
 									cssClass: 'reorder-up',
-									icon: 'icon-circle-arrow-up',
+									icon: 'angle-up',
 									on: {
 										click(event) {
 											event.domEvent.preventDefault();
@@ -214,7 +224,7 @@ AUI.add(
 								},
 								{
 									cssClass: 'reorder-down',
-									icon: 'icon-circle-arrow-down',
+									icon: 'angle-down',
 									on: {
 										click(event) {
 											event.domEvent.preventDefault();
