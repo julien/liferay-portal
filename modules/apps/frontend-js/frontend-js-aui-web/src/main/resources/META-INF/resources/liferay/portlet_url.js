@@ -12,6 +12,13 @@
  * details.
  */
 
+/**
+ * The Portlet URL Utility
+ *
+ * @deprecated since 7.3, replaced by Liferay.Util.PortletURL
+ * @module liferay-portlet-url
+ */
+
 AUI.add(
 	'liferay-portlet-url',
 	function(A) {
