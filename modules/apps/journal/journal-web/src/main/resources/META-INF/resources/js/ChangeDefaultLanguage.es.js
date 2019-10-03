@@ -19,7 +19,7 @@ import ClayLabel from '@clayui/label';
 import PropTypes from 'prop-types';
 import React, {useState, useCallback} from 'react';
 
-function ChangeDefaultLanguage(props) {
+export function ChangeDefaultLanguage(props) {
 	const [active, setActive] = useState(false);
 
 	const [selectedDefaultLanguage, setSelectedDefaultLanguage] = useState(
@@ -70,6 +70,7 @@ function ChangeDefaultLanguage(props) {
 							data-value={item.label}
 							key={item.label}
 							onClick={event => onItemClick(event, item.label)}
+							title={item.label}
 						>
 							<span className="autofit-col autofit-col-expand">
 								<span className="autofit-section">
