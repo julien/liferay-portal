@@ -6,7 +6,9 @@
 		"metal": "2.16.8",
 		"metal-dom": "2.16.8",
 		"metal-soy": "2.16.8",
-		"metal-state": "2.16.8"
+		"metal-state": "2.16.8",
+		"react": "16.9.0",
+		"react-dom": "16.9.0"
 	},
 	"name": "journal-web",
 	"scripts": {
