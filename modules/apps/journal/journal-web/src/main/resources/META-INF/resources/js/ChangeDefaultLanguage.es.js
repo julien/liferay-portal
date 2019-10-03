@@ -19,7 +19,7 @@ import ClayLabel from '@clayui/label';
 import PropTypes from 'prop-types';
 import React, {useState, useCallback} from 'react';
 
-export function ChangeDefaultLanguage(props) {
+function ChangeDefaultLanguage(props) {
 	const [active, setActive] = useState(false);
 
 	const [selectedDefaultLanguage, setSelectedDefaultLanguage] = useState(
