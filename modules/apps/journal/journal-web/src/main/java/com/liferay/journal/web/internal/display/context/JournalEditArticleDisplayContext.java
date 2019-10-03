@@ -109,23 +109,16 @@ public class JournalEditArticleDisplayContext {
 		return _availableLocales;
 	}
 
-	public Map<String, Object> getChangeDefaultLanguageSoyContext() {
-		Map<String, Object> context = new HashMap<>();
+	public Map<String, Object> getChangeDefaultLanguageData() {
+		Map<String, Object> data = new HashMap<>();
 
-		context.put("defaultLanguage", getDefaultArticleLanguageId());
+		data.put("defaultLanguage", getDefaultArticleLanguageId());
 
 		LinkedHashSet<String> uniqueLanguageIds = new LinkedHashSet<>();
 
 		uniqueLanguageIds.add(getDefaultLanguageId());
 
 		Map<String, Object> strings = new HashMap<>();
-
-		strings.put(
-			"change",
-			LanguageUtil.format(_httpServletRequest, "change", "content"));
-		strings.put(
-			"default",
-			LanguageUtil.format(_httpServletRequest, "default", "content"));
 
 		for (Locale availableLocale : getAvailableLocales()) {
 			String curLanguageId = LocaleUtil.toLanguageId(availableLocale);
@@ -140,14 +133,13 @@ public class JournalEditArticleDisplayContext {
 			uniqueLanguageIds.add(curLanguageId);
 		}
 
+		data.put("strings", strings);
+
 		List<Map<String, Object>> languages = new ArrayList<>();
 
 		for (String curLanguageId : uniqueLanguageIds) {
 			Map<String, Object> language = new HashMap<>();
 
-			language.put(
-				"checked",
-				Objects.equals(getDefaultLanguageId(), curLanguageId));
 			language.put(
 				"icon",
 				StringUtil.toLowerCase(
@@ -157,14 +149,9 @@ public class JournalEditArticleDisplayContext {
 			languages.add(language);
 		}
 
-		context.put("languages", languages);
-		context.put("namespace", _liferayPortletResponse.getNamespace());
-		context.put(
-			"spritemap",
-			_themeDisplay.getPathThemeImages() + "/lexicon/icons.svg");
-		context.put("strings", strings);
+		data.put("languages", languages);
 
-		return context;
+		return data;
 	}
 
 	public long getClassNameId() {

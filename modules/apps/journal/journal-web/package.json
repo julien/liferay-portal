@@ -1,5 +1,9 @@
 {
 	"dependencies": {
+		"@clayui/button": "3.0.0",
+		"@clayui/drop-down": "3.0.0",
+		"@clayui/icon": "3.0.0",
+		"@clayui/label": "3.0.0",
 		"clay-dropdown": "2.18.1",
 		"clay-label": "2.18.1",
 		"frontend-js-web": "*",
@@ -7,8 +11,7 @@
 		"metal-dom": "2.16.8",
 		"metal-soy": "2.16.8",
 		"metal-state": "2.16.8",
-		"react": "16.9.0",
-		"react-dom": "16.9.0"
+		"prop-types": "15.7.2"
 	},
 	"name": "journal-web",
 	"scripts": {
