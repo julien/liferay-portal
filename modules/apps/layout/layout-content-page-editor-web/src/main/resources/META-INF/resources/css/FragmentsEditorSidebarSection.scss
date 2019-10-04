@@ -130,7 +130,7 @@
 	&__panel {
 		background-color: transparent;
 
-		& a {
+		& .collapse-icon {
 			border-color: $sidebarCollapsiblePanelLineColor;
 			font-size: 12px;
 			margin-bottom: $sidebarCardMarginBottom;
