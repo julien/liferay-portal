@@ -1,0 +1,76 @@
+/**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
+import React, {useState, useEffect} from 'react';
+import Collapse from './Collapse.es';
+import SearchForm from './SearchForm.es';
+import SidebarHeader from '../SidebarHeader.es';
+import Widget from './Widget.es';
+import useSelector from '../../../store/hooks/useSelector.es';
+
+const SidebarWidgets = () => {
+	const widgets = useSelector(state => state.widgets);
+	const [searchValue, setSearchValue] = useState('');
+	const [filteredWidgets, setFilteredWidgets] = useState(widgets);
+
+	useEffect(() => {
+		const searchValueLowerCase = searchValue.toLowerCase();
+
+		setFilteredWidgets(
+			widgets
+				.map(category => {
+					return {
+						...category,
+						portlets: category.portlets.filter(
+							widget =>
+								widget.title
+									.toLowerCase()
+									.indexOf(searchValueLowerCase) !== -1
+						)
+					};
+				})
+				.filter(category => {
+					return category.portlets.length > 0;
+				})
+		);
+	}, [searchValue, widgets]);
+
+	return (
+		<>
+			<SidebarHeader>{Liferay.Language.get('widgets')}</SidebarHeader>
+
+			<div className="fragments-editor-sidebar-section__panel p-3">
+				<SearchForm onChange={setSearchValue} value={searchValue} />
+
+				{filteredWidgets.map(category => (
+					<div key={category.title}>
+						<Collapse
+							label={category.title}
+							open={searchValue.length > 0}
+						>
+							{category.portlets.map(widget => (
+								<Widget
+									key={widget.portletId}
+									widget={widget}
+								/>
+							))}
+						</Collapse>
+					</div>
+				))}
+			</div>
+		</>
+	);
+};
+
+export default SidebarWidgets;
