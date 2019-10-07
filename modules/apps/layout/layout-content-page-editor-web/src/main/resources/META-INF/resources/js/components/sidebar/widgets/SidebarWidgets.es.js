@@ -16,13 +16,24 @@ import React, {useState, useEffect} from 'react';
 import Collapse from './Collapse.es';
 import SearchForm from './SearchForm.es';
 import SidebarHeader from '../SidebarHeader.es';
-import Widget from './Widget.es';
+import SidebarWidgetsDragDrop from './SidebarWidgetsDragDrop.es';
+import useDispatch from '../../../store/hooks/useDispatch.es';
 import useSelector from '../../../store/hooks/useSelector.es';
+import Widget from './Widget.es';
 
 const SidebarWidgets = () => {
+	const dispatch = useDispatch();
 	const widgets = useSelector(state => state.widgets);
 	const [searchValue, setSearchValue] = useState('');
 	const [filteredWidgets, setFilteredWidgets] = useState(widgets);
+
+	useEffect(() => {
+		const dragDrop = new SidebarWidgetsDragDrop({dispatch});
+
+		return () => {
+			dragDrop.dispose();
+		};
+	}, [dispatch]);
 
 	useEffect(() => {
 		const searchValueLowerCase = searchValue.toLowerCase();
