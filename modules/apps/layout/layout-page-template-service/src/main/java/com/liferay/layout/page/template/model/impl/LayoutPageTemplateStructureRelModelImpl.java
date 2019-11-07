@@ -17,6 +17,7 @@ package com.liferay.layout.page.template.model.impl;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
 import com.liferay.exportimport.kernel.lar.StagedModelType;
+import com.liferay.layout.page.template.internal.util.LayoutDataConverter;
 import com.liferay.layout.page.template.model.LayoutPageTemplateStructureRel;
 import com.liferay.layout.page.template.model.LayoutPageTemplateStructureRelModel;
 import com.liferay.petra.string.StringBundler;
@@ -562,12 +563,7 @@ public class LayoutPageTemplateStructureRelModelImpl
 
 	@Override
 	public String getData() {
-		if (_data == null) {
-			return "";
-		}
-		else {
-			return _data;
-		}
+		return LayoutDataConverter.convert(_data);
 	}
 
 	@Override
