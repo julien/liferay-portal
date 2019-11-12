@@ -14,9 +14,6 @@
 
 import React from 'react';
 
-import {LAYOUT_DATA_ITEM_DEFAULT_CONFIGURATIONS} from '../config/constants/layoutDataItemDefaultConfigurations';
-import {LAYOUT_DATA_ITEM_TYPES} from '../config/constants/layoutDataItemTypes';
-
 const INITIAL_STATE = {
 	/**
 	 * A collection of dynamically loaded reducers that may be loaded from
@@ -67,21 +64,6 @@ function transformServerData(data) {
 	return {
 		...data,
 
-		fragments: data.elements,
-
-		layoutData: {
-			items: {
-				main: {
-					children: [],
-					config: {...LAYOUT_DATA_ITEM_DEFAULT_CONFIGURATIONS.root},
-					itemId: 'main',
-					parentId: null,
-					type: LAYOUT_DATA_ITEM_TYPES.root
-				}
-			},
-
-			rootItems: {main: 'main'},
-			version: 1
-		}
+		fragments: data.elements
 	};
 }
