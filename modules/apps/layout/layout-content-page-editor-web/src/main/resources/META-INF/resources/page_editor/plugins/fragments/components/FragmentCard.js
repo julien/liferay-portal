@@ -16,6 +16,9 @@ import ClayIcon from '@clayui/icon';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
+import {useDrag} from 'react-dnd';
+
+import {LAYOUT_DATA_ITEM_TYPES} from '../../../app/config/constants/layoutDataItemTypes';
 
 const ImagePreview = ({imagePreviewURL}) => {
 	if (imagePreviewURL) {
@@ -34,6 +37,15 @@ const ImagePreview = ({imagePreviewURL}) => {
 };
 
 export default function FragmentCard({imagePreviewURL, name}) {
+	const [, drag] = useDrag({
+		end(_item, _monitor) {
+			// TODO: call server to get itemId and notify app
+		},
+		item: {
+			type: LAYOUT_DATA_ITEM_TYPES.fragment
+		}
+	});
+
 	return (
 		<div
 			className={classNames(
@@ -44,6 +56,7 @@ export default function FragmentCard({imagePreviewURL, name}) {
 				'selector-button',
 				'overflow-hidden'
 			)}
+			ref={drag}
 		>
 			<ImagePreview imagePreviewURL={imagePreviewURL} />
 

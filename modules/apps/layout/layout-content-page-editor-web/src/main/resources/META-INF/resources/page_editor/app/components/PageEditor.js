@@ -14,10 +14,150 @@
 
 import classNames from 'classnames';
 import React, {useContext} from 'react';
+import {useDrop} from 'react-dnd';
 
 import {LAYOUT_DATA_ITEM_TYPES} from '../config/constants/layoutDataItemTypes';
 import {StoreContext} from '../store/index';
 import UnsafeHTML from './UnsafeHTML';
+
+function Root({children, item}) {
+	const dropItem = item;
+
+	const [{canDrop, isOver}, drop] = useDrop({
+		accept: [
+			LAYOUT_DATA_ITEM_TYPES.column,
+			LAYOUT_DATA_ITEM_TYPES.container,
+			LAYOUT_DATA_ITEM_TYPES.fragment,
+			LAYOUT_DATA_ITEM_TYPES.root,
+			LAYOUT_DATA_ITEM_TYPES.row
+		],
+		collect(monitor) {
+			return {
+				canDrop: monitor.canDrop(),
+				isOver: monitor.isOver()
+			};
+		},
+		drop(_, monitor) {
+			// At this point we don't have
+			// the dropped item's "itemId" property
+			// but we do have the "parentId" which is
+			// the id of the container in which the item
+			// was dropped
+			return {
+				itemType: monitor.getItemType(),
+				parentId: dropItem.itemId,
+				position: dropItem.children.length + 1
+			};
+		}
+	});
+
+	const active = isOver && canDrop;
+	const background = active ? 'honeydew' : 'aliceblue';
+
+	return (
+		<div ref={drop} style={{background, height: '100vh'}}>
+			{children}
+		</div>
+	);
+}
+
+function Container({children, item}) {
+	const {
+		backgroundColorCssClass,
+		backgroundImage,
+		paddingHorizontal,
+		paddingVertical,
+		type
+	} = item.config;
+
+	// eslint-disable-next-line
+	const [{canDrop, isDragging}, drop] = useDrop({
+		accept: [LAYOUT_DATA_ITEM_TYPES.fragment, LAYOUT_DATA_ITEM_TYPES.row]
+	});
+
+	return (
+		<div
+			className={classNames(`py-${paddingVertical}`, {
+				[`bg-${backgroundColorCssClass}`]: !!backgroundColorCssClass,
+				container: type === 'fixed',
+				'container-fluid': type === 'fluid',
+				[`px-${paddingHorizontal}`]: paddingHorizontal !== 3
+			})}
+			ref={drop}
+			style={
+				backgroundImage
+					? {
+							backgroundImage: `url(${backgroundImage})`,
+							backgroundPosition: '50% 50%',
+							backgroundRepeat: 'no-repeat',
+							backgroundSize: 'cover'
+					  }
+					: {}
+			}
+		>
+			{children}
+		</div>
+	);
+}
+
+function Row({children, item}) {
+	const {layoutData} = useContext(StoreContext);
+	const parent = layoutData.items[item.parentId];
+
+	// eslint-disable-next-line
+	const [{canDrop, isDragging}, drop] = useDrop({
+		accept: [LAYOUT_DATA_ITEM_TYPES.column]
+	});
+
+	const rowContent = (
+		<div
+			className={classNames('row', {
+				empty: !item.children.some(
+					childId => layoutData.items[childId].children.length
+				),
+				'no-gutters': !item.config.gutters
+			})}
+			ref={drop}
+		>
+			{children}
+		</div>
+	);
+
+	return !parent || parent.type === LAYOUT_DATA_ITEM_TYPES.root ? (
+		<div className="container-fluid p-0">{rowContent}</div>
+	) : (
+		rowContent
+	);
+}
+
+function Column({children, item}) {
+	// eslint-disable-next-line
+	const [{canDrop, isDragging}, drop] = useDrop({
+		accept: [LAYOUT_DATA_ITEM_TYPES.fragment]
+	});
+
+	const {size} = item.config;
+
+	return (
+		<div className={classNames('col', {[`col-${size}`]: size})} ref={drop}>
+			{children}
+		</div>
+	);
+}
+
+function Fragment({item}) {
+	const {fragmentEntryLinks} = useContext(StoreContext);
+
+	const fragmentEntryLink =
+		fragmentEntryLinks[item.config.fragmentEntryLinkId];
+
+	return (
+		<UnsafeHTML
+			className="fragment"
+			markup={fragmentEntryLink.content.value.content}
+		/>
+	);
+}
 
 const LAYOUT_DATA_ITEMS = {
 	[LAYOUT_DATA_ITEM_TYPES.column]: Column,
@@ -26,13 +166,6 @@ const LAYOUT_DATA_ITEMS = {
 	[LAYOUT_DATA_ITEM_TYPES.root]: Root,
 	[LAYOUT_DATA_ITEM_TYPES.row]: Row
 };
-
-export default function PageEditor() {
-	const {layoutData} = useContext(StoreContext);
-	const mainItem = layoutData.items[layoutData.rootItems.main];
-
-	return <LayoutDataItem item={mainItem} layoutData={layoutData} />;
-}
 
 function LayoutDataItem({item, layoutData}) {
 	const Component = LAYOUT_DATA_ITEMS[item.type];
@@ -52,84 +185,9 @@ function LayoutDataItem({item, layoutData}) {
 	);
 }
 
-function Column({children, item}) {
-	const {size} = item.config;
-
-	return (
-		<div className={classNames('col', {[`col-${size}`]: size})}>
-			{children}
-		</div>
-	);
-}
-
-function Container({children, item}) {
-	const {
-		backgroundColorCssClass,
-		backgroundImage,
-		paddingHorizontal,
-		paddingVertical,
-		type
-	} = item.config;
-
-	return (
-		<div
-			className={classNames(`py-${paddingVertical}`, {
-				[`bg-${backgroundColorCssClass}`]: !!backgroundColorCssClass,
-				container: type === 'fixed',
-				'container-fluid': type === 'fluid',
-				[`px-${paddingHorizontal}`]: paddingHorizontal !== 3
-			})}
-			style={
-				backgroundImage
-					? {
-							backgroundImage: `url(${backgroundImage})`,
-							backgroundPosition: '50% 50%',
-							backgroundRepeat: 'no-repeat',
-							backgroundSize: 'cover'
-					  }
-					: {}
-			}
-		>
-			{children}
-		</div>
-	);
-}
-
-function Fragment({item}) {
-	const {fragmentEntryLinks} = useContext(StoreContext);
-
-	const fragmentEntryLink =
-		fragmentEntryLinks[item.config.fragmentEntryLinkId];
-
-	return (
-		<UnsafeHTML className="fragment" markup={fragmentEntryLink.content} />
-	);
-}
-
-function Root({children}) {
-	return <>{children}</>;
-}
-
-function Row({children, item}) {
+export default function PageEditor() {
 	const {layoutData} = useContext(StoreContext);
-	const parent = layoutData.items[item.parentId];
+	const mainItem = layoutData.items[layoutData.rootItems.main];
 
-	const rowContent = (
-		<div
-			className={classNames('row', {
-				empty: !item.children.some(
-					childId => layoutData.items[childId].children.length
-				),
-				'no-gutters': !item.config.gutters
-			})}
-		>
-			{children}
-		</div>
-	);
-
-	return !parent || parent.type === LAYOUT_DATA_ITEM_TYPES.root ? (
-		<div className="container-fluid p-0">{rowContent}</div>
-	) : (
-		rowContent
-	);
+	return <LayoutDataItem item={mainItem} layoutData={layoutData} />;
 }

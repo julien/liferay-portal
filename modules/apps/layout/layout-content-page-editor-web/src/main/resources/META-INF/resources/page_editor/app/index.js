@@ -13,6 +13,8 @@
  */
 
 import React from 'react';
+import {DragDropContextProvider} from 'react-dnd';
+import HTML5Backend from 'react-dnd-html5-backend';
 
 import useThunk from '../core/hooks/useThunk';
 import App from './components/App';
@@ -41,7 +43,9 @@ function Container({data}) {
 		<ConfigContext.Provider value={config}>
 			<StoreContext.Provider value={store}>
 				<DispatchContext.Provider value={dispatch}>
-					<App />
+					<DragDropContextProvider backend={HTML5Backend}>
+						<App />
+					</DragDropContextProvider>
 				</DispatchContext.Provider>
 			</StoreContext.Provider>
 		</ConfigContext.Provider>

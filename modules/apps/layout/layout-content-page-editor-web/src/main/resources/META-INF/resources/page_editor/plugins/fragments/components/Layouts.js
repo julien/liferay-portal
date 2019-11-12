@@ -14,7 +14,9 @@
 
 import classNames from 'classnames';
 import React from 'react';
+import {useDrag} from 'react-dnd';
 
+import {LAYOUT_DATA_ITEM_TYPES} from '../../../app/config/constants/layoutDataItemTypes';
 import Collapse from '../../../common/components/Collapse';
 
 const layouts = [
@@ -39,6 +41,15 @@ const layouts = [
 ];
 
 const LayoutCard = ({layoutColumns}) => {
+	const [, drag] = useDrag({
+		end(_item, _monitor) {
+			// TODO: call server to get itemId and update layoutData
+		},
+		item: {
+			type: LAYOUT_DATA_ITEM_TYPES.container
+		}
+	});
+
 	return (
 		<button
 			aria-label={Liferay.Util.sub(
@@ -52,6 +63,7 @@ const LayoutCard = ({layoutColumns}) => {
 				'card-interactive-secondary',
 				'selector-button'
 			)}
+			ref={drag}
 			type="button"
 		>
 			<div className="card-body px-2 py-3" role="image">
