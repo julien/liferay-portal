@@ -22,8 +22,17 @@ const {useRef} = React;
  * thunks (ie. functions that dispatch actions) as well as plain actions (ie.
  * objects).
  */
-export default function useThunk([state, dispatch]) {
+export default function useThunk([state, dispatch, config]) {
 	const isMounted = useIsMounted();
+
+	const configRef = useRef();
+	const stateRef = useRef();
+
+	const getConfigRef = useRef(() => configRef.current);
+	const getStateRef = useRef(() => stateRef.current);
+
+	configRef.current = config;
+	stateRef.current = state;
 
 	// Use a ref to ensure our `dispatch` is stable across renders, just
 	// like the React-provided `dispatch` that we're wrapping.
@@ -34,7 +43,7 @@ export default function useThunk([state, dispatch]) {
 					if (isMounted()) {
 						dispatch(payload);
 					}
-				});
+				}, getStateRef.current, getConfigRef.current);
 			} else {
 				dispatch(action);
 			}

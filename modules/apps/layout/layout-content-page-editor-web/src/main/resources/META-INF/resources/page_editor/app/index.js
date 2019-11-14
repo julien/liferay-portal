@@ -36,16 +36,14 @@ function Container({data}) {
 	const config = getConfig(data);
 
 	const [store, dispatch] = useThunk(
-		useReducer(reducer, [data, config], getInitialState)
+		[ ...useReducer(reducer, [data, config], getInitialState), config ]
 	);
 
 	return (
 		<ConfigContext.Provider value={config}>
 			<StoreContext.Provider value={store}>
 				<DispatchContext.Provider value={dispatch}>
-					<DragDropContextProvider backend={HTML5Backend}>
 						<App />
-					</DragDropContextProvider>
 				</DispatchContext.Provider>
 			</StoreContext.Provider>
 		</ConfigContext.Provider>
@@ -53,5 +51,9 @@ function Container({data}) {
 }
 
 export default function(data) {
-	return <Container data={data} />;
+	return (
+		<DragDropContextProvider backend={HTML5Backend}>
+			<Container data={data} />;
+		</DragDropContextProvider>
+	);
 }

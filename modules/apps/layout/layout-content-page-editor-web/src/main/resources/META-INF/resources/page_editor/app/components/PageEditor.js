@@ -14,7 +14,7 @@
 
 import classNames from 'classnames';
 import React, {useContext} from 'react';
-import {useDrop} from 'react-dnd';
+import {useDrag, useDrop} from 'react-dnd';
 
 import {LAYOUT_DATA_ITEM_TYPES} from '../config/constants/layoutDataItemTypes';
 import {StoreContext} from '../store/index';
@@ -151,10 +151,20 @@ function Fragment({item}) {
 	const fragmentEntryLink =
 		fragmentEntryLinks[item.config.fragmentEntryLinkId];
 
+	let markup = '';
+
+	if (typeof fragmentEntryLink.content === 'string') {
+		markup = fragmentEntryLink.content;
+	} else if (fragmentEntryLink.content.value && fragmentEntryLink.content.value.content) {
+		markup = fragmentEntryLink.content.value.content;
+	} else {
+		markup = `<div>No markup from ${item.config.fragmentEntryLinkId}</div>`;
+	}
+
 	return (
 		<UnsafeHTML
 			className="fragment"
-			markup={fragmentEntryLink.content.value.content}
+			markup={markup}
 		/>
 	);
 }
@@ -167,7 +177,7 @@ const LAYOUT_DATA_ITEMS = {
 	[LAYOUT_DATA_ITEM_TYPES.row]: Row
 };
 
-function LayoutDataItem({item, layoutData}) {
+const LayoutDataItem = React.forwardRef(({item, layoutData}, ref) => {
 	const Component = LAYOUT_DATA_ITEMS[item.type];
 
 	return (
@@ -175,6 +185,7 @@ function LayoutDataItem({item, layoutData}) {
 			{item.children.map(childId => {
 				return (
 					<LayoutDataItem
+						drag={ref}
 						item={layoutData.items[childId]}
 						key={childId}
 						layoutData={layoutData}
@@ -183,7 +194,7 @@ function LayoutDataItem({item, layoutData}) {
 			})}
 		</Component>
 	);
-}
+});
 
 export default function PageEditor() {
 	const {layoutData} = useContext(StoreContext);

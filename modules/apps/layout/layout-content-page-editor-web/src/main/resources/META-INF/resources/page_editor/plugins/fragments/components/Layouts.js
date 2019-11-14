@@ -15,7 +15,6 @@
 import classNames from 'classnames';
 import React from 'react';
 import {useDrag} from 'react-dnd';
-
 import {LAYOUT_DATA_ITEM_TYPES} from '../../../app/config/constants/layoutDataItemTypes';
 import Collapse from '../../../common/components/Collapse';
 
@@ -41,9 +40,11 @@ const layouts = [
 ];
 
 const LayoutCard = ({layoutColumns}) => {
+	// const dispatch = useContext(DispatchContext);
+
 	const [, drag] = useDrag({
 		end(_item, _monitor) {
-			// TODO: call server to get itemId and update layoutData
+			// TODO: dispatch "addFragment"
 		},
 		item: {
 			type: LAYOUT_DATA_ITEM_TYPES.container

@@ -15,10 +15,11 @@
 import ClayIcon from '@clayui/icon';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, {useContext} from 'react';
 import {useDrag} from 'react-dnd';
-
 import {LAYOUT_DATA_ITEM_TYPES} from '../../../app/config/constants/layoutDataItemTypes';
+import {DispatchContext} from '../../../app/reducers/index';
+import addFragment from '../../../app/actions/addFragment';
 
 const ImagePreview = ({imagePreviewURL}) => {
 	if (imagePreviewURL) {
@@ -36,10 +37,27 @@ const ImagePreview = ({imagePreviewURL}) => {
 	);
 };
 
-export default function FragmentCard({imagePreviewURL, name}) {
+export default function FragmentCard({
+	imagePreviewURL,
+	fragmentKey,
+	fragmentGroupId,
+	name
+}) {
+	const dispatch = useContext(DispatchContext);
+
 	const [, drag] = useDrag({
-		end(_item, _monitor) {
-			// TODO: call server to get itemId and notify app
+		end(_item, monitor) {
+			const {
+				parentId,
+				position
+			} = monitor.getDropResult();
+
+			dispatch(addFragment({
+				fragmentKey,
+				fragmentGroupId,
+				parentId,
+				position
+			}));
 		},
 		item: {
 			type: LAYOUT_DATA_ITEM_TYPES.fragment

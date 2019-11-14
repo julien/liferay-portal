@@ -12,6 +12,7 @@
  * details.
  */
 
+export const ADD_FRAGMENT_ENTRY_LINK = 'ADD_FRAGMENT_ENTRY_LINK';
 export const ADD_ITEM = 'ADD_ITEM';
 export const DISCARD = 'DISCARD';
 export const LOAD_REDUCER = 'LOAD_REDUCER';
