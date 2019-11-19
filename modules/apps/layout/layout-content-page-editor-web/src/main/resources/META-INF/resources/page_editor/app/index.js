@@ -16,11 +16,12 @@ import React from 'react';
 import {DragDropContextProvider} from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 
-import useThunk from '../core/hooks/useThunk';
-import App from './components/App';
-import {setConfig} from './config/index';
 import {DispatchContext, reducer} from './reducers/index';
+import {setConfig} from './config/index';
 import {StoreContext, getInitialState} from './store/index';
+import App from './components/App';
+import FloatingToolbarProvider from './components/FloatingToolbarProvider';
+import useThunk from '../core/hooks/useThunk';
 
 const {useReducer} = React;
 
@@ -42,7 +43,9 @@ function Container({data}) {
 	return (
 		<StoreContext.Provider value={state}>
 			<DispatchContext.Provider value={dispatch}>
-				<App />
+				<FloatingToolbarProvider>
+					<App />
+				</FloatingToolbarProvider>
 			</DispatchContext.Provider>
 		</StoreContext.Provider>
 	);
