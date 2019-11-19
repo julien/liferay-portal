@@ -13,9 +13,14 @@
  */
 
 import classNames from 'classnames';
-import React, {useContext} from 'react';
+import React, {useContext, useRef} from 'react';
 import {useDrag, useDrop} from 'react-dnd';
 
+import useOnClickOutside from '../../core/hooks/useOnClickOutside';
+import hideFloatingToolbar from '../actions/hideFloatingToolbar';
+import showFloatingToolbar from '../actions/showFloatingToolbar';
+import {FloatingToolbarContext} from '../components/FloatingToolbarProvider';
+import {LAYOUT_DATA_FLOATING_TOOLBAR_BUTTONS} from '../config/constants/layoutDataFloatingToolbarButtons';
 import {LAYOUT_DATA_ITEM_TYPES} from '../config/constants/layoutDataItemTypes';
 import {StoreContext} from '../store/index';
 import UnsafeHTML from './UnsafeHTML';
@@ -75,6 +80,18 @@ function Container({children, item}) {
 		accept: [LAYOUT_DATA_ITEM_TYPES.fragment, LAYOUT_DATA_ITEM_TYPES.row]
 	});
 
+	const {dispatch} = useContext(FloatingToolbarContext);
+
+	const containerRef = useRef(null);
+
+	useOnClickOutside(containerRef, () =>
+		dispatch(
+			hideFloatingToolbar({
+				targetContainerRef: containerRef
+			})
+		)
+	);
+
 	return (
 		<div
 			className={classNames(`py-${paddingVertical}`, {
@@ -83,7 +100,24 @@ function Container({children, item}) {
 				'container-fluid': type === 'fluid',
 				[`px-${paddingHorizontal}`]: paddingHorizontal !== 3
 			})}
-			ref={drop}
+			ref={node => {
+				containerRef.current = node;
+				drop(node);
+			}}
+			onClick={event => {
+				event.preventDefault();
+
+				dispatch(
+					showFloatingToolbar({
+						buttons: [
+							LAYOUT_DATA_FLOATING_TOOLBAR_BUTTONS.backgroundColor,
+							LAYOUT_DATA_FLOATING_TOOLBAR_BUTTONS.edit,
+							LAYOUT_DATA_FLOATING_TOOLBAR_BUTTONS.spacing,
+						],
+						targetContainerRef: containerRef
+					})
+				);
+			}}
 			style={
 				backgroundImage
 					? {
@@ -153,9 +187,24 @@ function Fragment({item}) {
 
 	let markup = '';
 
+	const {dispatch} = useContext(FloatingToolbarContext);
+
+	const fragmentRef = useRef(null);
+
+	useOnClickOutside(fragmentRef, () =>
+		dispatch(
+			hideFloatingToolbar({
+				targetContainerRef: fragmentRef
+			})
+		)
+	);
+
 	if (typeof fragmentEntryLink.content === 'string') {
 		markup = fragmentEntryLink.content;
-	} else if (fragmentEntryLink.content.value && fragmentEntryLink.content.value.content) {
+	} else if (
+		fragmentEntryLink.content.value &&
+		fragmentEntryLink.content.value.content
+	) {
 		markup = fragmentEntryLink.content.value.content;
 	} else {
 		markup = `<div>No markup from ${item.config.fragmentEntryLinkId}</div>`;
@@ -165,6 +214,20 @@ function Fragment({item}) {
 		<UnsafeHTML
 			className="fragment"
 			markup={markup}
+			onClick={event => {
+				event.preventDefault();
+
+				dispatch(
+					showFloatingToolbar({
+						buttons: [
+							LAYOUT_DATA_FLOATING_TOOLBAR_BUTTONS.backgroundColor,
+							LAYOUT_DATA_FLOATING_TOOLBAR_BUTTONS.duplicateFragment
+						],
+						targetContainerRef: fragmentRef
+					})
+				);
+			}}
+			ref={fragmentRef}
 		/>
 	);
 }
