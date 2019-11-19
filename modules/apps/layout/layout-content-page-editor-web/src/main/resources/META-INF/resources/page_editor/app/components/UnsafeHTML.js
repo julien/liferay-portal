@@ -12,13 +12,15 @@
  * details.
  */
 
-import React from 'react';
+import React, {forwardRef} from 'react';
 
-export default function UnsafeHTML({TagName = 'div', className = '', markup}) {
-	return (
+export default forwardRef(
+	({TagName = 'div', className = '', markup, ...otherProps}, ref) => (
 		<TagName
+			{...otherProps}
 			className={className}
 			dangerouslySetInnerHTML={{__html: markup}}
+			ref={ref}
 		/>
-	);
-}
+	)
+);

@@ -12,13 +12,19 @@
  * details.
  */
 
-export const ADD_FRAGMENT_ENTRY_LINK = 'ADD_FRAGMENT_ENTRY_LINK';
-export const ADD_ITEM = 'ADD_ITEM';
-export const ALIGN_FLOATING_TOOLBAR = 'ALIGN_FLOATING_TOOLBAR';
-export const DISCARD = 'DISCARD';
-export const HIDE_FLOATING_TOOLBAR = 'HIDE_FLOATING_TOOLBAR';
-export const LOAD_REDUCER = 'LOAD_REDUCER';
-export const PUBLISH = 'PUBLISH';
-export const REMOVE_ITEM = 'REMOVE_ITEM';
-export const SHOW_FLOATING_TOOLBAR = 'SHOW_FLOATING_TOOLBAR';
-export const UNLOAD_REDUCER = 'UNLOAD_REDUCER';
+import {SHOW_FLOATING_TOOLBAR as type} from './types';
+
+const ACTION = {type};
+
+/**
+ * @param {Array<object>} buttons
+ * @param {object} targetContainerRef
+ * @return {object}
+ */
+export default function showFloatingToolbar({buttons, targetContainerRef}) {
+	return {
+		...ACTION,
+		buttons,
+		targetContainerRef
+	};
+}

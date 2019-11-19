@@ -12,13 +12,38 @@
  * details.
  */
 
-export const ADD_FRAGMENT_ENTRY_LINK = 'ADD_FRAGMENT_ENTRY_LINK';
-export const ADD_ITEM = 'ADD_ITEM';
-export const ALIGN_FLOATING_TOOLBAR = 'ALIGN_FLOATING_TOOLBAR';
-export const DISCARD = 'DISCARD';
-export const HIDE_FLOATING_TOOLBAR = 'HIDE_FLOATING_TOOLBAR';
-export const LOAD_REDUCER = 'LOAD_REDUCER';
-export const PUBLISH = 'PUBLISH';
-export const REMOVE_ITEM = 'REMOVE_ITEM';
-export const SHOW_FLOATING_TOOLBAR = 'SHOW_FLOATING_TOOLBAR';
-export const UNLOAD_REDUCER = 'UNLOAD_REDUCER';
+import {TYPES} from '../actions/index';
+
+export default function floatingToolbarReducer(state, {type, ...payload}) {
+	let nextState = state;
+
+	switch (type) {
+		case TYPES.ALIGN_FLOATING_TOOLBAR:
+			nextState = {
+				...state,
+				...payload
+			};
+
+			break;
+		case TYPES.SHOW_FLOATING_TOOLBAR:
+			nextState = {
+				...state,
+				...payload,
+				show: true
+			};
+
+			break;
+		case TYPES.HIDE_FLOATING_TOOLBAR:
+			nextState = {
+				...state,
+				...payload,
+				show: false
+			};
+
+			break;
+		default:
+			break;
+	}
+
+	return nextState;
+}

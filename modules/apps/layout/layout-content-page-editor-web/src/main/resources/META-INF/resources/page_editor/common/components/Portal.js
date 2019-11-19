@@ -12,13 +12,25 @@
  * details.
  */
 
-export const ADD_FRAGMENT_ENTRY_LINK = 'ADD_FRAGMENT_ENTRY_LINK';
-export const ADD_ITEM = 'ADD_ITEM';
-export const ALIGN_FLOATING_TOOLBAR = 'ALIGN_FLOATING_TOOLBAR';
-export const DISCARD = 'DISCARD';
-export const HIDE_FLOATING_TOOLBAR = 'HIDE_FLOATING_TOOLBAR';
-export const LOAD_REDUCER = 'LOAD_REDUCER';
-export const PUBLISH = 'PUBLISH';
-export const REMOVE_ITEM = 'REMOVE_ITEM';
-export const SHOW_FLOATING_TOOLBAR = 'SHOW_FLOATING_TOOLBAR';
-export const UNLOAD_REDUCER = 'UNLOAD_REDUCER';
+import React, {useRef, useEffect} from 'react';
+import {createPortal} from 'react-dom';
+
+const Portal = ({children}) => {
+	const portalRef = useRef(document.createElement('div'));
+
+	useEffect(() => {
+		if (document.body && portalRef.current) {
+			document.body.appendChild(portalRef.current);
+		}
+
+		return () => {
+			if (document.body && portalRef.current) {
+				document.body.removeChild(portalRef.current);
+			}
+		};
+	}, []);
+
+	return portalRef.current ? createPortal(children, portalRef.current) : children;
+};
+
+export default Portal;
