@@ -18,9 +18,12 @@ import HTML5Backend from 'react-dnd-html5-backend';
 
 import useThunk from '../core/hooks/useThunk';
 import App from './components/App';
-import {ConfigContext, getConfig} from './config/index';
+import {getConfig} from './config/index';
 import {DispatchContext, reducer} from './reducers/index';
 import {StoreContext, getInitialState} from './store/index';
+import App from './components/App';
+import FloatingToolbarProvider from './components/FloatingToolbarProvider';
+import useThunk from '../core/hooks/useThunk';
 
 const {useReducer} = React;
 
@@ -40,13 +43,13 @@ function Container({data}) {
 	);
 
 	return (
-		<ConfigContext.Provider value={config}>
-			<StoreContext.Provider value={store}>
-				<DispatchContext.Provider value={dispatch}>
+		<StoreContext.Provider value={store}>
+			<DispatchContext.Provider value={dispatch}>
+				<FloatingToolbarProvider>
 					<App />
-				</DispatchContext.Provider>
-			</StoreContext.Provider>
-		</ConfigContext.Provider>
+				</FloatingToolbarProvider>
+			</DispatchContext.Provider>
+		</StoreContext.Provider>
 	);
 }
 

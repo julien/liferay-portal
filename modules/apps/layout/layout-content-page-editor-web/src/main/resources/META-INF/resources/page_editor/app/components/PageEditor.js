@@ -17,8 +17,15 @@ import {useIsMounted} from 'frontend-js-react-web';
 import React, {useContext, useEffect, useRef} from 'react';
 import {useDrop} from 'react-dnd';
 
+import {FloatingToolbarContext} from '../components/FloatingToolbarProvider';
+import {LAYOUT_DATA_FLOATING_TOOLBAR_BUTTONS} from '../config/constants/layoutDataFloatingToolbarButtons';
 import {LAYOUT_DATA_ITEM_TYPES} from '../config/constants/layoutDataItemTypes';
-import {ConfigContext} from '../config/index';
+import {moveItem} from '../actions/index';
+import {Permission} from '../../common/index';
+import hideFloatingToolbar from '../actions/hideFloatingToolbar';
+import showFloatingToolbar from '../actions/showFloatingToolbar';
+import useOnClickOutside from '../../core/hooks/useOnClickOutside';
+import {getConfig} from '../config/index';
 import {DispatchContext} from '../reducers/index';
 import {StoreContext} from '../store/index';
 import updateLayoutData from '../thunks/updateLayoutData';
@@ -94,6 +101,18 @@ function Container({children, item}) {
 		}
 	});
 
+	const {dispatch} = useContext(FloatingToolbarContext);
+
+	const containerRef = useRef(null);
+
+	useOnClickOutside(containerRef, () =>
+		dispatch(
+			hideFloatingToolbar({
+				targetContainerRef: containerRef
+			})
+		)
+	);
+
 	return (
 		<TopperBar item={item} name="Container">
 			<div
@@ -103,7 +122,24 @@ function Container({children, item}) {
 					'container-fluid': type === 'fluid',
 					[`px-${paddingHorizontal}`]: paddingHorizontal !== 3
 				})}
-				ref={drop}
+				ref={node => {
+					containerRef.current = node;
+					drop(node);
+				}}
+				onClick={event => {
+					event.preventDefault();
+	
+					dispatch(
+						showFloatingToolbar({
+							buttons: [
+								LAYOUT_DATA_FLOATING_TOOLBAR_BUTTONS.backgroundColor,
+								LAYOUT_DATA_FLOATING_TOOLBAR_BUTTONS.edit,
+								LAYOUT_DATA_FLOATING_TOOLBAR_BUTTONS.spacing,
+							],
+							targetContainerRef: containerRef
+						})
+					);
+				}}
 				style={
 					backgroundImage
 						? {
@@ -196,6 +232,18 @@ function Fragment({item}) {
 
 	let markup = '';
 
+	const {dispatch} = useContext(FloatingToolbarContext);
+
+	const fragmentRef = useRef(null);
+
+	useOnClickOutside(fragmentRef, () =>
+		dispatch(
+			hideFloatingToolbar({
+				targetContainerRef: fragmentRef
+			})
+		)
+	);
+
 	if (typeof fragmentEntryLink.content === 'string') {
 		markup = fragmentEntryLink.content;
 	} else if (
@@ -209,7 +257,24 @@ function Fragment({item}) {
 
 	return (
 		<TopperBar item={item} name={fragmentEntryLink.name}>
-			<UnsafeHTML className="fragment" markup={markup} />
+			<UnsafeHTML
+				className="fragment"
+				markup={markup}
+				onClick={event => {
+					event.preventDefault();
+
+					dispatch(
+						showFloatingToolbar({
+							buttons: [
+								LAYOUT_DATA_FLOATING_TOOLBAR_BUTTONS.backgroundColor,
+								LAYOUT_DATA_FLOATING_TOOLBAR_BUTTONS.duplicateFragment
+							],
+							targetContainerRef: fragmentRef
+						})
+					);
+				}}
+				ref={fragmentRef}
+			/>
 		</TopperBar>
 	);
 }
