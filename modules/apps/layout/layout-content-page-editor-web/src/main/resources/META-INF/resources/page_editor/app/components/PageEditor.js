@@ -129,6 +129,11 @@ function Container({children, item}) {
 				onClick={event => {
 					event.preventDefault();
 	
+					/**
+					 * Mocked buttons to FloatingToolbar. However, the mechanism needs
+					 * just dispatch an action with previously-defined-constants to render
+					 * FloatingToolbar buttons.
+					 */
 					dispatch(
 						showFloatingToolbar({
 							buttons: [
@@ -263,6 +268,11 @@ function Fragment({item}) {
 				onClick={event => {
 					event.preventDefault();
 
+					/**
+					 * Mocked buttons to FloatingToolbar. However, the mechanism needs
+					 * just dispatch an action with previously-defined-constants to render
+					 * FloatingToolbar buttons.
+					 */
 					dispatch(
 						showFloatingToolbar({
 							buttons: [
