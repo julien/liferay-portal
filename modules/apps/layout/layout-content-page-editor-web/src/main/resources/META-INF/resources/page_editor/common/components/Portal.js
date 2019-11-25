@@ -30,7 +30,9 @@ const Portal = ({children}) => {
 		};
 	}, []);
 
-	return portalRef.current ? createPortal(children, portalRef.current) : children;
+	return portalRef.current
+		? createPortal(children, portalRef.current)
+		: children;
 };
 
 export default Portal;

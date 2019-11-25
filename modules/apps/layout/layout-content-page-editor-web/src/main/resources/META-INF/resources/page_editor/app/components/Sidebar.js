@@ -37,7 +37,7 @@ const {Suspense, useCallback, useContext, useEffect} = React;
 const swallow = [value => value, _error => undefined];
 
 export default function Sidebar() {
-	const config = useContext(ConfigContext);
+	const config = getConfig();
 	const dispatch = useContext(DispatchContext);
 	const store = useContext(StoreContext);
 

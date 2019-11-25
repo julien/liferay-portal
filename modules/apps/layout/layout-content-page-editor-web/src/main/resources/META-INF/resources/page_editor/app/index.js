@@ -23,7 +23,8 @@ import {DispatchContext, reducer} from './reducers/index';
 import {StoreContext, getInitialState} from './store/index';
 import App from './components/App';
 import FloatingToolbarProvider from './components/FloatingToolbarProvider';
-import useThunk from '../core/hooks/useThunk';
+import {DispatchContext, reducer} from './reducers/index';
+import {StoreContext, getInitialState} from './store/index';
 
 const {useReducer} = React;
 
