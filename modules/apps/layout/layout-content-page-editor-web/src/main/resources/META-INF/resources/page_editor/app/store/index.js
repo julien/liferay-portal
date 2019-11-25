@@ -18,6 +18,8 @@ import React from 'react';
 import {LAYOUT_DATA_ITEM_DEFAULT_CONFIGURATIONS} from '../config/constants/layoutDataItemDefaultConfigurations';
 import {LAYOUT_DATA_ITEM_TYPES} from '../config/constants/layoutDataItemTypes';
 
+import {getConfig} from '../config/index';
+
 const INITIAL_STATE = {
 	/**
 	 * A collection of dynamically loaded reducers that may be loaded from
@@ -46,10 +48,12 @@ export const StoreContext = React.createContext(INITIAL_STATE);
  * (see the `useState` hook) or a in more localized context objects that apply
  * to specific subtrees.
  */
-export function getInitialState([data, config]) {
+export function getInitialState(data) {
 	const state = {
 		...transformServerData(data)
 	};
+
+	const config = getConfig();
 
 	// Exclude keys that were partitioned off into config.
 	Object.keys(config).forEach(key => {
