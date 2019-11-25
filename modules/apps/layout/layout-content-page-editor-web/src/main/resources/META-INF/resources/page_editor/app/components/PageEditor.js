@@ -19,14 +19,14 @@ import {useIsMounted} from 'frontend-js-react-web';
 import React, {useContext, useState, useEffect, useRef} from 'react';
 import {useDrag, useDrop} from 'react-dnd';
 
+import {Permission} from '../../common/index';
+import useOnClickOutside from '../../core/hooks/useOnClickOutside';
+import hideFloatingToolbar from '../actions/hideFloatingToolbar';
+import {moveItem} from '../actions/index';
+import showFloatingToolbar from '../actions/showFloatingToolbar';
 import {FloatingToolbarContext} from '../components/FloatingToolbarProvider';
 import {LAYOUT_DATA_FLOATING_TOOLBAR_BUTTONS} from '../config/constants/layoutDataFloatingToolbarButtons';
 import {LAYOUT_DATA_ITEM_TYPES} from '../config/constants/layoutDataItemTypes';
-import {moveItem} from '../actions/index';
-import {Permission} from '../../common/index';
-import hideFloatingToolbar from '../actions/hideFloatingToolbar';
-import showFloatingToolbar from '../actions/showFloatingToolbar';
-import useOnClickOutside from '../../core/hooks/useOnClickOutside';
 import {getConfig} from '../config/index';
 import {DispatchContext} from '../reducers/index';
 import {StoreContext} from '../store/index';
@@ -280,13 +280,9 @@ function Container({children, item}) {
 					'container-fluid': type === 'fluid',
 					[`px-${paddingHorizontal}`]: paddingHorizontal !== 3
 				})}
-				ref={node => {
-					containerRef.current = node;
-					drop(node);
-				}}
 				onClick={event => {
 					event.preventDefault();
-	
+
 					/**
 					 * Mocked buttons to FloatingToolbar. However, the mechanism needs
 					 * just dispatch an action with previously-defined-constants to render
@@ -297,11 +293,15 @@ function Container({children, item}) {
 							buttons: [
 								LAYOUT_DATA_FLOATING_TOOLBAR_BUTTONS.backgroundColor,
 								LAYOUT_DATA_FLOATING_TOOLBAR_BUTTONS.edit,
-								LAYOUT_DATA_FLOATING_TOOLBAR_BUTTONS.spacing,
+								LAYOUT_DATA_FLOATING_TOOLBAR_BUTTONS.spacing
 							],
 							targetContainerRef: containerRef
 						})
 					);
+				}}
+				ref={node => {
+					containerRef.current = node;
+					drop(node);
 				}}
 				style={
 					backgroundImage

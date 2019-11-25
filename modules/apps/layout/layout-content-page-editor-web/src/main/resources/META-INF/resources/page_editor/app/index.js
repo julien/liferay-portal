@@ -16,12 +16,12 @@ import React from 'react';
 import {DragDropContextProvider} from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 
-import {DispatchContext, reducer} from './reducers/index';
-import {setConfig} from './config/index';
-import {StoreContext, getInitialState} from './store/index';
+import useThunk from '../core/hooks/useThunk';
 import App from './components/App';
 import FloatingToolbarProvider from './components/FloatingToolbarProvider';
-import useThunk from '../core/hooks/useThunk';
+import {setConfig} from './config/index';
+import {DispatchContext, reducer} from './reducers/index';
+import {StoreContext, getInitialState} from './store/index';
 
 const {useReducer} = React;
 
