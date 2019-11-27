@@ -40,7 +40,7 @@ const LayoutElementCard = ({label, layoutColumns}) => {
 			// TODO: Figure out what should go in this config object
 			const config = {};
 
-			const {parentId, position} = monitor.getDropResult();
+			const {position, siblingId} = monitor.getDropResult();
 
 			const itemId = `layout-${Date.now()}`;
 			const itemType = item.type;
@@ -50,8 +50,8 @@ const LayoutElementCard = ({label, layoutColumns}) => {
 					config,
 					itemId,
 					itemType,
-					parentId,
-					position
+					position,
+					siblingId
 				})
 			);
 		},
