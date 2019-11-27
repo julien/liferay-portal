@@ -12,234 +12,20 @@
  * details.
  */
 
-import ClayButton from '@clayui/button';
-import ClayIcon from '@clayui/icon';
 import classNames from 'classnames';
 import {useIsMounted} from 'frontend-js-react-web';
-import React, {useContext, useState, useEffect, useRef} from 'react';
-import {useDrag, useDrop} from 'react-dnd';
+import React, {useContext, useEffect, useRef} from 'react';
 
-import {Permission} from '../../common/index';
-import {moveItem} from '../actions/index';
 import {LAYOUT_DATA_ITEM_TYPES} from '../config/constants/layoutDataItemTypes';
 import {ConfigContext} from '../config/index';
 import {DispatchContext} from '../reducers/index';
 import {StoreContext} from '../store/index';
 import updateLayoutData from '../thunks/updateLayoutData';
-import Topper, {
-	TopperProvider,
-	TopperContext,
-	TOPPER_ACTIVE,
-	TOPPER_HOVER
-} from './Topper';
+import {TopperProvider} from './Topper';
+import TopperBar from './TopperBar';
 import UnsafeHTML from './UnsafeHTML';
 
-function Root({children, item}) {
-	const dropItem = item;
-
-	const [{canDrop, isOver}, drop] = useDrop({
-		accept: [
-			LAYOUT_DATA_ITEM_TYPES.column,
-			LAYOUT_DATA_ITEM_TYPES.container,
-			LAYOUT_DATA_ITEM_TYPES.fragment,
-			LAYOUT_DATA_ITEM_TYPES.root,
-			LAYOUT_DATA_ITEM_TYPES.row
-		],
-		collect(monitor) {
-			return {
-				canDrop: monitor.canDrop(),
-				isOver: monitor.isOver({shallow: true})
-			};
-		},
-		drop(_, monitor) {
-			if (!monitor.didDrop()) {
-				return {
-					itemType: monitor.getItemType(),
-					parentId: dropItem.itemId,
-					position: dropItem.children.length + 1
-				};
-			}
-		}
-	});
-
-	const active = isOver && canDrop;
-	const background = active ? 'honeydew' : 'aliceblue';
-
-	return (
-		<TopperProvider>
-			<div ref={drop} style={{background, height: '100vh'}}>
-				{children}
-			</div>
-		</TopperProvider>
-	);
-}
-
-const TopperBar = ({children, item, name}) => {
-	const containerRef = useRef(null);
-	const [dragHover, setDragHover] = useState(null);
-	const [{active, hover}, dispatch] = useContext(TopperContext);
-	const {layoutData} = useContext(StoreContext);
-	const dispatchStore = useContext(DispatchContext);
-
-	const [{isDragging}, drag] = useDrag({
-		collect: monitor => ({
-			isDragging: monitor.isDragging()
-		}),
-		end(_item, _monitor) {
-			const {itemId, position, siblingId} = _monitor.getDropResult();
-
-			dispatchStore(moveItem({itemId, position, siblingId}));
-		},
-		item: {
-			...item,
-			type: LAYOUT_DATA_ITEM_TYPES[item.type]
-		}
-	});
-
-	const [{isOver}, drop] = useDrop({
-		accept: [LAYOUT_DATA_ITEM_TYPES.fragment],
-		collect(_monitor) {
-			return {
-				isOver: _monitor.isOver({shallow: true})
-			};
-		},
-		drop(_item, _monitor) {
-			if (!_monitor.didDrop()) {
-				return {
-					itemId: _item.itemId,
-					itemType: _monitor.getItemType(),
-					position: dragHover,
-					siblingId: item.itemId
-				};
-			}
-		},
-		hover(_item, _monitor) {
-			const dragId = _item.itemId;
-			const dragParentId = _item.parentId;
-			const hoverId = item.itemId;
-
-			// Don't replace items with themselves
-			if (dragId === hoverId) {
-				setDragHover(null);
-
-				return;
-			}
-
-			// Determine rectangle on screen
-			const hoverBoundingRect = containerRef.current.getBoundingClientRect();
-
-			// Get vertical middle
-			const hoverMiddleY =
-				(hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
-
-			// Determine mouse position
-			const clientOffset = _monitor.getClientOffset();
-
-			// Get pixels to the top
-			const hoverClientY = clientOffset.y - hoverBoundingRect.top;
-
-			const parentChildren = layoutData.items[dragParentId].children;
-
-			const dragIndex = parentChildren.findIndex(
-				child => child === dragId
-			);
-
-			// When dragging downwards, only move when the cursor is below 50%
-			// When dragging upwards, only move when the cursor is above 50%
-			// Dragging downwards
-			if (
-				parentChildren[dragIndex + 1] !== hoverId &&
-				hoverClientY < hoverMiddleY
-			) {
-				setDragHover(0);
-				return;
-			}
-
-			// Dragging upwards
-			if (
-				parentChildren[dragIndex - 1] !== hoverId &&
-				hoverClientY > hoverMiddleY
-			) {
-				setDragHover(1);
-				return;
-			}
-
-			setDragHover(null);
-		}
-	});
-
-	return (
-		<div
-			className={classNames(
-				'fragments-editor__drag-source fragments-editor__drag-source--fragment fragments-editor__drop-target fragments-editor__topper-wrapper fragment-entry-link-wrapper',
-				{
-					'fragments-editor__topper-wrapper--active':
-						active === item.itemId,
-					'fragments-editor__topper-wrapper--hovered fragment-entry-link-wrapper--hovered':
-						hover === item.itemId,
-					'fragments-editor-border-bottom': dragHover === 1 && isOver,
-					'fragments-editor-border-top': dragHover === 0 && isOver
-				}
-			)}
-			onClick={event => {
-				event.stopPropagation();
-
-				dispatch({payload: item.itemId, type: TOPPER_ACTIVE});
-			}}
-			onMouseLeave={event => {
-				event.stopPropagation();
-
-				dispatch({payload: null, type: TOPPER_HOVER});
-			}}
-			onMouseOver={event => {
-				if (!isDragging) {
-					event.stopPropagation();
-
-					dispatch({payload: item.itemId, type: TOPPER_HOVER});
-				}
-			}}
-			ref={containerRef}
-		>
-			<Permission>
-				<Topper>
-					<Topper.Item className="pr-0" isDragHandler ref={drag}>
-						<ClayIcon
-							className="fragments-editor__topper__drag-icon fragments-editor__topper__icon"
-							symbol="drag"
-						/>
-					</Topper.Item>
-					<Topper.Item expand isDragHandler isTitle ref={drag}>
-						{name}
-					</Topper.Item>
-					<Topper.Item>
-						<ClayButton displayType="unstyled" small>
-							<ClayIcon
-								className="fragments-editor__topper__icon"
-								symbol="comments"
-							/>
-						</ClayButton>
-					</Topper.Item>
-					<Topper.Item>
-						<ClayButton displayType="unstyled" small>
-							<ClayIcon
-								className="fragments-editor__topper__icon"
-								symbol="times-circle"
-							/>
-						</ClayButton>
-					</Topper.Item>
-				</Topper>
-			</Permission>
-			<div
-				className={classNames('fragment-entry-link-content', {
-					dragged: isDragging
-				})}
-				ref={drop}
-			>
-				{children}
-			</div>
-		</div>
-	);
-};
+const Root = ({children}) => <div style={{height: '100%'}}>{children}</div>;
 
 function Container({children, item}) {
 	const {
@@ -250,44 +36,32 @@ function Container({children, item}) {
 		type
 	} = item.config;
 
-	const [, drop] = useDrop({
-		accept: [LAYOUT_DATA_ITEM_TYPES.fragment, LAYOUT_DATA_ITEM_TYPES.row]
-	});
-
 	return (
-		<TopperBar item={item} name="Container">
-			<div
-				className={classNames(`container py-${paddingVertical}`, {
-					[`bg-${backgroundColorCssClass}`]: !!backgroundColorCssClass,
-					container: type === 'fixed',
-					'container-fluid': type === 'fluid',
-					[`px-${paddingHorizontal}`]: paddingHorizontal !== 3
-				})}
-				ref={drop}
-				style={
-					backgroundImage
-						? {
-								backgroundImage: `url(${backgroundImage})`,
-								backgroundPosition: '50% 50%',
-								backgroundRepeat: 'no-repeat',
-								backgroundSize: 'cover'
-						  }
-						: {}
-				}
-			>
-				{children}
-			</div>
-		</TopperBar>
+		<div
+			className={classNames(`container py-${paddingVertical}`, {
+				[`bg-${backgroundColorCssClass}`]: !!backgroundColorCssClass,
+				container: type === 'fixed',
+				'container-fluid': type === 'fluid',
+				[`px-${paddingHorizontal}`]: paddingHorizontal !== 3
+			})}
+			style={
+				backgroundImage
+					? {
+							backgroundImage: `url(${backgroundImage})`,
+							backgroundPosition: '50% 50%',
+							backgroundRepeat: 'no-repeat',
+							backgroundSize: 'cover'
+					  }
+					: {}
+			}
+		>
+			{children}
+		</div>
 	);
 }
 
-function Row({children, item}) {
-	const {layoutData} = useContext(StoreContext);
+function Row({children, item, layoutData}) {
 	const parent = layoutData.items[item.parentId];
-
-	const [, drop] = useDrop({
-		accept: [LAYOUT_DATA_ITEM_TYPES.column]
-	});
 
 	const rowContent = (
 		<div
@@ -297,7 +71,6 @@ function Row({children, item}) {
 				),
 				'no-gutters': !item.config.gutters
 			})}
-			ref={drop}
 		>
 			{children}
 		</div>
@@ -310,43 +83,18 @@ function Row({children, item}) {
 	);
 }
 
-function Column({children, item}) {
-	const containerRef = useRef(null);
-
-	const [, drop] = useDrop({
-		accept: [LAYOUT_DATA_ITEM_TYPES.fragment],
-		collect(_monitor) {
-			return {
-				canDrop: _monitor.canDrop(),
-				isOver: _monitor.isOver({shallow: true})
-			};
-		},
-		drop(_item, _monitor) {
-			if (!_monitor.didDrop()) {
-				return {
-					itemId: _item.itemId,
-					itemType: _monitor.getItemType(),
-					position: item.children.length + 1,
-					siblingId: item.itemId
-				};
-			}
-		}
-	});
-
+const Column = React.forwardRef(({children, className, item}, ref) => {
 	const {size} = item.config;
 
 	return (
 		<div
-			className={classNames('col', {[`col-${size}`]: size})}
-			ref={node => {
-				containerRef.current = node;
-				drop(node);
-			}}
+			className={classNames(className, 'col', {[`col-${size}`]: size})}
+			ref={ref}
 		>
 			{children}
 		</div>
 	);
-}
+});
 
 function Fragment({item}) {
 	const {fragmentEntryLinks} = useContext(StoreContext);
@@ -367,11 +115,7 @@ function Fragment({item}) {
 		markup = `<div>No markup from ${item.config.fragmentEntryLinkId}</div>`;
 	}
 
-	return (
-		<TopperBar item={item} name={fragmentEntryLink.name}>
-			<UnsafeHTML className="fragment" markup={markup} />
-		</TopperBar>
-	);
+	return <UnsafeHTML className="fragment" markup={markup} />;
 }
 
 const LAYOUT_DATA_ITEMS = {
@@ -382,29 +126,60 @@ const LAYOUT_DATA_ITEMS = {
 	[LAYOUT_DATA_ITEM_TYPES.row]: Row
 };
 
-const LayoutDataItem = React.forwardRef(({item, layoutData}, ref) => {
+const LAYOUT_DATA_ACCEPT_DROP_TYPES = {
+	[LAYOUT_DATA_ITEM_TYPES.column]: [LAYOUT_DATA_ITEM_TYPES.fragment],
+	[LAYOUT_DATA_ITEM_TYPES.container]: [LAYOUT_DATA_ITEM_TYPES.container],
+	[LAYOUT_DATA_ITEM_TYPES.fragment]: [LAYOUT_DATA_ITEM_TYPES.fragment],
+	[LAYOUT_DATA_ITEM_TYPES.root]: [],
+	[LAYOUT_DATA_ITEM_TYPES.row]: []
+};
+
+const LAYOUT_DATA_TOPPER_ACTIVE = {
+	[LAYOUT_DATA_ITEM_TYPES.column]: false,
+	[LAYOUT_DATA_ITEM_TYPES.container]: true,
+	[LAYOUT_DATA_ITEM_TYPES.fragment]: true,
+	[LAYOUT_DATA_ITEM_TYPES.root]: false,
+	[LAYOUT_DATA_ITEM_TYPES.row]: false
+};
+
+const LayoutDataItem = ({fragmentEntryLinks, item, layoutData}) => {
 	const Component = LAYOUT_DATA_ITEMS[item.type];
+	const isActiveTopper = LAYOUT_DATA_TOPPER_ACTIVE[item.type];
+
+	const fragmentEntryLink = fragmentEntryLinks[
+		item.config.fragmentEntryLinkId
+	] || {name: item.type};
 
 	return (
-		<Component item={item}>
-			{item.children.map(childId => {
-				return (
-					<LayoutDataItem
-						drag={ref}
-						item={layoutData.items[childId]}
-						key={childId}
-						layoutData={layoutData}
-					/>
-				);
-			})}
-		</Component>
+		<TopperBar
+			acceptDrop={LAYOUT_DATA_ACCEPT_DROP_TYPES[item.type]}
+			active={isActiveTopper}
+			item={item}
+			layoutData={layoutData}
+			name={fragmentEntryLink.name}
+		>
+			<Component item={item} layoutData={layoutData}>
+				{item.children.map(childId => {
+					return (
+						<LayoutDataItem
+							fragmentEntryLinks={fragmentEntryLinks}
+							item={layoutData.items[childId]}
+							key={childId}
+							layoutData={layoutData}
+						/>
+					);
+				})}
+			</Component>
+		</TopperBar>
 	);
-});
+};
 
 export default function PageEditor() {
 	const config = useContext(ConfigContext);
 	const dispatch = useContext(DispatchContext);
-	const {layoutData, segmentsExperienceId} = useContext(StoreContext);
+	const {fragmentEntryLinks, layoutData, segmentsExperienceId} = useContext(
+		StoreContext
+	);
 
 	const mainItem = layoutData.items[layoutData.rootItems.main];
 
@@ -428,5 +203,11 @@ export default function PageEditor() {
 		}
 	}, [config, dispatch, isMounted, layoutData, segmentsExperienceId]);
 
-	return <LayoutDataItem item={mainItem} layoutData={layoutData} />;
+	return (
+		<LayoutDataItem
+			fragmentEntryLinks={fragmentEntryLinks}
+			item={mainItem}
+			layoutData={layoutData}
+		/>
+	);
 }
