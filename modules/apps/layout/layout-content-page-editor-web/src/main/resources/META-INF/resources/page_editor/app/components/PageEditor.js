@@ -174,6 +174,15 @@ const LayoutDataItem = ({fragmentEntryLinks, item, layoutData}) => {
 	);
 };
 
+const LayoutEmptyState = () => (
+	<div className="fragment-editor-empty-state mt-4">
+		<div className="fragment-editor-empty-state__image taglib-empty-result-message-header"></div>
+		<div className="text-center text-muted">
+			{Liferay.Language.get('the-page-editor-is-empty')}
+		</div>
+	</div>
+);
+
 export default function PageEditor() {
 	const config = useContext(ConfigContext);
 	const dispatch = useContext(DispatchContext);
@@ -204,10 +213,16 @@ export default function PageEditor() {
 	}, [config, dispatch, isMounted, layoutData, segmentsExperienceId]);
 
 	return (
-		<LayoutDataItem
-			fragmentEntryLinks={fragmentEntryLinks}
-			item={mainItem}
-			layoutData={layoutData}
-		/>
+		<TopperProvider>
+			{mainItem.children.length > 0 ? (
+				<LayoutDataItem
+					fragmentEntryLinks={fragmentEntryLinks}
+					item={mainItem}
+					layoutData={layoutData}
+				/>
+			) : (
+				<LayoutEmptyState item={mainItem} />
+			)}
+		</TopperProvider>
 	);
 }

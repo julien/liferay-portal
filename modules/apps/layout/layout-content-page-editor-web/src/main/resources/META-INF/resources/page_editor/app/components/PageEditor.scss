@@ -1,3 +1,17 @@
 .row.empty {
 	min-height: 10em;
 }
+
+.fragment-editor-empty-state {
+	background: #f7faff;
+	cursor: pointer;
+	will-change: box-shadow;
+	border: 2px dashed #b3cdff;
+	padding: 10vh 0;
+	transition: box-shadow ease 0.3s;
+
+	&__image {
+		max-width: 144px;
+		padding-top: 160px;
+	}
+}
