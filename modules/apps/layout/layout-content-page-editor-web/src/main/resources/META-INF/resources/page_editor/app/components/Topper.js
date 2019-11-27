@@ -17,7 +17,7 @@ import React, {useReducer} from 'react';
 
 const initialState = {active: null, hover: null};
 
-const TopperContext = React.createContext([initialState, () => {}]);
+const TopperInteractionsContext = React.createContext([initialState, () => {}]);
 
 const TOPPER_ACTIVE = 'ACTIVE';
 const TOPPER_HOVER = 'HOVER';
@@ -43,9 +43,9 @@ const TopperProvider = ({children}) => {
 	const [state, dispatch] = useReducer(reducer, initialState);
 
 	return (
-		<TopperContext.Provider value={[state, dispatch]}>
+		<TopperInteractionsContext.Provider value={[state, dispatch]}>
 			{children}
-		</TopperContext.Provider>
+		</TopperInteractionsContext.Provider>
 	);
 };
 
@@ -77,5 +77,5 @@ const Topper = ({children}) => (
 
 Topper.Item = TopperListItem;
 
-export {TopperProvider, TopperContext, TOPPER_ACTIVE, TOPPER_HOVER};
+export {TopperProvider, TopperInteractionsContext, TOPPER_ACTIVE, TOPPER_HOVER};
 export default Topper;
