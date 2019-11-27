@@ -103,7 +103,7 @@ const FloatingToolbarProvider = ({autoAlign, children, popoverProps = {}}) => {
 											data-type={type}
 											displayType="secondary"
 											id={id}
-											key={panelId}
+											key={icon}
 											small
 											symbol={icon}
 										/>
