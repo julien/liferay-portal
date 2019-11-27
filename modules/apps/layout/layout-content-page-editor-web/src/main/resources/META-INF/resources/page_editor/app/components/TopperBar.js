@@ -18,7 +18,6 @@ import classNames from 'classnames';
 import React, {useContext, useRef, useState} from 'react';
 import {useDrag, useDrop} from 'react-dnd';
 
-import {Permission} from '../../common/index';
 import {moveItem} from '../actions/index';
 import {LAYOUT_DATA_ITEM_TYPES} from '../config/constants/layoutDataItemTypes';
 import {DispatchContext} from '../reducers/index';
