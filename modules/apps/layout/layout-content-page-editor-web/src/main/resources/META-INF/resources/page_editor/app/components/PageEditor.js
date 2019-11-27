@@ -15,7 +15,6 @@
 import classNames from 'classnames';
 import {useIsMounted} from 'frontend-js-react-web';
 import React, {useContext, useEffect, useRef} from 'react';
-import {useDrop} from 'react-dnd';
 
 import FloatingToolbar from '../components/FloatingToolbar';
 import {LAYOUT_DATA_FLOATING_TOOLBAR_BUTTONS} from '../config/constants/layoutDataFloatingToolbarButtons';
@@ -27,43 +26,7 @@ import updateLayoutData from '../thunks/updateLayoutData';
 import Topper from './Topper';
 import UnsafeHTML from './UnsafeHTML';
 
-function Root({children, item}) {
-	const dropItem = item;
-
-	const [{canDrop, isOver}, drop] = useDrop({
-		accept: [
-			LAYOUT_DATA_ITEM_TYPES.column,
-			LAYOUT_DATA_ITEM_TYPES.container,
-			LAYOUT_DATA_ITEM_TYPES.fragment,
-			LAYOUT_DATA_ITEM_TYPES.root,
-			LAYOUT_DATA_ITEM_TYPES.row
-		],
-		collect(monitor) {
-			return {
-				canDrop: monitor.canDrop(),
-				isOver: monitor.isOver({shallow: true})
-			};
-		},
-		drop(_, monitor) {
-			if (!monitor.didDrop()) {
-				return {
-					itemType: monitor.getItemType(),
-					parentId: dropItem.itemId,
-					position: dropItem.children.length + 1
-				};
-			}
-		}
-	});
-
-	const active = isOver && canDrop;
-	const background = active ? 'honeydew' : 'aliceblue';
-
-	return (
-		<div ref={drop} style={{background, height: '100vh'}}>
-			{children}
-		</div>
-	);
-}
+const Root = ({children}) => <div style={{height: '100vh'}}>{children}</div>;
 
 function Container({children, item}) {
 	const {
@@ -74,149 +37,63 @@ function Container({children, item}) {
 		type
 	} = item.config;
 
-	const containerRef = useRef(null);
-
-	const [, drop] = useDrop({
-		accept: [LAYOUT_DATA_ITEM_TYPES.fragment, LAYOUT_DATA_ITEM_TYPES.row],
-		collect(monitor) {
-			return {
-				canDrop: monitor.canDrop(),
-				isOver: monitor.isOver()
-			};
-		},
-		drop(_, monitor) {
-			if (!monitor.didDrop()) {
-				return {
-					itemType: monitor.getItemType(),
-					parentId: item.itemId,
-					position: item.children.length + 1
-				};
-			}
-		}
-	});
-
-	return (
-		<Topper item={item} name="Container">
-			<FloatingToolbar
-				buttons={[
-					LAYOUT_DATA_FLOATING_TOOLBAR_BUTTONS.backgroundColor,
-					LAYOUT_DATA_FLOATING_TOOLBAR_BUTTONS.layoutBackgroundImage,
-					LAYOUT_DATA_FLOATING_TOOLBAR_BUTTONS.spacing
-				]}
-				item={item}
-				itemRef={containerRef}
-			/>
-
-			<div
-				className={classNames(`container py-${paddingVertical}`, {
-					[`bg-${backgroundColorCssClass}`]: !!backgroundColorCssClass,
-					container: type === 'fixed',
-					'container-fluid': type === 'fluid',
-					[`px-${paddingHorizontal}`]: paddingHorizontal !== 3
-				})}
-				ref={node => {
-					containerRef.current = node;
-					drop(node);
-				}}
-				style={
-					backgroundImage
-						? {
-								backgroundImage: `url(${backgroundImage})`,
-								backgroundPosition: '50% 50%',
-								backgroundRepeat: 'no-repeat',
-								backgroundSize: 'cover'
-						  }
-						: {}
-				}
-			>
-				{children}
-			</div>
-		</Topper>
-	);
-}
-
-function Row({children, item}) {
-	const {layoutData} = useContext(StoreContext);
-	const parent = layoutData.items[item.parentId];
-	const rowRef = useRef(null);
-
-	const [, drop] = useDrop({
-		accept: [LAYOUT_DATA_ITEM_TYPES.column]
-	});
-
-	const rowContent = (
-		<>
-			<FloatingToolbar
-				buttons={[LAYOUT_DATA_FLOATING_TOOLBAR_BUTTONS.spacing]}
-				item={item}
-				itemRef={rowRef}
-			/>
-
-			<div
-				className={classNames('row', {
-					empty: !item.children.some(
-						childId => layoutData.items[childId].children.length
-					),
-					'no-gutters': !item.config.gutters
-				})}
-				ref={node => {
-					rowRef.current = node;
-					drop(node);
-				}}
-			>
-				{children}
-			</div>
-		</>
-	);
-
-	return !parent || parent.type === LAYOUT_DATA_ITEM_TYPES.root ? (
-		<Topper item={item} name="Row">
-			<div className="container-fluid p-0">{rowContent}</div>
-		</Topper>
-	) : (
-		<Topper item={item} name="Row">
-			{rowContent}
-		</Topper>
-	);
-}
-
-function Column({children, item}) {
-	const containerRef = useRef(null);
-
-	const [, drop] = useDrop({
-		accept: [LAYOUT_DATA_ITEM_TYPES.fragment],
-		collect(_monitor) {
-			return {
-				canDrop: _monitor.canDrop(),
-				isOver: _monitor.isOver({shallow: true})
-			};
-		},
-		drop(_item, _monitor) {
-			if (!_monitor.didDrop()) {
-				return {
-					itemId: _item.itemId,
-					itemType: _monitor.getItemType(),
-					position: item.children.length + 1,
-					siblingId: item.itemId
-				};
-			}
-		}
-	});
-
-	const {size} = item.config;
-
 	return (
 		<div
-			className={classNames('col', {[`col-${size}`]: size})}
-			ref={node => {
-				containerRef.current = node;
-				drop(node);
-			}}
+			className={classNames(`container py-${paddingVertical}`, {
+				[`bg-${backgroundColorCssClass}`]: !!backgroundColorCssClass,
+				container: type === 'fixed',
+				'container-fluid': type === 'fluid',
+				[`px-${paddingHorizontal}`]: paddingHorizontal !== 3
+			})}
+			style={
+				backgroundImage
+					? {
+							backgroundImage: `url(${backgroundImage})`,
+							backgroundPosition: '50% 50%',
+							backgroundRepeat: 'no-repeat',
+							backgroundSize: 'cover'
+					  }
+					: {}
+			}
 		>
 			{children}
 		</div>
 	);
 }
+
+function Row({children, item, layoutData}) {
+	const parent = layoutData.items[item.parentId];
+
+	const rowContent = (
+		<div
+			className={classNames('row', {
+				empty: !item.children.some(
+					childId => layoutData.items[childId].children.length
+				),
+				'no-gutters': !item.config.gutters
+			})}
+		>
+			{children}
+		</div>
+	);
+
+	return !parent || parent.type === LAYOUT_DATA_ITEM_TYPES.root ? (
+		<div className="container-fluid p-0">{rowContent}</div>
+	) : rowContent;
+}
+
+const Column = React.forwardRef(({children, className, item}, ref) => {
+	const {size} = item.config;
+
+	return (
+		<div
+			className={classNames(className, 'col', {[`col-${size}`]: size})}
+			ref={ref}
+		>
+			{children}
+		</div>
+	);
+});
 
 function Fragment({item}) {
 	const {fragmentEntryLinks} = useContext(StoreContext);
@@ -237,25 +114,7 @@ function Fragment({item}) {
 		markup = `<div>No markup from ${item.config.fragmentEntryLinkId}</div>`;
 	}
 
-	const fragmentRef = useRef(null);
-
-	return (
-		<Topper item={item} name={fragmentEntryLink.name}>
-			<FloatingToolbar
-				buttons={[
-					LAYOUT_DATA_FLOATING_TOOLBAR_BUTTONS.fragmentConfiguration
-				]}
-				item={item}
-				itemRef={fragmentRef}
-			/>
-
-			<UnsafeHTML
-				className="fragment"
-				markup={markup}
-				ref={fragmentRef}
-			/>
-		</Topper>
-	);
+	return <UnsafeHTML className="fragment" markup={markup} />;
 }
 
 const LAYOUT_DATA_ITEMS = {
@@ -266,29 +125,81 @@ const LAYOUT_DATA_ITEMS = {
 	[LAYOUT_DATA_ITEM_TYPES.row]: Row
 };
 
-const LayoutDataItem = React.forwardRef(({item, layoutData}, ref) => {
+const LAYOUT_DATA_ACCEPT_DROP_TYPES = {
+	[LAYOUT_DATA_ITEM_TYPES.column]: [LAYOUT_DATA_ITEM_TYPES.fragment],
+	[LAYOUT_DATA_ITEM_TYPES.container]: [LAYOUT_DATA_ITEM_TYPES.container],
+	[LAYOUT_DATA_ITEM_TYPES.fragment]: [LAYOUT_DATA_ITEM_TYPES.fragment],
+	[LAYOUT_DATA_ITEM_TYPES.root]: [],
+	[LAYOUT_DATA_ITEM_TYPES.row]: []
+};
+
+const LAYOUT_DATA_TOPPER_ACTIVE = {
+	[LAYOUT_DATA_ITEM_TYPES.column]: false,
+	[LAYOUT_DATA_ITEM_TYPES.container]: true,
+	[LAYOUT_DATA_ITEM_TYPES.fragment]: true,
+	[LAYOUT_DATA_ITEM_TYPES.root]: false,
+	[LAYOUT_DATA_ITEM_TYPES.row]: false
+};
+
+const LAYOUT_DATA_FLOATING_TOOLBAR_TYPES = [
+	[LAYOUT_DATA_ITEM_TYPES.column]: [],
+	[LAYOUT_DATA_ITEM_TYPES.container]: [
+		LAYOUT_DATA_FLOATING_TOOLBAR_BUTTONS.backgroundColor,
+		LAYOUT_DATA_FLOATING_TOOLBAR_BUTTONS.layoutBackgroundImage,
+		LAYOUT_DATA_FLOATING_TOOLBAR_BUTTONS.spacing
+	],
+	[LAYOUT_DATA_ITEM_TYPES.fragment]: [LAYOUT_DATA_FLOATING_TOOLBAR_BUTTONS.fragmentConfiguration],
+	[LAYOUT_DATA_ITEM_TYPES.root]: [],
+	[LAYOUT_DATA_ITEM_TYPES.row]: [LAYOUT_DATA_FLOATING_TOOLBAR_BUTTONS.spacing]
+];
+
+const LayoutDataItem = ({fragmentEntryLinks, item, layoutData}) => {
 	const Component = LAYOUT_DATA_ITEMS[item.type];
+	const isActiveTopper = LAYOUT_DATA_TOPPER_ACTIVE[item.type];
+	const floatingToolbarButtons = LAYOUT_DATA_FLOATING_TOOLBAR_TYPES[item.type];
+
+	const fragmentEntryLink = fragmentEntryLinks[
+		item.config.fragmentEntryLinkId
+	] || {name: item.type};
 
 	return (
-		<Component item={item}>
-			{item.children.map(childId => {
-				return (
-					<LayoutDataItem
-						drag={ref}
-						item={layoutData.items[childId]}
-						key={childId}
-						layoutData={layoutData}
-					/>
-				);
-			})}
-		</Component>
+		<Topper
+			acceptDrop={LAYOUT_DATA_ACCEPT_DROP_TYPES[item.type]}
+			active={isActiveTopper}
+			item={item}
+			layoutData={layoutData}
+			name={fragmentEntryLink.name}
+		>
+			{floatingToolbarButtons.length && (
+				<FloatingToolbar
+					buttons={floatingToolbarButtons}
+					item={item}
+					itemRef={fragmentRef}
+				/>
+			)}
+
+			<Component item={item} layoutData={layoutData}>
+				{item.children.map(childId => {
+					return (
+						<LayoutDataItem
+							fragmentEntryLinks={fragmentEntryLinks}
+							item={layoutData.items[childId]}
+							key={childId}
+							layoutData={layoutData}
+						/>
+					);
+				})}
+			</Component>
+		</Topper>
 	);
-});
+};
 
 export default function PageEditor() {
 	const config = useContext(ConfigContext);
 	const dispatch = useContext(DispatchContext);
-	const {layoutData, segmentsExperienceId} = useContext(StoreContext);
+	const {fragmentEntryLinks, layoutData, segmentsExperienceId} = useContext(
+		StoreContext
+	);
 
 	const mainItem = layoutData.items[layoutData.rootItems.main];
 
@@ -312,5 +223,11 @@ export default function PageEditor() {
 		}
 	}, [config, dispatch, isMounted, layoutData, segmentsExperienceId]);
 
-	return <LayoutDataItem item={mainItem} layoutData={layoutData} />;
+	return (
+		<LayoutDataItem
+			fragmentEntryLinks={fragmentEntryLinks}
+			item={mainItem}
+			layoutData={layoutData}
+		/>
+	);
 }
