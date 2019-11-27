@@ -18,8 +18,8 @@ export default function addFragmentEntryLinkAndItem({
 	fragmentEntryLink,
 	itemId,
 	itemType,
-	parentId,
-	position
+	position,
+	siblingId
 }) {
 	const {fragmentEntryLinkId} = fragmentEntryLink;
 
@@ -31,8 +31,8 @@ export default function addFragmentEntryLinkAndItem({
 		fragmentEntryLinkId,
 		itemId,
 		itemType,
-		parentId,
 		position,
+		siblingId,
 		type: ADD_FRAGMENT_ENTRY_LINK_AND_ITEM
 	};
 }

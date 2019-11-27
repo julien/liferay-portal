@@ -20,8 +20,8 @@ export default function addFragmentEntryLink({
 	config,
 	fragmentGroupId,
 	fragmentKey,
-	parentId,
 	position,
+	siblingId,
 	store
 }) {
 	return dispatch => {
@@ -47,8 +47,8 @@ export default function addFragmentEntryLink({
 					fragmentEntryLink,
 					itemId: `thing-${Date.now()}`,
 					itemType: LAYOUT_DATA_ITEM_TYPES.fragment,
-					parentId,
-					position
+					position,
+					siblingId
 				})
 			);
 		});
