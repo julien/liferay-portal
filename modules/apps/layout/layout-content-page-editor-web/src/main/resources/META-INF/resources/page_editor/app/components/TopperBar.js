@@ -203,37 +203,35 @@ const TopperBar = ({
 			}
 			ref={containerRef}
 		>
-			<Permission>
-				<Topper>
-					<Topper.Item expand isDragHandler ref={drag}>
-						<ul className="tbar-nav">
-							<Topper.Item className="pr-0">
-								<ClayIcon
-									className="fragments-editor__topper__drag-icon fragments-editor__topper__icon"
-									symbol="drag"
-								/>
-							</Topper.Item>
-							<Topper.Item isTitle>{name}</Topper.Item>
-						</ul>
-					</Topper.Item>
-					<Topper.Item>
-						<ClayButton displayType="unstyled" small>
+			<Topper>
+				<Topper.Item expand isDragHandler ref={drag}>
+					<ul className="tbar-nav">
+						<Topper.Item className="pr-0">
 							<ClayIcon
-								className="fragments-editor__topper__icon"
-								symbol="comments"
+								className="fragments-editor__topper__drag-icon fragments-editor__topper__icon"
+								symbol="drag"
 							/>
-						</ClayButton>
-					</Topper.Item>
-					<Topper.Item>
-						<ClayButton displayType="unstyled" small>
-							<ClayIcon
-								className="fragments-editor__topper__icon"
-								symbol="times-circle"
-							/>
-						</ClayButton>
-					</Topper.Item>
-				</Topper>
-			</Permission>
+						</Topper.Item>
+						<Topper.Item isTitle>{name}</Topper.Item>
+					</ul>
+				</Topper.Item>
+				<Topper.Item>
+					<ClayButton displayType="unstyled" small>
+						<ClayIcon
+							className="fragments-editor__topper__icon"
+							symbol="comments"
+						/>
+					</ClayButton>
+				</Topper.Item>
+				<Topper.Item>
+					<ClayButton displayType="unstyled" small>
+						<ClayIcon
+							className="fragments-editor__topper__icon"
+							symbol="times-circle"
+						/>
+					</ClayButton>
+				</Topper.Item>
+			</Topper>
 			<div
 				className={classNames('fragment-entry-link-content', {
 					dragged: isDragging
