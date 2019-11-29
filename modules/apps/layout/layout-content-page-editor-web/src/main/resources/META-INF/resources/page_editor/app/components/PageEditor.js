@@ -22,9 +22,9 @@ import {ConfigContext} from '../config/index';
 import {DispatchContext} from '../reducers/index';
 import {StoreContext} from '../store/index';
 import updateLayoutData from '../thunks/updateLayoutData';
-import UnsafeHTML from './UnsafeHTML';
-import TopperBar from './TopperBar';
 import {TopperProvider} from './Topper';
+import TopperBar from './TopperBar';
+import UnsafeHTML from './UnsafeHTML';
 
 function Root({children, item}) {
 	const dropItem = item;
