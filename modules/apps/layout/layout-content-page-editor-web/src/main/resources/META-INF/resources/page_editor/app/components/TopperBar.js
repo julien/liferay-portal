@@ -13,22 +13,18 @@
  */
 import ClayButton from '@clayui/button';
 import ClayIcon from '@clayui/icon';
-
 import classNames from 'classnames';
 import React, {useContext, useState, useRef} from 'react';
 import {useDrag} from 'react-dnd';
-import {moveItem} from '../actions/index';
-import Topper, {
-	TopperContext,
-	TOPPER_ACTIVE,
-	TOPPER_HOVER
-} from './Topper';
-import {DispatchContext} from '../reducers/index';
+
+import {moveItem, removeItem} from '../actions/index';
 import {LAYOUT_DATA_ITEM_TYPES} from '../config/constants/layoutDataItemTypes';
+import {DispatchContext} from '../reducers/index';
+import Topper, {TopperContext, TOPPER_ACTIVE, TOPPER_HOVER} from './Topper';
 
 const TopperBar = ({children, item, name}) => {
 	const containerRef = useRef(null);
-	const [dragHover, ] = useState(null);
+	const [dragHover] = useState(null);
 	const [{active, hover}, dispatch] = useContext(TopperContext);
 	const dispatchStore = useContext(DispatchContext);
 
@@ -98,6 +94,15 @@ const TopperBar = ({children, item, name}) => {
 					<ClayButton displayType="unstyled" small>
 						<ClayIcon
 							className="fragments-editor__topper__icon"
+							onClick={event => {
+								event.stopPropagation();
+
+								dispatchStore(
+									removeItem({
+										itemId: item.itemId
+									})
+								);
+							}}
 							symbol="times-circle"
 						/>
 					</ClayButton>
