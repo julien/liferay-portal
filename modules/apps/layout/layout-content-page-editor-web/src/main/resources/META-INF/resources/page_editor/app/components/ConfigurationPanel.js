@@ -40,7 +40,7 @@ const ALIGNMENTS_MAP = {
 };
 
 export default forwardRef(
-	({configurationPanel, popoverRef, ...otherProps}, ref) => {
+	({configurationPanel, itemId, popoverRef, ...otherProps}, ref) => {
 		const configurationPanelRef = useRef(null);
 
 		const [configurationPanelAlign, setConfigurationPanelAlign] = useState(
@@ -86,7 +86,7 @@ export default forwardRef(
 				{...otherProps}
 			>
 				<div className="p-3 popover popover-scrollable">
-					<ConfigurationPanelComponent />
+					<ConfigurationPanelComponent itemId={itemId} />
 				</div>
 			</div>
 		);
