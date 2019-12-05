@@ -40,9 +40,10 @@ const ALIGNMENTS_MAP = {
 };
 
 export default forwardRef(function ConfigurationPanel(
-	{configurationPanel, popoverRef, ...otherProps},
+	{configurationPanel, itemId, popoverRef, ...otherProps},
 	ref
-) {
+	) {
+
 	const configurationPanelRef = useRef(null);
 
 	const [configurationPanelAlign, setConfigurationPanelAlign] = useState(
