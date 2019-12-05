@@ -16,6 +16,7 @@ import React from 'react';
 
 import baseReducer from './baseReducer';
 import layoutDataReducer from './layoutDataReducer';
+import sidebarReducer from './sidebarReducer';
 
 export const DispatchContext = React.createContext(() => {});
 
@@ -27,6 +28,7 @@ export function reducer(state, action) {
 	return [
 		baseReducer,
 		layoutDataReducer,
+		sidebarReducer,
 		...Object.values(state.reducers)
 	].reduce((nextState, nextReducer) => {
 		return nextReducer(nextState, action);

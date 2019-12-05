@@ -19,8 +19,13 @@ import React, {useContext, useRef, useState} from 'react';
 import {useDrag} from 'react-dnd';
 
 import useOnClickOutside from '../../core/hooks/useOnClickOutside';
-import {moveItem, removeItem} from '../actions/index';
+import {
+	moveItem,
+	removeItem,
+	setSelectedSidebarPanelId
+} from '../actions/index';
 import {LAYOUT_DATA_ITEM_TYPES} from '../config/constants/layoutDataItemTypes';
+import {ConfigContext} from '../config/index';
 import {DispatchContext} from '../reducers/index';
 import {
 	useIsSelected,
@@ -51,6 +56,7 @@ const TopperListItem = React.forwardRef(
 
 export default function Topper({children, item, name}) {
 	const containerRef = useRef(null);
+	const config = useContext(ConfigContext);
 	const dispatch = useContext(DispatchContext);
 	const [dragHover] = useState(null);
 	const hoverItem = useHoverItem();
@@ -75,6 +81,12 @@ export default function Topper({children, item, name}) {
 			selectItem(null);
 		}
 	});
+
+	const {sidebarPanels} = config;
+
+	const sidebarPanel = sidebarPanels[3];
+
+	const sidebarPanelId = sidebarPanel[0].sidebarPanelId;
 
 	return (
 		<div
@@ -128,6 +140,15 @@ export default function Topper({children, item, name}) {
 						<ClayButton displayType="unstyled" small>
 							<ClayIcon
 								className="fragments-editor__topper__icon"
+								onClick={event => {
+									event.stopPropagation();
+
+									dispatch(
+										setSelectedSidebarPanelId({
+											sidebarPanelId
+										})
+									);
+								}}
 								symbol="comments"
 							/>
 						</ClayButton>

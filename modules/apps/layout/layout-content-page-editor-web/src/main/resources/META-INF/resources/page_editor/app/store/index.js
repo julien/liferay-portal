@@ -73,6 +73,7 @@ function transformServerData(data) {
 					config: {...LAYOUT_DATA_ITEM_DEFAULT_CONFIGURATIONS.root},
 					itemId: 'main',
 					parentId: null,
+					sidebarPanelId: null,
 					type: LAYOUT_DATA_ITEM_TYPES.root
 				}
 			},

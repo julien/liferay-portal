@@ -12,13 +12,26 @@
  * details.
  */
 
-export const ADD_FRAGMENT_ENTRY_LINK_AND_ITEM =
-	'ADD_FRAGMENT_ENTRY_LINK_AND_ITEM';
-export const ADD_ITEM = 'ADD_ITEM';
-export const DISCARD = 'DISCARD';
-export const LOAD_REDUCER = 'LOAD_REDUCER';
-export const MOVE_ITEM = 'MOVE_ITEM';
-export const PUBLISH = 'PUBLISH';
-export const REMOVE_ITEM = 'REMOVE_ITEM';
-export const SET_SELECTED_SIDEBAR_PANEL_ID = 'SET_SELECTED_SIDEBAR_PANEL_ID';
-export const UNLOAD_REDUCER = 'UNLOAD_REDUCER';
+import {TYPES} from '../actions/index';
+
+function setSelectedSidebarPanelId(items, action) {
+	const {sidebarPanelId} = action;
+
+	return items;
+}
+
+export default function sidebarReducer(state, action) {
+	let nextState = state;
+
+	if (action.type === TYPES.SET_SELECTED_SIDEBAR_PANEL_ID) {
+		nextState = {
+			...state,
+			layoutData: {
+				...state.layoutData,
+				items: setSelectedSidebarPanelId(state.layoutData.items, action)
+			}
+		};
+	}
+
+	return nextState;
+}
