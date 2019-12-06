@@ -80,6 +80,7 @@ function Container({children, item}) {
 	const {
 		backgroundColorCssClass,
 		backgroundImage,
+		columnSpacing,
 		paddingHorizontal,
 		paddingVertical,
 		type
@@ -126,7 +127,8 @@ function Container({children, item}) {
 						container: type === 'fixed',
 						'container-fluid': type === 'fluid',
 						empty: !item.children.length,
-						[`px-${paddingHorizontal}`]: paddingHorizontal !== 3
+						[`px-${paddingHorizontal}`]: paddingHorizontal !== 3,
+						'no-gutters': columnSpacing
 					}
 				)}
 				ref={node => {
