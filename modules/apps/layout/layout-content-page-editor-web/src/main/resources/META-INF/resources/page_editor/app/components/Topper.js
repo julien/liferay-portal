@@ -19,7 +19,7 @@ import React, {useContext, useRef, useState} from 'react';
 import {useDrag, useDrop} from 'react-dnd';
 
 import useOnClickOutside from '../../core/hooks/useOnClickOutside';
-import {moveItem, removeItem} from '../actions/index';
+import {moveItem, removeItem, setSidebarPanelId} from '../actions/index';
 import {LAYOUT_DATA_ITEM_TYPES} from '../config/constants/layoutDataItemTypes';
 import {DispatchContext} from '../reducers/index';
 import {
@@ -57,6 +57,7 @@ export default function Topper({
 }) {
 	const [edge, setEdge] = useState(null);
 	const containerRef = useRef(null);
+	const config = useContext(ConfigContext);
 	const dispatch = useContext(DispatchContext);
 	const hoverItem = useHoverItem();
 	const isHovered = useIsHovered();
@@ -217,6 +218,19 @@ export default function Topper({
 		});
 	}
 
+	const {sidebarPanels} = config;
+
+	function getSidebarPanelById(sidebarActivePanelId) {
+		return sidebarPanels.find(
+			sidebarPanel =>
+				sidebarPanel[0].sidebarPanelId === sidebarActivePanelId
+		);
+	}
+
+	const commentsPanel = getSidebarPanelById('comments');
+
+	const commentsPanelId = commentsPanel[0].sidebarPanelId;
+
 	return (
 		<div
 			className={classNames(styles)}
@@ -273,7 +287,14 @@ export default function Topper({
 					<TopperListItem>
 						<ClayButton displayType="unstyled" small>
 							<ClayIcon
-								className="page-editor-topper__icon"
+								className="fragments-editor__topper__icon"
+								onClick={() => {
+									dispatch(
+										setSidebarPanelId({
+											sidebarActivePanelId: commentsPanelId
+										})
+									);
+								}}
 								symbol="comments"
 							/>
 						</ClayButton>

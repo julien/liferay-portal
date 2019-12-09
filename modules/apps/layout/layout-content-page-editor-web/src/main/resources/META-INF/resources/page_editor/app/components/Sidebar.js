@@ -43,9 +43,8 @@ export default function Sidebar() {
 
 	const [hasError, setHasError] = useStateSafe(false);
 	const [open, setOpen] = useStateSafe(false);
-	const [activePluginId, setActivePluginId] = useStateSafe(null);
-
 	const {sidebarPanels} = config;
+	const {sidebarActivePanelId} = useContext(StoreContext);
 
 	const isMounted = useIsMounted();
 
@@ -87,7 +86,7 @@ export default function Sidebar() {
 		const {rendersSidebarContent, sidebarPanelId} = panel;
 
 		const shouldActivate =
-			!rendersSidebarContent || sidebarPanelId !== activePluginId;
+			!rendersSidebarContent || sidebarPanelId !== sidebarActivePanelId;
 
 		const wantOpen = rendersSidebarContent && shouldActivate;
 
@@ -97,14 +96,18 @@ export default function Sidebar() {
 			adjustWrapperPadding({sidebarOpen: wantOpen});
 		}
 
-		getInstance(activePluginId).then(activePlugin => {
+		getInstance(sidebarActivePanelId).then(activePlugin => {
 			if (activePlugin && typeof activePlugin.deactivate === 'function') {
 				activePlugin.deactivate();
 			}
 		});
 
 		if (shouldActivate) {
-			setActivePluginId(sidebarPanelId);
+			dispatch(
+				setSidebarPanelId({
+					sidebarActivePanelId: sidebarPanelId
+				})
+			);
 
 			const promise = load(sidebarPanelId, panel.pluginEntryPoint);
 
@@ -128,7 +131,11 @@ export default function Sidebar() {
 				}
 			});
 		} else {
-			setActivePluginId(null);
+			dispatch(
+				setSidebarPanelId({
+					sidebarActivePanelId: null
+				})
+			);
 		}
 	};
 
@@ -187,7 +194,11 @@ export default function Sidebar() {
 								block
 								displayType="secondary"
 								onClick={() => {
-									setActivePluginId(null);
+									dispatch(
+										setSidebarPanelId({
+											sidebarActivePanelId: null
+										})
+									);
 									setHasError(false);
 									setOpen(false);
 								}}
@@ -200,8 +211,7 @@ export default function Sidebar() {
 						<ErrorBoundary handleError={() => setHasError(true)}>
 							<Suspense fallback={<ClayLoadingIndicator />}>
 								<SidebarPanel
-									getInstance={getInstance}
-									pluginId={activePluginId}
+									plugin={getInstance(sidebarActivePanelId)}
 								/>
 							</Suspense>
 						</ErrorBoundary>

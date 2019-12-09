@@ -21,6 +21,7 @@ export {default as loadReducer} from './loadReducer';
 export {default as moveItem} from './moveItem';
 export {default as publish} from './publish';
 export {default as removeItem} from './removeItem';
+export {default as setSidebarPanelId} from './setSidebarPanelId';
 export {default as unloadReducer} from './unloadReducer';
 
 /**

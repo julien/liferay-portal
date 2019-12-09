@@ -12,12 +12,13 @@
  * details.
  */
 
-export const ADD_FRAGMENT_ENTRY_LINK = 'ADD_FRAGMENT_ENTRY_LINK';
-export const ADD_ITEM = 'ADD_ITEM';
-export const DISCARD = 'DISCARD';
-export const LOAD_REDUCER = 'LOAD_REDUCER';
-export const MOVE_ITEM = 'MOVE_ITEM';
-export const PUBLISH = 'PUBLISH';
-export const REMOVE_ITEM = 'REMOVE_ITEM';
-export const SET_SIDEBAR_PANEL_ID = 'SET_SIDEBAR_PANEL_ID';
-export const UNLOAD_REDUCER = 'UNLOAD_REDUCER';
+import {SET_SIDEBAR_PANEL_ID as type} from './types';
+
+const ACTION = {type};
+
+export default function setSidebarPanelId({sidebarActivePanelId}) {
+	return {
+		...ACTION,
+		sidebarActivePanelId
+	};
+}

@@ -17,6 +17,7 @@ import React from 'react';
 import baseReducer from './baseReducer';
 import fragmentEntryLinksReducer from './fragmentEntryLinksReducer';
 import layoutDataReducer from './layoutDataReducer';
+import sidebarReducer from './sidebarReducer';
 
 export const DispatchContext = React.createContext(() => {});
 
@@ -29,6 +30,7 @@ export function reducer(state, action) {
 		baseReducer,
 		fragmentEntryLinksReducer,
 		layoutDataReducer,
+		sidebarReducer,
 		...Object.values(state.reducers)
 	].reduce((nextState, nextReducer) => {
 		return nextReducer(nextState, action);
