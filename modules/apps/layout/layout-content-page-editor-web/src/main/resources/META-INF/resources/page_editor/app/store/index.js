@@ -25,7 +25,8 @@ const INITIAL_STATE = {
 	 *
 	 * TODO: potentially allow us to specify a ranking here to determine order
 	 */
-	reducers: {}
+	reducers: {},
+	sidebarActivePanelId: null
 };
 
 export const StoreContext = React.createContext(INITIAL_STATE);
