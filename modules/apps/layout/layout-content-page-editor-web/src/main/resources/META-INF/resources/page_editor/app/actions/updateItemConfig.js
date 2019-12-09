@@ -24,7 +24,7 @@ const ACTION = {type};
  * @param {string} options.parentId
  * @return {object}
  */
-export default function updateItem({config = {}, itemId, itemType}) {
+export default function updateItemConfig({config = {}, itemId, itemType}) {
 	return {
 		...ACTION,
 		config,
