@@ -12,10 +12,11 @@
  * details.
  */
 
-import React from 'react';
+import React, {useMemo} from 'react';
 import {DragDropContextProvider} from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 
+import useService from '../core/hooks/useService';
 import useThunk from '../core/hooks/useThunk';
 import App from './components/App';
 import {ControlsProvider} from './components/Controls';
@@ -36,13 +37,18 @@ const {useReducer} = React;
 function Container({data}) {
 	const config = getConfig(data.config);
 
+	const {fetcher, ...service} = useService(config);
+
 	const [store, dispatch] = useThunk(
-		useReducer(reducer, [data.state, config], getInitialState)
+		useReducer(reducer, [data.state, {...config, fetcher}], getInitialState)
 	);
 
+	/* eslint-disable-next-line react-hooks/exhaustive-deps */
+	const memoizedConfig = useMemo(() => ({...config, fetcher}), []);
+
 	return (
-		<ConfigContext.Provider value={config}>
-			<StoreContext.Provider value={store}>
+		<ConfigContext.Provider value={memoizedConfig}>
+			<StoreContext.Provider value={{...store, service}}>
 				<DispatchContext.Provider value={dispatch}>
 					<ControlsProvider>
 						<App />

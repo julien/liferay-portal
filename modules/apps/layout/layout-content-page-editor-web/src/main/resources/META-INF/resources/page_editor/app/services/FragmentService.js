@@ -12,8 +12,6 @@
  * details.
  */
 
-import serviceFetch from './serviceFetch';
-
 /**
  * @typedef FragmentEntryLink
  * @property {string} content
@@ -36,9 +34,9 @@ export default {
 		fragmentKey,
 		segmentsExperienceId
 	}) {
-		const {addFragmentEntryLinkURL, classNameId, classPK} = config;
+		const {addFragmentEntryLinkURL, classNameId, classPK, fetcher} = config;
 
-		return serviceFetch(config, addFragmentEntryLinkURL, {
+		return fetcher(addFragmentEntryLinkURL, {
 			classNameId,
 			classPK,
 			fragmentGroupId,

@@ -12,8 +12,6 @@
  * details.
  */
 
-import serviceFetch from './serviceFetch';
-
 export default {
 	/**
 	 * Updates layout's layoutData
@@ -24,9 +22,14 @@ export default {
 	 * @return {Promise<void>}
 	 */
 	updateLayoutData({config, layoutData, segmentsExperienceId}) {
-		const {classNameId, classPK, updateLayoutPageTemplateDataURL} = config;
+		const {
+			classNameId,
+			classPK,
+			fetcher,
+			updateLayoutPageTemplateDataURL
+		} = config;
 
-		return serviceFetch(config, updateLayoutPageTemplateDataURL, {
+		return fetcher(updateLayoutPageTemplateDataURL, {
 			classNameId,
 			classPK,
 			data: JSON.stringify(layoutData),
