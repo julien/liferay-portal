@@ -17,10 +17,10 @@ import React, {useMemo, useState} from 'react';
 
 import {SERVICE_NETWORK_STATUS_TYPES} from '../config/constants/serviceNetworkStatusTypes';
 
-const getStatus = (isOnline, networkStatus, lastSaveDate) => {
+const getStatus = (isOnline, status, lastSaveDate) => {
 	if (!isOnline) {
 		return `${Liferay.Language.get('trying-to-reconnect')}...`;
-	} else if (networkStatus === SERVICE_NETWORK_STATUS_TYPES.Fetching) {
+	} else if (status === SERVICE_NETWORK_STATUS_TYPES.Fetching) {
 		return Liferay.Language.get('saving-changes');
 	} else if (lastSaveDate) {
 		return lastSaveDate;
@@ -29,9 +29,7 @@ const getStatus = (isOnline, networkStatus, lastSaveDate) => {
 	return null;
 };
 
-const NetworkStatusBar = ({service}) => {
-	const {lastFetch, networkStatus} = service;
-
+const NetworkStatusBar = ({lastFetch, status}) => {
 	const [isOnline, setIsOnline] = useState(true);
 
 	const lastSaveDate = useMemo(() => {
@@ -51,13 +49,15 @@ const NetworkStatusBar = ({service}) => {
 
 	useEventListener('offline', () => setIsOnline(false), true, window);
 
-	const status = getStatus(isOnline, networkStatus, lastSaveDate);
+	const statusText = getStatus(isOnline, status, lastSaveDate);
+
+	if (!statusText) {
+		return null;
+	}
 
 	return (
 		<li className="d-inline nav-item text-truncate">
-			{status && (
-				<span className="lfr-portal-tooltip navbar-text">{status}</span>
-			)}
+			<span className="lfr-portal-tooltip navbar-text">{statusText}</span>
 		</li>
 	);
 };

@@ -132,7 +132,7 @@ function ToolbarBody() {
 			</ul>
 
 			<ul className="navbar-nav">
-				<NetworkStatusBar service={store.service} />
+				<NetworkStatusBar {...store.service} />
 				<li className="nav-item">
 					<ClayButton
 						className="nav-btn"

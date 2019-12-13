@@ -19,10 +19,11 @@ export default function updateLayoutData({
 	layoutData,
 	segmentsExperienceId
 }) {
-	return () =>
+	return dispatch =>
 		LayoutService.updateLayoutData({
 			config,
 			layoutData,
+			onServiceStatus: dispatch,
 			segmentsExperienceId
 		});
 }

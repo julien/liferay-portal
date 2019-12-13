@@ -12,22 +12,20 @@
  * details.
  */
 
-/**
- * Action creators.
- */
+import {UPDATE_SERVICE as type} from './types';
 
-export {default as discard} from './discard';
-export {default as loadReducer} from './loadReducer';
-export {default as moveItem} from './moveItem';
-export {default as publish} from './publish';
-export {default as removeItem} from './removeItem';
-export {default as unloadReducer} from './unloadReducer';
-export {default as updateItemConfig} from './updateItemConfig';
-export {default as updateLanguageId} from './updateLanguageId';
-export {default as updateService} from './updateService';
+const ACTION = {type};
 
 /**
- * Action types.
+ * @param {object} service
+ * @param {number} service.status
+ * @param {!string} service.error
+ * @param {!Date} service.lastFetch
+ * @return {object}
  */
-
-export * as TYPES from './types';
+export default function updateService(service) {
+	return {
+		...ACTION,
+		service
+	};
+}

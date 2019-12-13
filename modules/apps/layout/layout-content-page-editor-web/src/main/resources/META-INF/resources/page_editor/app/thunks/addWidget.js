@@ -27,6 +27,7 @@ export default function addWidget({
 
 		WidgetService.addPortlet({
 			config,
+			onServiceStatus: dispatch,
 			portletId,
 			segmentsExperienceId
 		}).then(fragmentEntryLink => {

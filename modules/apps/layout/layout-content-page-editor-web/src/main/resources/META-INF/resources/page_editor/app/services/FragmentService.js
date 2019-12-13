@@ -12,6 +12,8 @@
  * details.
  */
 
+import serviceFetch from './serviceFetch';
+
 /**
  * @typedef FragmentEntryLink
  * @property {string} content
@@ -25,6 +27,7 @@ export default {
 	 * @param {object} options.config Application config
 	 * @param {string} options.fragmentGroupId GroupId that wraps the Fragment
 	 * @param {string} options.fragmentKey Key of the Fragment
+	 * @param {Function} options.onServiceStatus Callback for network status changes
 	 * @param {string} options.segmentsExperienceId Current segmentsExperienceId
 	 * @return {Promise<FragmentEntryLink>} Created FragmentEntryLink
 	 */
@@ -32,11 +35,12 @@ export default {
 		config,
 		fragmentGroupId,
 		fragmentKey,
+		onServiceStatus,
 		segmentsExperienceId
 	}) {
-		const {addFragmentEntryLinkURL, classNameId, classPK, fetcher} = config;
+		const {addFragmentEntryLinkURL, classNameId, classPK} = config;
 
-		return fetcher(addFragmentEntryLinkURL, {
+		return serviceFetch(addFragmentEntryLinkURL, {
 			classNameId,
 			classPK,
 			fragmentGroupId,

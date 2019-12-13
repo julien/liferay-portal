@@ -30,6 +30,7 @@ export default function addFragment({
 			config,
 			fragmentGroupId,
 			fragmentKey,
+			onServiceStatus: dispatch,
 			segmentsExperienceId
 		}).then(fragmentEntryLink => {
 			// TODO: This is a temporary "hack"
