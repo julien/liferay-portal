@@ -13,13 +13,13 @@
  */
 
 /**
- * - Unused (0) When no request is happening the status will be `unused`.
- * - Fetching (1) When no request is happening the status will be `unused`.
+ * - Idle (0) When no request is happening the status will be `Idle`.
+ * - Fetching (1) When a request is pending the status will be `Fetching`.
  * - Error (2) When any timeout or request `error` occurs, the status will be set
  * 	 to error.
  */
 export const SERVICE_NETWORK_STATUS_TYPES = {
 	Error: 2,
 	Fetching: 1,
-	Unused: 0
+	Idle: 0
 };
