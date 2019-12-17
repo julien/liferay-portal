@@ -26,6 +26,7 @@ import updateLayoutData from '../thunks/updateLayoutData';
 import {useIsActive} from './Controls';
 import Topper from './Topper';
 import UnsafeHTML from './UnsafeHTML';
+import FragmentContent from './FragmentContent';
 
 const Root = React.forwardRef(({canDrop, children, isOver}, ref) => (
 	<div
@@ -131,26 +132,7 @@ const Fragment = React.forwardRef(({item}, ref) => {
 	const fragmentEntryLink =
 		fragmentEntryLinks[item.config.fragmentEntryLinkId];
 
-	let markup = '';
-
-	if (typeof fragmentEntryLink.content === 'string') {
-		markup = fragmentEntryLink.content;
-	} else if (
-		fragmentEntryLink.content.value &&
-		fragmentEntryLink.content.value.content
-	) {
-		markup = fragmentEntryLink.content.value.content;
-	} else {
-		markup = `<div>No markup from ${item.config.fragmentEntryLinkId}</div>`;
-	}
-
-	return (
-		<UnsafeHTML
-			className="page-editor__fragment"
-			markup={markup}
-			ref={ref}
-		/>
-	);
+	return <FragmentContent fragmentEntryLink={fragmentEntryLink} ref={ref} />;
 });
 
 const LAYOUT_DATA_ITEMS = {
