@@ -19,12 +19,16 @@ export default function deleteFragmentComment({
 	commentId,
 	config,
 	fragmentEntryLinkId,
+	network,
 	parentCommentId
 }) {
 	return dispatch => {
+		const {fetcher} = network;
+
 		return FragmentCommentService.deleteFragmentEntryLinkComment({
 			commentId,
-			config
+			config,
+			fetcher
 		}).then(() => {
 			dispatch(
 				deleteFragmentEntryLinkComment({

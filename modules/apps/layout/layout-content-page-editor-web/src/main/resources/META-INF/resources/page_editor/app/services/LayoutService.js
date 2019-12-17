@@ -12,36 +12,25 @@
  * details.
  */
 
-import serviceFetch from './serviceFetch';
-
 export default {
 	/**
 	 * Updates layout's layoutData
 	 * @param {object} options
 	 * @param {object} options.config Application config
 	 * @param {string} options.segmentsExperienceId Current segmentsExperienceId
+	 * @param {Function} options.fetcher service fetcher
 	 * @param {object} options.layoutData New layoutData
 	 * @param {Function} options.onServiceStatus Callback for network status changes
 	 * @return {Promise<void>}
 	 */
-	updateLayoutData({
-		config,
-		layoutData,
-		onServiceStatus,
-		segmentsExperienceId
-	}) {
+	updateLayoutData({config, fetcher, layoutData, segmentsExperienceId}) {
 		const {classNameId, classPK, updateLayoutPageTemplateDataURL} = config;
 
-		return serviceFetch(
-			config,
-			updateLayoutPageTemplateDataURL,
-			{
-				classNameId,
-				classPK,
-				data: JSON.stringify(layoutData),
-				segmentsExperienceId
-			},
-			onServiceStatus
-		);
+		return fetcher(updateLayoutPageTemplateDataURL, {
+			classNameId,
+			classPK,
+			data: JSON.stringify(layoutData),
+			segmentsExperienceId
+		});
 	}
 };

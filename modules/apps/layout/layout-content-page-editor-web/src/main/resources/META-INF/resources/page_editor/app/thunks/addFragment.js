@@ -19,18 +19,20 @@ export default function addFragment({
 	config,
 	fragmentGroupId,
 	fragmentKey,
+	network,
 	position,
 	siblingId,
 	store
 }) {
 	return dispatch => {
 		const {segmentsExperienceId} = store;
+		const {fetcher} = network;
 
 		FragmentService.addFragmentEntryLink({
 			config,
+			fetcher,
 			fragmentGroupId,
 			fragmentKey,
-			onServiceStatus: dispatch,
 			segmentsExperienceId
 		}).then(fragmentEntryLink => {
 			// TODO: This is a temporary "hack"

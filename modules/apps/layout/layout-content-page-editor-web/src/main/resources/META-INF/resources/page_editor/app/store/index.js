@@ -17,7 +17,6 @@ import React from 'react';
 // Commented out to avoid lint errors
 import {LAYOUT_DATA_ITEM_DEFAULT_CONFIGURATIONS} from '../config/constants/layoutDataItemDefaultConfigurations';
 import {LAYOUT_DATA_ITEM_TYPES} from '../config/constants/layoutDataItemTypes';
-import {SERVICE_NETWORK_STATUS_TYPES} from '../config/constants/serviceNetworkStatusTypes';
 
 const INITIAL_STATE = {
 	/**
@@ -26,13 +25,7 @@ const INITIAL_STATE = {
 	 *
 	 * TODO: potentially allow us to specify a ranking here to determine order
 	 */
-	reducers: {},
-
-	service: {
-		error: null,
-		lastFetch: null,
-		status: SERVICE_NETWORK_STATUS_TYPES.Idle
-	}
+	reducers: {}
 };
 
 export const StoreContext = React.createContext(INITIAL_STATE);

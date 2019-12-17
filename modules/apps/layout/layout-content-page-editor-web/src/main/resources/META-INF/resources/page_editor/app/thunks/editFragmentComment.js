@@ -20,14 +20,18 @@ export default function editFragmentComment({
 	commentId,
 	config,
 	fragmentEntryLinkId,
+	network,
 	parentCommentId,
 	resolved = false
 }) {
 	return dispatch => {
+		const {fetcher} = network;
+
 		return FragmentCommentService.editFragmentEntryLinkComment({
 			body,
 			commentId,
 			config,
+			fetcher,
 			resolved
 		}).then(fragmentEntryLinkComment => {
 			dispatch(

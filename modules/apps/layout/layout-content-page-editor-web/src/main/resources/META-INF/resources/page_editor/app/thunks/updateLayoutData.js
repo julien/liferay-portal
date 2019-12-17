@@ -17,13 +17,14 @@ import LayoutService from '../services/LayoutService';
 export default function updateLayoutData({
 	config,
 	layoutData,
+	network,
 	segmentsExperienceId
 }) {
-	return dispatch =>
+	return () =>
 		LayoutService.updateLayoutData({
 			config,
+			fetcher: network.fetcher,
 			layoutData,
-			onServiceStatus: dispatch,
 			segmentsExperienceId
 		});
 }

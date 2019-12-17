@@ -21,6 +21,7 @@ import App from './components/App';
 import {ControlsProvider} from './components/Controls';
 import {ConfigContext, getConfig} from './config/index';
 import {DispatchContext, reducer} from './reducers/index';
+import {NetworkProvider} from './services/index';
 import {StoreContext, getInitialState} from './store/index';
 
 const {useReducer} = React;
@@ -44,9 +45,11 @@ function Container({data}) {
 		<ConfigContext.Provider value={config}>
 			<StoreContext.Provider value={store}>
 				<DispatchContext.Provider value={dispatch}>
-					<ControlsProvider>
-						<App />
-					</ControlsProvider>
+					<NetworkProvider config={config}>
+						<ControlsProvider>
+							<App />
+						</ControlsProvider>
+					</NetworkProvider>
 				</DispatchContext.Provider>
 			</StoreContext.Provider>
 		</ConfigContext.Provider>

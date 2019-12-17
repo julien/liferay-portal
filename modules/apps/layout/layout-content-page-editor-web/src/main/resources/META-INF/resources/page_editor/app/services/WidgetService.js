@@ -12,31 +12,24 @@
  * details.
  */
 
-import serviceFetch from './serviceFetch';
-
 export default {
 	/**
 	 * Adds a Widget to the current layout
 	 * @param {object} options
 	 * @param {object} options.config Application config
 	 * @param {string} options.portletId Portlet id of the Widget
-	 * @param {Function} options.onServiceStatus Callback for network status changes
+	 * @param {Function} options.fetcher service fetcher
 	 * @param {string} options.segmentsExperienceId Current segmentsExperienceId
 	 * @return {Promise<FragmentEntryLink>} Created FragmentEntryLink
 	 */
-	addPortlet({config, onServiceStatus, portletId, segmentsExperienceId}) {
+	addPortlet({config, fetcher, portletId, segmentsExperienceId}) {
 		const {addPortletURL, classNameId, classPK} = config;
 
-		return serviceFetch(
-			config,
-			addPortletURL,
-			{
-				classNameId,
-				classPK,
-				portletId,
-				segmentsExperienceId
-			},
-			onServiceStatus
-		);
+		return fetcher(addPortletURL, {
+			classNameId,
+			classPK,
+			portletId,
+			segmentsExperienceId
+		});
 	}
 };

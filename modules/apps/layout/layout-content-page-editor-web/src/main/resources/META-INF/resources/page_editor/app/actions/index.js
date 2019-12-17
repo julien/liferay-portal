@@ -24,7 +24,6 @@ export {default as removeItem} from './removeItem';
 export {default as unloadReducer} from './unloadReducer';
 export {default as updateItemConfig} from './updateItemConfig';
 export {default as updateLanguageId} from './updateLanguageId';
-export {default as updateService} from './updateService';
 
 /**
  * Action types.

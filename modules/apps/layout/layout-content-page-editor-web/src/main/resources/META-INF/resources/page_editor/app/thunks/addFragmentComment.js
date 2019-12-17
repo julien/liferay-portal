@@ -19,12 +19,16 @@ export default function addFragmentComment({
 	body,
 	config,
 	fragmentEntryLinkId,
+	network,
 	parentCommentId
 }) {
 	return dispatch => {
+		const {fetcher} = network;
+
 		return FragmentCommentService.addFragmentEntryLinkComment({
 			body,
 			config,
+			fetcher,
 			fragmentEntryLinkId,
 			parentCommentId
 		}).then(fragmentEntryLinkComment => {

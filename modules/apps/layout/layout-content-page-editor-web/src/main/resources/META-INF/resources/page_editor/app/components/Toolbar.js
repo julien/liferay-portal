@@ -23,6 +23,7 @@ import usePlugins from '../../core/hooks/usePlugins';
 import * as Actions from '../actions/index';
 import {ConfigContext} from '../config/index';
 import {DispatchContext} from '../reducers/index';
+import {NetworkContext} from '../services/index';
 import {StoreContext} from '../store/index';
 import NetworkStatusBar from './NetworkStatusBar';
 import Translation from './Translation';
@@ -39,6 +40,7 @@ function ToolbarBody() {
 	const isMounted = useIsMounted();
 	const load = useLoad();
 	const store = useContext(StoreContext);
+	const network = useContext(NetworkContext);
 
 	const {singleSegmentsExperienceMode, toolbarPlugins} = config;
 
@@ -132,7 +134,7 @@ function ToolbarBody() {
 			</ul>
 
 			<ul className="navbar-nav">
-				<NetworkStatusBar {...store.service} />
+				<NetworkStatusBar {...network} />
 				<li className="nav-item">
 					<ClayButton
 						className="nav-btn"

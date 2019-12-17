@@ -14,7 +14,6 @@
 
 import {fetch} from 'frontend-js-web';
 
-import {updateService} from '../actions/index';
 import {SERVICE_NETWORK_STATUS_TYPES} from '../config/constants/serviceNetworkStatusTypes';
 
 /**
@@ -38,72 +37,63 @@ function getFormData({portletNamespace}, body) {
  * Performs a POST request to the given url and parses an expected object response.
  * If the response status is over 400, or there is any "error" or "exception"
  * properties on the response object, it rejects the promise with an Error object.
- * @param {string} url
- * @param {object} [body={}]
+ * @param {object} config
  * @param {Function} onServiceStatus
  * @private
- * @return {Promise<object>}
+ * @return {Function}
  * @review
  */
-export default function serviceFetch(config, url, body = {}, onServiceStatus) {
-	onServiceStatus(
-		updateService({status: SERVICE_NETWORK_STATUS_TYPES.Fetching})
-	);
+export default function serviceFetch(config, onServiceStatus) {
+	return (url, body = {}) => {
+		onServiceStatus({status: SERVICE_NETWORK_STATUS_TYPES.Fetching});
 
-	return fetch(url, {
-		body: getFormData(config, body),
-		method: 'POST'
-	})
-		.then(
-			response =>
-				new Promise((resolve, reject) => {
-					response
-						.clone()
-						.json()
-						.then(body => resolve([response, body]))
-						.catch(() => response.clone().text())
-						.then(body => resolve([response, body]))
-						.catch(reject);
-				})
-		)
-		.then(([response, body]) => {
-			if (typeof body === 'object') {
-				if ('exception' in body) {
-					onServiceStatus(
-						updateService({
+		return fetch(url, {
+			body: getFormData(config, body),
+			method: 'POST'
+		})
+			.then(
+				response =>
+					new Promise((resolve, reject) => {
+						response
+							.clone()
+							.json()
+							.then(body => resolve([response, body]))
+							.catch(() => response.clone().text())
+							.then(body => resolve([response, body]))
+							.catch(reject);
+					})
+			)
+			.then(([response, body]) => {
+				if (typeof body === 'object') {
+					if ('exception' in body) {
+						onServiceStatus({
 							error: body.exception,
 							status: SERVICE_NETWORK_STATUS_TYPES.Error
-						})
-					);
-					return;
-				} else if ('error' in body) {
-					onServiceStatus(
-						updateService({
+						});
+						return;
+					} else if ('error' in body) {
+						onServiceStatus({
 							error: body.error,
 							status: SERVICE_NETWORK_STATUS_TYPES.Error
-						})
-					);
-					return;
+						});
+						return;
+					}
 				}
-			}
 
-			if (response.status >= 400) {
-				onServiceStatus(
-					updateService({
+				if (response.status >= 400) {
+					onServiceStatus({
 						error: `${response.status} ${body}`,
 						status: SERVICE_NETWORK_STATUS_TYPES.Error
-					})
-				);
-				return;
-			}
+					});
+					return;
+				}
 
-			onServiceStatus(
-				updateService({
+				onServiceStatus({
 					error: null,
 					lastFetch: new Date(),
 					status: SERVICE_NETWORK_STATUS_TYPES.Idle
-				})
-			);
-			return body;
-		});
+				});
+				return body;
+			});
+	};
 }

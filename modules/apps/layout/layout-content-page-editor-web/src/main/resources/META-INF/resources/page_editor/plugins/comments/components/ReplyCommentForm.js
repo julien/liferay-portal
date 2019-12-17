@@ -19,6 +19,7 @@ import React, {useState, useContext} from 'react';
 
 import {ConfigContext} from '../../../app/config/index';
 import {DispatchContext} from '../../../app/reducers/index';
+import {NetworkContext} from '../../../app/services/index';
 import addFragmentComment from '../../../app/thunks/addFragmentComment';
 import CommentForm from './CommentForm';
 
@@ -32,6 +33,7 @@ export default function ReplyCommentForm({
 	const [textareaContent, setTextareaContent] = useState('');
 	const config = useContext(ConfigContext);
 	const dispatch = useContext(DispatchContext);
+	const network = useContext(NetworkContext);
 
 	const handleReplyButtonClick = () => {
 		setAddingComment(true);
@@ -41,6 +43,7 @@ export default function ReplyCommentForm({
 				body: textareaContent,
 				config,
 				fragmentEntryLinkId,
+				network,
 				parentCommentId
 			})
 		)
