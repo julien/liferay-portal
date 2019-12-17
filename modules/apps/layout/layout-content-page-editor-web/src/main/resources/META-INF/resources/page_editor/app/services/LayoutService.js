@@ -20,7 +20,6 @@ export default {
 	 * @param {string} options.segmentsExperienceId Current segmentsExperienceId
 	 * @param {Function} options.fetcher service fetcher
 	 * @param {object} options.layoutData New layoutData
-	 * @param {Function} options.onServiceStatus Callback for network status changes
 	 * @return {Promise<void>}
 	 */
 	updateLayoutData({config, fetcher, layoutData, segmentsExperienceId}) {
