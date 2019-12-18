@@ -21,7 +21,6 @@ import {LAYOUT_DATA_FLOATING_TOOLBAR_BUTTONS} from '../config/constants/layoutDa
 import {LAYOUT_DATA_ITEM_TYPES} from '../config/constants/layoutDataItemTypes';
 import {ConfigContext} from '../config/index';
 import {DispatchContext} from '../reducers/index';
-import {NetworkContext} from '../services/index';
 import {StoreContext} from '../store/index';
 import updateLayoutData from '../thunks/updateLayoutData';
 import {useIsActive} from './Controls';
@@ -276,7 +275,6 @@ const LayoutDataItem = ({fragmentEntryLinks, item, layoutData}) => {
 export default function PageEditor() {
 	const config = useContext(ConfigContext);
 	const dispatch = useContext(DispatchContext);
-	const network = useContext(NetworkContext);
 	const {fragmentEntryLinks, layoutData, segmentsExperienceId} = useContext(
 		StoreContext
 	);
@@ -296,20 +294,12 @@ export default function PageEditor() {
 					updateLayoutData({
 						config,
 						layoutData,
-						network,
 						segmentsExperienceId
 					})
 				);
 			}
 		}
-	}, [
-		config,
-		dispatch,
-		isMounted,
-		layoutData,
-		network,
-		segmentsExperienceId
-	]);
+	}, [config, dispatch, isMounted, layoutData, segmentsExperienceId]);
 
 	return (
 		<LayoutDataItem

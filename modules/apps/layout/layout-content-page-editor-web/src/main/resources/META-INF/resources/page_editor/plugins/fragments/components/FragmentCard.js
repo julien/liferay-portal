@@ -21,7 +21,6 @@ import {useDrag} from 'react-dnd';
 import {LAYOUT_DATA_ITEM_TYPES} from '../../../app/config/constants/layoutDataItemTypes';
 import {ConfigContext} from '../../../app/config/index';
 import {DispatchContext} from '../../../app/reducers/index';
-import {NetworkContext} from '../../../app/services/index';
 import {StoreContext} from '../../../app/store/index';
 import addFragment from '../../../app/thunks/addFragment';
 
@@ -50,7 +49,6 @@ export default function FragmentCard({
 	const config = useContext(ConfigContext);
 	const dispatch = useContext(DispatchContext);
 	const store = useContext(StoreContext);
-	const network = useContext(NetworkContext);
 
 	const [, drag] = useDrag({
 		end(_item, monitor) {
@@ -67,7 +65,6 @@ export default function FragmentCard({
 					config,
 					fragmentGroupId,
 					fragmentKey,
-					network,
 					position,
 					siblingId,
 					store

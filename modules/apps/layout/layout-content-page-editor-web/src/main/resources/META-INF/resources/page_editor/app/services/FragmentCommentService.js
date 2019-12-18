@@ -12,6 +12,8 @@
  * details.
  */
 
+import serviceFetch from './serviceFetch';
+
 /**
  * @typedef FragmentComment
  * @property {object} author
@@ -28,7 +30,6 @@ export default {
 	 * Adds a new Fragment to the current layout
 	 * @param {object} options
 	 * @param {string} options.body Body of the comment
-	 * @param {Function} options.fetcher service fetcher
 	 * @param {object} options.config AppConfig
 	 * @param {string} options.fragmentEntryLinkId Id of the Fragment
 	 * @return {Promise<FragmentComment>} Created FragmentComment
@@ -36,13 +37,12 @@ export default {
 	addFragmentEntryLinkComment({
 		body,
 		config,
-		fetcher,
 		fragmentEntryLinkId,
 		parentCommentId = 0
 	}) {
 		const {addFragmentEntryLinkCommentURL} = config;
 
-		return fetcher(addFragmentEntryLinkCommentURL, {
+		return serviceFetch(config, addFragmentEntryLinkCommentURL, {
 			body,
 			fragmentEntryLinkId,
 			parentCommentId
@@ -53,14 +53,13 @@ export default {
 	 * Deletes a fragment comment
 	 * @param {object} options
 	 * @param {string} options.commentId Id of the comment
-	 * @param {Function} options.fetcher service fetcher
 	 * @param {object} options.config AppConfig
 	 * @return {Promise<void>}
 	 */
-	deleteFragmentEntryLinkComment({commentId, config, fetcher}) {
+	deleteFragmentEntryLinkComment({commentId, config}) {
 		const {deleteFragmentEntryLinkCommentURL} = config;
 
-		return fetcher(deleteFragmentEntryLinkCommentURL, {
+		return serviceFetch(config, deleteFragmentEntryLinkCommentURL, {
 			commentId
 		});
 	},
@@ -70,15 +69,14 @@ export default {
 	 * @param {object} options
 	 * @param {string} options.body Body of the comment
 	 * @param {string} options.commentId Id of the comment
-	 * @param {Function} options.fetcher service fetcher
 	 * @param {object} options.config AppConfig
 	 * @param {boolean} options.resolved Whether the comment should be marked as resolved or not
 	 * @return {Promise<FragmentComment>} Created FragmentComment
 	 */
-	editFragmentEntryLinkComment({body, commentId, config, fetcher, resolved}) {
+	editFragmentEntryLinkComment({body, commentId, config, resolved}) {
 		const {editFragmentEntryLinkCommentURL} = config;
 
-		return fetcher(editFragmentEntryLinkCommentURL, {
+		return serviceFetch(config, editFragmentEntryLinkCommentURL, {
 			body,
 			commentId,
 			resolved

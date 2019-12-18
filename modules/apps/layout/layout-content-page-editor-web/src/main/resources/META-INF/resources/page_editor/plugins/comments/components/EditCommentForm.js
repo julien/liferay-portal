@@ -18,7 +18,6 @@ import React, {useState, useContext} from 'react';
 
 import {ConfigContext} from '../../../app/config/index';
 import {DispatchContext} from '../../../app/reducers/index';
-import {NetworkContext} from '../../../app/services/index';
 import editFragmentComment from '../../../app/thunks/editFragmentComment';
 import CommentForm from './CommentForm';
 
@@ -31,7 +30,6 @@ export default function EditCommentForm({
 	const [textareaContent, setTextareaContent] = useState(comment.body);
 	const config = useContext(ConfigContext);
 	const dispatch = useContext(DispatchContext);
-	const network = useContext(NetworkContext);
 
 	const _handleCommentButtonClick = () => {
 		setEditingComment(true);
@@ -42,7 +40,6 @@ export default function EditCommentForm({
 				commentId: comment.commentId,
 				config,
 				fragmentEntryLinkId,
-				network,
 				parentCommentId: comment.parentCommentId
 			})
 		)

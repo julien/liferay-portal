@@ -23,7 +23,7 @@ import usePlugins from '../../core/hooks/usePlugins';
 import * as Actions from '../actions/index';
 import {ConfigContext} from '../config/index';
 import {DispatchContext} from '../reducers/index';
-import {NetworkContext} from '../services/index';
+import {NetworkContext} from '../services/NetworkProvider';
 import {StoreContext} from '../store/index';
 import NetworkStatusBar from './NetworkStatusBar';
 import Translation from './Translation';

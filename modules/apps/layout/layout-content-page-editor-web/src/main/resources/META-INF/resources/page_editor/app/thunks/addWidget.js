@@ -17,7 +17,6 @@ import WidgetService from '../services/WidgetService';
 
 export default function addWidget({
 	config,
-	network,
 	portletId,
 	position,
 	siblingId,
@@ -25,11 +24,9 @@ export default function addWidget({
 }) {
 	return dispatch => {
 		const {segmentsExperienceId} = store;
-		const {fetcher} = network;
 
 		WidgetService.addPortlet({
 			config,
-			fetcher,
 			portletId,
 			segmentsExperienceId
 		}).then(fragmentEntryLink => {

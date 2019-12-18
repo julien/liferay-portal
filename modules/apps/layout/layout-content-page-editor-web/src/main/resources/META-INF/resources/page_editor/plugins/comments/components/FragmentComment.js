@@ -24,7 +24,6 @@ import React, {useEffect, useState, useContext} from 'react';
 import {ConfigContext} from '../../../app/config/index';
 import {DispatchContext} from '../../../app/reducers/index';
 import FragmentCommentService from '../../../app/services/FragmentCommentService';
-import {NetworkContext} from '../../../app/services/index';
 import {StoreContext} from '../../../app/store/index';
 import deleteFragmentComment from '../../../app/thunks/deleteFragmentComment';
 import InlineConfirm from '../../../common/components/InlineConfirm';
@@ -60,7 +59,6 @@ export default function FragmentComment({
 	const {showResolvedComments} = useContext(StoreContext);
 	const dispatch = useContext(DispatchContext);
 	const config = useContext(ConfigContext);
-	const network = useContext(NetworkContext);
 
 	const showModifiedDateTooltip = !!(edited && modifiedDateDescription);
 
@@ -273,7 +271,6 @@ export default function FragmentComment({
 								commentId,
 								config,
 								fragmentEntryLinkId,
-								network,
 								parentCommentId
 							})
 						).catch(() => {

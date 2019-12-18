@@ -19,18 +19,15 @@ export default function addFragment({
 	config,
 	fragmentGroupId,
 	fragmentKey,
-	network,
 	position,
 	siblingId,
 	store
 }) {
 	return dispatch => {
 		const {segmentsExperienceId} = store;
-		const {fetcher} = network;
 
 		FragmentService.addFragmentEntryLink({
 			config,
-			fetcher,
 			fragmentGroupId,
 			fragmentKey,
 			segmentsExperienceId
