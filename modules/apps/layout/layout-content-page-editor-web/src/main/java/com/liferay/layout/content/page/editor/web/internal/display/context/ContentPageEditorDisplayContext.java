@@ -291,6 +291,12 @@ public class ContentPageEditorDisplayContext {
 				"availableSegmentsExperiences",
 				editorSoyContext.get("availableSegmentsExperiences")
 			).put(
+				"discardDraftURL",
+				editorSoyContext.get("discardDraftURL")
+			).put(
+				"discardDraftRedirectURL",
+				editorSoyContext.get("discardDraftRedirectURL")
+			).put(
 				"fragmentEntryLinks", editorSoyContext.get("fragmentEntryLinks")
 			).put(
 				"languageId", editorSoyContext.get("languageId")

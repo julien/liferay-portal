@@ -25,7 +25,12 @@ const INITIAL_STATE = {
 	 *
 	 * TODO: potentially allow us to specify a ranking here to determine order
 	 */
-	reducers: {}
+	discardDraftRedirectURL: '',
+	discardDraftURL: '',
+	draft: true,
+	lastSaveDate: '',
+	reducers: {},
+	singleSegmentsExperienceMode: false
 };
 
 export const StoreContext = React.createContext(INITIAL_STATE);
