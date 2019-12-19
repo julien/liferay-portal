@@ -18,11 +18,6 @@ const DEFAULT_CONFIG = {
 	toolbarId: 'pageEditorToolbar'
 };
 
-const INITIAL_STATE = {
-	discardDraftRedirectURL: '',
-	discardDraftURL: ''
-};
-
 export const ConfigContext = React.createContext(DEFAULT_CONFIG);
 
 /**
@@ -44,7 +39,6 @@ export function getConfig(config) {
 
 	return {
 		...DEFAULT_CONFIG,
-		...INITIAL_STATE,
 		...config,
 		...syntheticItems
 	};
