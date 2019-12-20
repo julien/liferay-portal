@@ -254,6 +254,11 @@ public class ContentPageEditorDisplayContext {
 				getFragmentEntryActionURL(
 					"/content_layout/delete_fragment_entry_link_comment")
 			).put(
+				"discardDraftRedirectURL",
+				editorSoyContext.get("discardDraftRedirectURL")
+			).put(
+				"discardDraftURL", editorSoyContext.get("discardDraftURL")
+			).put(
 				"editFragmentEntryLinkCommentURL",
 				getFragmentEntryActionURL(
 					"/content_layout/edit_fragment_entry_link_comment",
@@ -284,6 +289,10 @@ public class ContentPageEditorDisplayContext {
 					"/content_layout/move_fragment_entry_link_react")
 			).put(
 				"portletNamespace", editorSoyContext.get("portletNamespace")
+			).put(
+				"publishURL", editorSoyContext.get("publishURL")
+			).put(
+				"redirectURL", editorSoyContext.get("redirectURL")
 			).put(
 				"renderFragmentEntryURL",
 				editorSoyContext.get("renderFragmentEntryURL")
