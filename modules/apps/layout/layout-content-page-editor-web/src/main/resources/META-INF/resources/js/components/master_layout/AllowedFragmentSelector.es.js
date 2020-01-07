@@ -68,6 +68,7 @@ const AllowedFragmentSelector = ({onSelectedFragment}) => {
 
 			<Treeview
 				filterQuery={filter}
+				inheritSelection
 				initialSelectedNodeIds={allowedFragmentEntryKeys}
 				NodeComponent={AllowedFragmentTreeNode}
 				nodes={nodes}
