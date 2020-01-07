@@ -67,6 +67,19 @@ function filterNodes(nodes, filterQuery) {
 }
 
 /**
+ * Recursively get all the children of a parent, including the children of the children and so on
+ */
+function getChildrenIds(node, childrenIds = []) {
+	node.children.forEach(children => {
+		childrenIds.push(children.id);
+
+		getChildrenIds(children, childrenIds);
+	});
+
+	return childrenIds;
+}
+
+/**
  * Finds the deepest visible node in the subtree rooted at `node`.
  */
 function getLastVisible(node) {
@@ -84,6 +97,7 @@ function getLastVisible(node) {
  */
 function init({
 	filterQuery,
+	inheritSelection,
 	initialNodes,
 	initialSelectedNodeIds,
 	multiSelection
@@ -119,6 +133,7 @@ function init({
 		filterQuery,
 		filteredNodes: filterNodes(nodes, filterQuery),
 		focusedNodeId: null,
+		inheritSelection,
 		multiSelection,
 		nodeMap,
 		nodes,
@@ -465,20 +480,43 @@ function reducer(state, action) {
 			const id = action.nodeId;
 
 			if (!nodeMap[id].disabled) {
-				const {multiSelection} = state;
+				const {inheritSelection, multiSelection} = state;
 
 				let {selectedNodeIds} = state;
 
-				if (selectedNodeIds.has(id)) {
-					selectedNodeIds = new Set(
-						[...selectedNodeIds].filter(
-							selectedId => selectedId !== id
-						)
-					);
-				} else if (multiSelection) {
-					selectedNodeIds = new Set([...selectedNodeIds, id]);
+				if (inheritSelection) {
+					const selectedNode = nodeMap[id];
+
+					const parentAndChildrenIds = [
+						id,
+						...getChildrenIds(selectedNode)
+					];
+
+					if (selectedNodeIds.has(id)) {
+						selectedNodeIds = new Set(
+							[...selectedNodeIds].filter(
+								selectedId =>
+									!parentAndChildrenIds.includes(selectedId)
+							)
+						);
+					} else {
+						selectedNodeIds = new Set([
+							...selectedNodeIds,
+							...parentAndChildrenIds
+						]);
+					}
 				} else {
-					selectedNodeIds = new Set([id]);
+					if (selectedNodeIds.has(id)) {
+						selectedNodeIds = new Set(
+							[...selectedNodeIds].filter(
+								selectedId => selectedId !== id
+							)
+						);
+					} else if (multiSelection) {
+						selectedNodeIds = new Set([...selectedNodeIds, id]);
+					} else {
+						selectedNodeIds = new Set([id]);
+					}
 				}
 
 				return {
@@ -591,6 +629,7 @@ function visit(node, callback, nodeMap) {
 function Treeview({
 	NodeComponent,
 	filterQuery,
+	inheritSelection,
 	initialSelectedNodeIds,
 	multiSelection,
 	nodes: initialNodes,
@@ -606,6 +645,7 @@ function Treeview({
 		reducer,
 		{
 			filterQuery,
+			inheritSelection,
 			initialNodes,
 			initialSelectedNodeIds,
 			multiSelection
