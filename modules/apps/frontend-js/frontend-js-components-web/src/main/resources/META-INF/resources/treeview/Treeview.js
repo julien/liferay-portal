@@ -43,6 +43,36 @@ function addLinks(nodes, parentId = null) {
 	});
 }
 
+/**
+ * Updates the selection status of the node based on its children.
+ * Having all the children selected will mark the item as selected;
+ */
+function computeParentSelection(nodeId, selectedNodeIds, nodes) {
+	const node = nodes[nodeId];
+
+	if (!node) {
+		return selectedNodeIds;
+	}
+
+	const allChildrenSelected = node.children.every(children =>
+		selectedNodeIds.has(children.id)
+	);
+
+	let nextSelectedNodeIds;
+
+	if (allChildrenSelected) {
+		nextSelectedNodeIds = selectedNodeIds.has(nodeId)
+			? selectedNodeIds
+			: new Set([...selectedNodeIds, nodeId]);
+	} else {
+		nextSelectedNodeIds = selectedNodeIds.has(nodeId)
+			? new Set([...selectedNodeIds].filter(id => id !== nodeId))
+			: selectedNodeIds;
+	}
+
+	return computeParentSelection(node.parentId, nextSelectedNodeIds, nodes);
+}
+
 function filterNodes(nodes, filterQuery) {
 	if (!filterQuery) {
 		return null;
@@ -492,19 +522,27 @@ function reducer(state, action) {
 						...getChildrenIds(selectedNode)
 					];
 
+					let nextSelectedNodeIds;
+
 					if (selectedNodeIds.has(id)) {
-						selectedNodeIds = new Set(
+						nextSelectedNodeIds = new Set(
 							[...selectedNodeIds].filter(
 								selectedId =>
 									!parentAndChildrenIds.includes(selectedId)
 							)
 						);
 					} else {
-						selectedNodeIds = new Set([
+						nextSelectedNodeIds = new Set([
 							...selectedNodeIds,
 							...parentAndChildrenIds
 						]);
 					}
+
+					selectedNodeIds = computeParentSelection(
+						selectedNode.parentId,
+						nextSelectedNodeIds,
+						nodeMap
+					);
 				} else {
 					if (selectedNodeIds.has(id)) {
 						selectedNodeIds = new Set(
