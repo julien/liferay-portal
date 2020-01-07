@@ -221,4 +221,59 @@ describe('Treeview', () => {
 		expect(button.dataset.icon).toBe('cog');
 		expect(button.dataset.size).toBe('sm');
 	});
+
+	describe('Treeview with inheritedSelection option enabled', () => {
+		it('selects children when selecting parent', () => {
+			const onSelectedNodesChange = jest.fn();
+			const {getByText} = render(
+				<Treeview
+					inheritSelection
+					nodes={nodes}
+					onSelectedNodesChange={onSelectedNodesChange}
+				/>
+			);
+
+			fireEvent.click(getByText('Sandro'));
+
+			expect(onSelectedNodesChange).toBeCalledWith(
+				new Set(['1', '1.1', '1.2', '1.2.1'])
+			);
+		});
+
+		it('enables parent when all of its children are selected', () => {
+			const onSelectedNodesChange = jest.fn();
+			const {getByText} = render(
+				<Treeview
+					inheritSelection
+					initialSelectedNodeIds={['1.2', '1.2.1']}
+					nodes={nodes}
+					onSelectedNodesChange={onSelectedNodesChange}
+				/>
+			);
+
+			fireEvent.click(getByText('Pablictor'));
+
+			expect(onSelectedNodesChange).toBeCalledWith(
+				new Set(['1', '1.1', '1.2', '1.2.1'])
+			);
+		});
+
+		it('disables parent when deselecting on of its children', () => {
+			const onSelectedNodesChange = jest.fn();
+			const {getByText} = render(
+				<Treeview
+					inheritSelection
+					initialSelectedNodeIds={['1', '1.1', '1.2', '1.2.1']}
+					nodes={nodes}
+					onSelectedNodesChange={onSelectedNodesChange}
+				/>
+			);
+
+			fireEvent.click(getByText('Pablictor'));
+
+			expect(onSelectedNodesChange).toBeCalledWith(
+				new Set(['1.2', '1.2.1'])
+			);
+		});
+	});
 });
