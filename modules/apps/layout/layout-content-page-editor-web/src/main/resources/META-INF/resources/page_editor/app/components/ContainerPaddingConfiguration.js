@@ -56,7 +56,7 @@ export const ContainerPaddingConfiguration = ({
 	paddingHorizontal,
 	paddingVertical
 }) => (
-	<ClayForm.Group className="form-group-autofit">
+	<ClayForm.Group className="form-group-autofit" small>
 		<div className="form-group-item">
 			<label htmlFor="containerPaddingVertical">
 				{Liferay.Language.get('padding-v')}

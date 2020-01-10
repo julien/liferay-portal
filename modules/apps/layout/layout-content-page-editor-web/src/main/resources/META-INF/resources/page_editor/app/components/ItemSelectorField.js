@@ -25,7 +25,7 @@ export const ItemSelectorField = ({field, onValueSelect, value}) => {
 
 	return (
 		<>
-			<ClayForm.Group>
+			<ClayForm.Group small>
 				<ItemSelector
 					itemSelectorURL={typeOptions.itemSelectorUrl}
 					label={field.label}
@@ -37,7 +37,7 @@ export const ItemSelectorField = ({field, onValueSelect, value}) => {
 			</ClayForm.Group>
 
 			{typeOptions.enableSelectTemplate && value.className && (
-				<ClayForm.Group>
+				<ClayForm.Group small>
 					<TemplateSelector
 						item={value}
 						onTemplateSelect={template => {
@@ -70,13 +70,13 @@ const TemplateSelector = ({item, onTemplateSelect, selectedTemplate}) => {
 
 	return (
 		<>
-			<div className="form-group">
+			<ClayForm.Group small>
 				<label htmlFor="template">
 					{Liferay.Language.get('template')}
 				</label>
 
 				<select
-					className="form-control form-control-sm"
+					className="form-control"
 					id="itemSelectorTemplateSelect"
 					onChange={event => {
 						onTemplateSelect(
@@ -132,7 +132,7 @@ const TemplateSelector = ({item, onTemplateSelect, selectedTemplate}) => {
 						}
 					})}
 				</select>
-			</div>
+			</ClayForm.Group>
 		</>
 	);
 };

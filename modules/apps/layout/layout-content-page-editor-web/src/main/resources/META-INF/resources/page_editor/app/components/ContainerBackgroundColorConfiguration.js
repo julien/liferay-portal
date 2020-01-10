@@ -23,7 +23,7 @@ export const ContainerBackgroundColorConfiguration = ({
 	backgroundColor,
 	onValueChange
 }) => (
-	<ClayForm.Group>
+	<ClayForm.Group small>
 		<ColorPalette
 			label={Liferay.Language.get('background-color')}
 			onClear={() =>

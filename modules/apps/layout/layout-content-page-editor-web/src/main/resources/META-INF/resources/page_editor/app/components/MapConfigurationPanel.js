@@ -121,7 +121,10 @@ export function MapConfigurationPanel({item}) {
 
 	return (
 		<>
-			<div className="floating-toolbar-layout-background-image-panel__asset-select form-group">
+			<ClayForm.Group
+				className="floating-toolbar-layout-background-image-panel__asset-select"
+				small
+			>
 				<label htmlFor="itemSelectorInput">
 					{Liferay.Language.get('content')}
 				</label>
@@ -154,8 +157,8 @@ export function MapConfigurationPanel({item}) {
 						</ClayButton>
 					</ClayButton.Group>
 				</div>
-			</div>
-			<ClayForm.Group>
+			</ClayForm.Group>
+			<ClayForm.Group small>
 				<label htmlFor="floatingToolbarLayoutBackgroundImagePanelFieldSelect">
 					{Liferay.Language.get('field')}
 				</label>

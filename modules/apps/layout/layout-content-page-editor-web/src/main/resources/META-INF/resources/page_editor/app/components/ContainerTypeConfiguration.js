@@ -18,7 +18,7 @@ import React from 'react';
 const CONTAINER_TYPE_IDENTIFIER = 'type';
 
 export const ContainerTypeConfiguration = ({containerType, onValueChange}) => (
-	<ClayForm.Group>
+	<ClayForm.Group small>
 		<label htmlFor="containerType">
 			{Liferay.Language.get('container')}
 		</label>

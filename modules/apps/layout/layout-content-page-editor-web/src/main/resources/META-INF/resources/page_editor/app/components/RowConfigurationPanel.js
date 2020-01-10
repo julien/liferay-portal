@@ -92,7 +92,7 @@ export const RowConfigurationPanel = ({item}) => {
 
 	return (
 		<>
-			<ClayForm.Group>
+			<ClayForm.Group small>
 				<label htmlFor="rowNumberOfColumns">
 					{Liferay.Language.get('number-of-columns')}
 				</label>
@@ -113,7 +113,7 @@ export const RowConfigurationPanel = ({item}) => {
 				/>
 			</ClayForm.Group>
 			{item.config.numberOfColumns > 1 && (
-				<ClayForm.Group>
+				<ClayForm.Group small>
 					<ClayCheckboxWithState
 						aria-label={Liferay.Language.get('columns-gutter')}
 						checked={item.config.gutters}

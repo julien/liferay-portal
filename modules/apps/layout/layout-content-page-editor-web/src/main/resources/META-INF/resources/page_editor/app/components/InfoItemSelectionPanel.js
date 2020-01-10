@@ -28,13 +28,16 @@ export default function InfoItemSelectionPanel({
 
 	return (
 		<>
-			<div className="floating-toolbar-layout-background-image-panel__asset-select form-group">
+			<ClayForm.Group
+				className="floating-toolbar-layout-background-image-panel__asset-select"
+				small
+			>
 				<label htmlFor="itemSelectorInput">
 					{Liferay.Language.get('content')}
 				</label>
 				<div className="d-flex">
 					<ClayInput
-						className="form-control-sm mr-2"
+						className="mr-2"
 						id="itemSelectorInput"
 						readOnly
 						type="text"
@@ -56,14 +59,13 @@ export default function InfoItemSelectionPanel({
 						</ClayButton>
 					</ClayButton.Group>
 				</div>
-			</div>
-			<ClayForm.Group>
+			</ClayForm.Group>
+			<ClayForm.Group small>
 				<label htmlFor="floatingToolbarLayoutBackgroundImagePanelFieldSelect">
 					{Liferay.Language.get('field')}
 				</label>
 				<ClaySelectWithOption
 					aria-label={Liferay.Language.get('field')}
-					className="form-control-sm"
 					disabled
 					id="floatingToolbarLayoutBackgroundImagePanelFieldSelect"
 					onChange={({target: {value}}) => value}
