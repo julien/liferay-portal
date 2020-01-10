@@ -16,12 +16,11 @@ import ClayForm, {ClaySelectWithOption} from '@clayui/form';
 import React from 'react';
 
 export const SelectField = ({field, onValueSelect, value}) => (
-	<ClayForm.Group>
+	<ClayForm.Group small>
 		<label htmlFor={field.name}>{field.label}</label>
 
 		<ClaySelectWithOption
 			aria-label={field.label}
-			className="form-control-sm"
 			defaultValue={field.defaultValue}
 			id={field.name}
 			onChange={event => {

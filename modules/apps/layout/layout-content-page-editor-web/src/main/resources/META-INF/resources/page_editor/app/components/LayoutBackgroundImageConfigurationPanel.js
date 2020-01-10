@@ -56,7 +56,7 @@ export const LayoutBackgroundImageConfigurationPanel = ({item}) => {
 
 	return (
 		<div className="floating-toolbar-layout-background-image-panel">
-			<ClayForm.Group>
+			<ClayForm.Group small>
 				<label htmlFor="floatingToolbarLayoutBackgroundImagePanelImageSourceTypeSelect">
 					{Liferay.Language.get('image-source')}
 				</label>

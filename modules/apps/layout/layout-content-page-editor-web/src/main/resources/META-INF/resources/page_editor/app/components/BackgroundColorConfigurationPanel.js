@@ -35,7 +35,7 @@ export const BackgroundColorConfigurationPanel = ({item}) => {
 		);
 
 	return (
-		<ClayForm.Group>
+		<ClayForm.Group small>
 			<ColorPalette
 				clearButton
 				label={Liferay.Language.get('background-color')}

@@ -65,7 +65,7 @@ export const SpacingConfigurationPanel = ({item}) => {
 
 	return (
 		<div className="floating-toolbar-spacing-panel">
-			<ClayForm.Group>
+			<ClayForm.Group small>
 				<label htmlFor="floatingToolbarSpacingPanelNumberOfColumnsOption">
 					{Liferay.Language.get('number-of-columns')}
 				</label>
