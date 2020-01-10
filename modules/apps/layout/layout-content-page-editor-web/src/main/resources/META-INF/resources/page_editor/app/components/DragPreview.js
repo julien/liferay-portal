@@ -33,7 +33,7 @@ const getItemStyles = (currentOffset, ref) => {
 	};
 };
 
-export default function DragPreview({fragmentEntryLinks}) {
+export default function DragPreview() {
 	const ref = useRef();
 
 	const {currentOffset, isDragging, item} = useDragLayer(monitor => ({
@@ -46,10 +46,6 @@ export default function DragPreview({fragmentEntryLinks}) {
 		return null;
 	}
 
-	const itemDetails = item.name
-		? item
-		: fragmentEntryLinks[item.config.fragmentEntryLinkId];
-
 	return (
 		<div className="page-editor-drag__preview-layer">
 			<div
@@ -57,8 +53,8 @@ export default function DragPreview({fragmentEntryLinks}) {
 				ref={ref}
 				style={getItemStyles(currentOffset, ref)}
 			>
-				{itemDetails && itemDetails.name
-					? itemDetails.name
+				{item && item.name
+					? item.name
 					: Liferay.Language.get('element')}
 			</div>
 		</div>

@@ -105,6 +105,7 @@ export default function Topper({
 		},
 		item: {
 			...item,
+			name,
 			type: LAYOUT_DATA_ITEM_TYPES[item.type]
 		}
 	});

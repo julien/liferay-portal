@@ -309,7 +309,7 @@ export default function PageEditor() {
 				'page-editor--with-sidebar-open': sidebarPanelId && sidebarOpen
 			})}
 		>
-			<DragPreview fragmentEntryLinks={fragmentEntryLinks} />
+			<DragPreview />
 			<LayoutDataItem
 				fragmentEntryLinks={fragmentEntryLinks}
 				item={mainItem}
