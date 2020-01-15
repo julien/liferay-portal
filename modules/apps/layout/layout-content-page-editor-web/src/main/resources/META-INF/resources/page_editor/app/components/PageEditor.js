@@ -290,6 +290,8 @@ function Fragment({item, layoutData}, ref) {
 		}
 	};
 
+	const portletId = fragmentEntryLink.portletId;
+
 	return (
 		<Topper
 			acceptDrop={[LAYOUT_DATA_ITEM_TYPES.fragment]}
@@ -300,15 +302,17 @@ function Fragment({item, layoutData}, ref) {
 		>
 			{() => (
 				<>
-					<FloatingToolbar
-						buttons={[
-							LAYOUT_DATA_FLOATING_TOOLBAR_BUTTONS.duplicateFragment,
-							LAYOUT_DATA_FLOATING_TOOLBAR_BUTTONS.fragmentConfiguration
-						]}
-						item={item}
-						itemRef={ref}
-						onButtonClick={handleButtonClick}
-					/>
+					{!portletId && (
+						<FloatingToolbar
+							buttons={[
+								LAYOUT_DATA_FLOATING_TOOLBAR_BUTTONS.duplicateFragment,
+								LAYOUT_DATA_FLOATING_TOOLBAR_BUTTONS.fragmentConfiguration
+							]}
+							item={item}
+							itemRef={ref}
+							onButtonClick={handleButtonClick}
+						/>
+					)}
 
 					<FragmentContent
 						fragmentEntryLink={fragmentEntryLink}
