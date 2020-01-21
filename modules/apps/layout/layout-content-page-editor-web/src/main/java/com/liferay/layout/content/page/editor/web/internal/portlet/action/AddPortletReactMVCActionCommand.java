@@ -117,35 +117,7 @@ public class AddPortletReactMVCActionCommand
 
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
-		try {
-			jsonObject = processAddPortlet(actionRequest, actionResponse);
-
-			if (SessionErrors.contains(
-					actionRequest, "fragmentEntryContentInvalid")) {
-
-				jsonObject.put("error", true);
-			}
-
-			SessionMessages.add(actionRequest, "fragmentEntryLinkAdded");
-		}
-		catch (Exception exception) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(exception, exception);
-			}
-
-			String errorMessage = "an-unexpected-error-occurred";
-
-			jsonObject.put(
-				"error",
-				LanguageUtil.get(
-					_portal.getHttpServletRequest(actionRequest),
-					errorMessage));
-		}
-
-		hideDefaultSuccessMessage(actionRequest);
-
-		JSONPortletResponseUtil.writeJSON(
-			actionRequest, actionResponse, jsonObject);
+		throw new IllegalAccessException("hola julien");
 	}
 
 	protected JSONObject processAddPortlet(

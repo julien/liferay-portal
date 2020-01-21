@@ -125,19 +125,10 @@ public class DeleteItemReactMVCActionCommand
 
 		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
-		try {
-			jsonObject = deleteItemJSONObject(
-				themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId(),
-				itemId, themeDisplay.getPlid(), segmentsExperienceId);
-		}
-		catch (Exception exception) {
-			_log.error(exception, exception);
-
-			jsonObject.put(
-				"error",
-				LanguageUtil.get(
-					themeDisplay.getRequest(), "an-unexpected-error-occurred"));
-		}
+		jsonObject.put(
+			"error",
+			LanguageUtil.get(
+				themeDisplay.getRequest(), "an-unexpected-error-occurred"));
 
 		hideDefaultSuccessMessage(actionRequest);
 
