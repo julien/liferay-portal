@@ -111,8 +111,10 @@ const TranslationItem = ({
 				>
 					{TRANSLATION_STATUS_LANGUAGE[status]}
 					{TRANSLATION_STATUS_TYPE[status] ===
-						TRANSLATION_STATUS_TYPE.translating &&
-						`${translatedValuesLength}/${editableValuesLength}`}
+						(TRANSLATION_STATUS_TYPE.untranslated ||
+							TRANSLATION_STATUS_TYPE.translating ||
+							TRANSLATION_STATUS_TYPE.translated) &&
+						` ${translatedValuesLength}/${editableValuesLength}`}
 				</div>
 			</span>
 		</ClayDropDown.Item>
