@@ -27,20 +27,31 @@ import java.util.UUID;
  */
 public class LayoutStructureItem {
 
+	public static LayoutStructureItem of(JSONObject jsonObject) {
+		JSONObject configJSONObject = jsonObject.getJSONObject("config");
+		String itemId = jsonObject.getString("itemId");
+		String parentId = jsonObject.getString("parentId");
+		String type = jsonObject.getString("type");
+
+		List<String> childrenItemIds = new ArrayList<>();
+
+		JSONUtil.addToStringCollection(
+			childrenItemIds, jsonObject.getJSONArray("children"));
+
+		LayoutStructureItem layoutStructureItem = new LayoutStructureItem();
+
+		layoutStructureItem.setChildrenItemIds(childrenItemIds);
+		layoutStructureItem.setItemConfigJSONObject(configJSONObject);
+		layoutStructureItem.setItemId(itemId);
+		layoutStructureItem.setItemType(type);
+		layoutStructureItem.setParentItemId(parentId);
+
+		return layoutStructureItem;
+	}
+
 	public LayoutStructureItem() {
 		_childrenItemIds = new ArrayList<>();
 		_itemConfigJSONObject = JSONFactoryUtil.createJSONObject();
-	}
-
-	public LayoutStructureItem(
-		List<String> childrenItemIds, JSONObject itemConfigJSONObject,
-		String itemId, String parentItemId, String itemType) {
-
-		_childrenItemIds = childrenItemIds;
-		_itemConfigJSONObject = itemConfigJSONObject;
-		_itemId = itemId;
-		_parentItemId = parentItemId;
-		_itemType = itemType;
 	}
 
 	public LayoutStructureItem(String parentItemId, String itemType) {

@@ -21,13 +21,10 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.util.PortalUtil;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -78,26 +75,12 @@ public class LayoutStructureUtil {
 
 		for (String key : itemsJSONObject.keySet()) {
 			layoutStructureItems.put(
-				key, _toItem(itemsJSONObject.getJSONObject(key)));
+				key,
+				LayoutStructureItem.of(itemsJSONObject.getJSONObject(key)));
 		}
 
 		return new LayoutStructure(
 			layoutStructureItems, rootItemsJSONObject.getString("main"));
-	}
-
-	private static LayoutStructureItem _toItem(JSONObject jsonObject) {
-		JSONObject configJSONObject = jsonObject.getJSONObject("config");
-		String itemId = jsonObject.getString("itemId");
-		String parentId = jsonObject.getString("parentId");
-		String type = jsonObject.getString("type");
-
-		List<String> childrenItemIds = new ArrayList<>();
-
-		JSONUtil.addToStringCollection(
-			childrenItemIds, jsonObject.getJSONArray("children"));
-
-		return new LayoutStructureItem(
-			childrenItemIds, configJSONObject, itemId, parentId, type);
 	}
 
 }
