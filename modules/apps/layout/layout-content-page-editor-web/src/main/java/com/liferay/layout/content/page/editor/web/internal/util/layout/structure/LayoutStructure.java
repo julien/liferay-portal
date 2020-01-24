@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * @author Víctor Galán
@@ -162,28 +163,14 @@ public class LayoutStructure {
 		return deletedLayoutStructureItems;
 	}
 
-	public LayoutStructureItem duplicateLayoutStructureItem(
-		long fragmentEntryLinkId, String itemId) {
+	public List<LayoutStructureItem> duplicateLayoutStructureItem(
+		String itemId) {
 
 		LayoutStructureItem layoutStructureItem = _layoutStructureItems.get(
 			itemId);
 
-		LayoutStructureItem parentLayoutStructureItem =
-			_layoutStructureItems.get(layoutStructureItem.getParentItemId());
-
-		List<String> childrenItemIds =
-			parentLayoutStructureItem.getChildrenItemIds();
-
-		LayoutStructureItem duplicateLayoutStructureItem =
-			addLayoutStructureItem(
-				layoutStructureItem.getItemType(),
-				layoutStructureItem.getParentItemId(),
-				childrenItemIds.indexOf(itemId) + 1);
-
-		duplicateLayoutStructureItem.updateItemConfigJSONObject(
-			JSONUtil.put("fragmentEntryLinkId", fragmentEntryLinkId));
-
-		return duplicateLayoutStructureItem;
+		return _duplicateLayoutStructureItem(
+			itemId, layoutStructureItem.getParentItemId());
 	}
 
 	public LayoutStructureItem moveLayoutStructureItem(
@@ -329,6 +316,44 @@ public class LayoutStructure {
 
 		layoutStructureItem.updateItemConfigJSONObject(
 			JSONUtil.put("size", size));
+	}
+
+	private List<LayoutStructureItem> _duplicateLayoutStructureItem(
+		String itemId, String parentItemId) {
+
+		List<LayoutStructureItem> duplicatedLayoutStructureItems =
+			new ArrayList<>();
+
+		LayoutStructureItem layoutStructureItem = _layoutStructureItems.get(
+			itemId);
+
+		LayoutStructureItem newLayoutStructureItem = new LayoutStructureItem();
+
+		newLayoutStructureItem.setItemConfigJSONObject(
+			layoutStructureItem.getItemConfigJSONObject());
+		newLayoutStructureItem.setItemId(String.valueOf(UUID.randomUUID()));
+		newLayoutStructureItem.setItemType(layoutStructureItem.getItemType());
+		newLayoutStructureItem.setParentItemId(parentItemId);
+
+		LayoutStructureItem parentLayoutStructureItem =
+			_layoutStructureItems.get(parentItemId);
+
+		List<String> parentLayoutChildrenItemIds =
+			parentLayoutStructureItem.getChildrenItemIds();
+
+		_updateLayoutStructure(
+			newLayoutStructureItem,
+			parentLayoutChildrenItemIds.indexOf(itemId) + 1);
+
+		for (String childrenItemId : layoutStructureItem.getChildrenItemIds()) {
+			duplicatedLayoutStructureItems.addAll(
+				_duplicateLayoutStructureItem(
+					childrenItemId, newLayoutStructureItem.getItemId()));
+		}
+
+		duplicatedLayoutStructureItems.add(newLayoutStructureItem);
+
+		return duplicatedLayoutStructureItems;
 	}
 
 	private void _updateLayoutStructure(
