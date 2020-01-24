@@ -58,18 +58,7 @@ public class LayoutStructure {
 		LayoutStructureItem layoutStructureItem = new LayoutStructureItem(
 			itemType, parentItemId);
 
-		_layoutStructureItems.put(
-			layoutStructureItem.getItemId(), layoutStructureItem);
-
-		if (Validator.isNull(parentItemId)) {
-			return layoutStructureItem;
-		}
-
-		LayoutStructureItem parentLayoutStructureItem =
-			_layoutStructureItems.get(parentItemId);
-
-		parentLayoutStructureItem.addChildrenItem(
-			position, layoutStructureItem.getItemId());
+		_updateLayoutStructure(layoutStructureItem, position);
 
 		return layoutStructureItem;
 	}
@@ -304,6 +293,23 @@ public class LayoutStructure {
 
 		layoutStructureItem.updateItemConfigJSONObject(
 			JSONUtil.put("size", size));
+	}
+
+	private void _updateLayoutStructure(
+		LayoutStructureItem layoutStructureItem, int position) {
+
+		_layoutStructureItems.put(
+			layoutStructureItem.getItemId(), layoutStructureItem);
+
+		if (Validator.isNull(layoutStructureItem.getParentItemId())) {
+			return;
+		}
+
+		LayoutStructureItem parentLayoutStructureItem =
+			_layoutStructureItems.get(layoutStructureItem.getParentItemId());
+
+		parentLayoutStructureItem.addChildrenItem(
+			position, layoutStructureItem.getItemId());
 	}
 
 	private static final int[][] _COLUMN_SIZES = {
