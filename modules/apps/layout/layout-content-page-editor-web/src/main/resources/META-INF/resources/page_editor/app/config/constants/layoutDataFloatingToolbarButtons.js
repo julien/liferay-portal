@@ -26,9 +26,9 @@ export const LAYOUT_DATA_FLOATING_TOOLBAR_BUTTONS = {
 
 	duplicateItem: {
 		icon: 'paste',
-		id: 'duplicate_fragment',
+		id: 'duplicate_item',
 		panelId: '',
-		title: Liferay.Language.get('duplicate-fragment'),
+		title: Liferay.Language.get('duplicate'),
 		type: 'panel'
 	},
 
