@@ -56,10 +56,8 @@ public class LayoutStructure {
 	public LayoutStructureItem addLayoutStructureItem(
 		String itemType, String parentItemId, int position) {
 
-		String itemId = String.valueOf(UUID.randomUUID());
-
 		LayoutStructureItem layoutStructureItem = new LayoutStructureItem(
-			itemId, parentItemId, itemType);
+			parentItemId, itemType);
 
 		_layoutStructureItems.put(
 			layoutStructureItem.getItemId(), layoutStructureItem);

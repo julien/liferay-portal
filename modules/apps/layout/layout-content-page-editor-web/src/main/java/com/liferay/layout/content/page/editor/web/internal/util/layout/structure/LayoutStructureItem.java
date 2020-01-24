@@ -20,6 +20,7 @@ import com.liferay.portal.kernel.json.JSONUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author Víctor Galán
@@ -42,13 +43,11 @@ public class LayoutStructureItem {
 		_itemType = itemType;
 	}
 
-	public LayoutStructureItem(
-		String itemId, String parentItemId, String itemType) {
-
-		_itemId = itemId;
+	public LayoutStructureItem(String parentItemId, String itemType) {
 		_parentItemId = parentItemId;
 		_itemType = itemType;
 
+		_itemId = String.valueOf(UUID.randomUUID());
 		_childrenItemIds = new ArrayList<>();
 		_itemConfigJSONObject = JSONFactoryUtil.createJSONObject();
 	}
