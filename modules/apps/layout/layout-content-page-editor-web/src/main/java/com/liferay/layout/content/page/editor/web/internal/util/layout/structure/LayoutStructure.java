@@ -16,13 +16,17 @@ package com.liferay.layout.content.page.editor.web.internal.util.layout.structur
 
 import com.liferay.layout.util.constants.LayoutDataItemTypeConstants;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -31,6 +35,38 @@ import java.util.Objects;
  * @author Víctor Galán
  */
 public class LayoutStructure {
+
+	public static LayoutStructure of(String layoutStructure) {
+		try {
+			JSONObject layoutStructureJSONObject =
+				JSONFactoryUtil.createJSONObject(layoutStructure);
+
+			JSONObject rootItemsJSONObject =
+				layoutStructureJSONObject.getJSONObject("rootItems");
+
+			JSONObject itemsJSONObject =
+				layoutStructureJSONObject.getJSONObject("items");
+
+			Map<String, LayoutStructureItem> layoutStructureItems =
+				new HashMap<>(itemsJSONObject.length());
+
+			for (String key : itemsJSONObject.keySet()) {
+				layoutStructureItems.put(
+					key,
+					LayoutStructureItem.of(itemsJSONObject.getJSONObject(key)));
+			}
+
+			return new LayoutStructure(
+				layoutStructureItems, rootItemsJSONObject.getString("main"));
+		}
+		catch (JSONException jsonException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug("Unable to parse JSON", jsonException);
+			}
+		}
+
+		return new LayoutStructure(new HashMap<>(), StringPool.BLANK);
+	}
 
 	public LayoutStructure(
 		Map<String, LayoutStructureItem> layoutStructureItems,
@@ -322,6 +358,9 @@ public class LayoutStructure {
 	private static final int _DEFAULT_ROW_COLUMNS = 3;
 
 	private static final int _MAX_COLUMNS = 12;
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		LayoutStructure.class);
 
 	private final Map<String, LayoutStructureItem> _layoutStructureItems;
 	private final String _mainItemId;

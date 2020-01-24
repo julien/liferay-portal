@@ -18,14 +18,9 @@ import com.liferay.layout.page.template.model.LayoutPageTemplateStructure;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalServiceUtil;
 import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.json.JSONException;
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.util.PortalUtil;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Víctor Galán
@@ -43,7 +38,7 @@ public class LayoutStructureUtil {
 					groupId, PortalUtil.getClassNameId(Layout.class.getName()),
 					plid, true);
 
-		LayoutStructure layoutStructure = _parse(
+		LayoutStructure layoutStructure = LayoutStructure.of(
 			layoutPageTemplateStructure.getData(segmentsExperienceId));
 
 		unsafeConsumer.accept(layoutStructure);
@@ -56,31 +51,6 @@ public class LayoutStructureUtil {
 				plid, segmentsExperienceId, dataJSONObject.toString());
 
 		return dataJSONObject;
-	}
-
-	private static LayoutStructure _parse(String layoutStructure)
-		throws JSONException {
-
-		JSONObject layoutStructureJSONObject = JSONFactoryUtil.createJSONObject(
-			layoutStructure);
-
-		JSONObject rootItemsJSONObject =
-			layoutStructureJSONObject.getJSONObject("rootItems");
-
-		JSONObject itemsJSONObject = layoutStructureJSONObject.getJSONObject(
-			"items");
-
-		Map<String, LayoutStructureItem> layoutStructureItems = new HashMap<>(
-			itemsJSONObject.length());
-
-		for (String key : itemsJSONObject.keySet()) {
-			layoutStructureItems.put(
-				key,
-				LayoutStructureItem.of(itemsJSONObject.getJSONObject(key)));
-		}
-
-		return new LayoutStructure(
-			layoutStructureItems, rootItemsJSONObject.getString("main"));
 	}
 
 }
