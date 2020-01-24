@@ -129,11 +129,11 @@ export default {
 	 * @param {string} options.segmentsExperienceId Experience id
 	 */
 	duplicateItem({config, itemId, onNetworkStatus, segmentsExperienceId}) {
-		const {duplicateFragmentEntryLinkURL} = config;
+		const {duplicateItemURL} = config;
 
 		return serviceFetch(
 			config,
-			duplicateFragmentEntryLinkURL,
+			duplicateItemURL,
 			{
 				body: {
 					itemId,

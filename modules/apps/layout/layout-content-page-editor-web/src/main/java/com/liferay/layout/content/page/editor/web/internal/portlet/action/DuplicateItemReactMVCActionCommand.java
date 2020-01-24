@@ -67,12 +67,11 @@ import org.osgi.service.component.annotations.Reference;
 	immediate = true,
 	property = {
 		"javax.portlet.name=" + ContentPageEditorPortletKeys.CONTENT_PAGE_EDITOR_PORTLET,
-		"mvc.command.name=/content_layout/duplicate_fragment_entry_link_react"
+		"mvc.command.name=/content_layout/duplicate_item_react"
 	},
 	service = MVCActionCommand.class
 )
-public class DuplicateFragmentEntryLinkReactMVCActionCommand
-	extends BaseMVCActionCommand {
+public class DuplicateItemReactMVCActionCommand extends BaseMVCActionCommand {
 
 	@Override
 	protected void doProcessAction(
