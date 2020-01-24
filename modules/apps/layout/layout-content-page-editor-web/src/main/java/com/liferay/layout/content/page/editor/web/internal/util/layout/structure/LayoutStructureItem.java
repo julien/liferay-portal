@@ -26,6 +26,11 @@ import java.util.List;
  */
 public class LayoutStructureItem {
 
+	public LayoutStructureItem() {
+		_childrenItemIds = new ArrayList<>();
+		_itemConfigJSONObject = JSONFactoryUtil.createJSONObject();
+	}
+
 	public LayoutStructureItem(
 		List<String> childrenItemIds, JSONObject itemConfigJSONObject,
 		String itemId, String parentItemId, String itemType) {
@@ -78,6 +83,22 @@ public class LayoutStructureItem {
 		return _parentItemId;
 	}
 
+	public void setChildrenItemIds(List<String> childrenItemIds) {
+		_childrenItemIds = childrenItemIds;
+	}
+
+	public void setItemConfigJSONObject(JSONObject itemConfigJSONObject) {
+		_itemConfigJSONObject = itemConfigJSONObject;
+	}
+
+	public void setItemId(String itemId) {
+		_itemId = itemId;
+	}
+
+	public void setItemType(String itemType) {
+		_itemType = itemType;
+	}
+
 	public void setParentItemId(String parentItemId) {
 		_parentItemId = parentItemId;
 	}
@@ -106,10 +127,10 @@ public class LayoutStructureItem {
 		}
 	}
 
-	private final List<String> _childrenItemIds;
-	private final JSONObject _itemConfigJSONObject;
-	private final String _itemId;
-	private final String _itemType;
+	private List<String> _childrenItemIds;
+	private JSONObject _itemConfigJSONObject;
+	private String _itemId;
+	private String _itemType;
 	private String _parentItemId;
 
 }
