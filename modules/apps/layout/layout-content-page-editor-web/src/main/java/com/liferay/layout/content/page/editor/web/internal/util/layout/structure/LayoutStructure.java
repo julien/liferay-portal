@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.UUID;
 
 /**
  * @author Víctor Galán
@@ -57,7 +56,7 @@ public class LayoutStructure {
 		String itemType, String parentItemId, int position) {
 
 		LayoutStructureItem layoutStructureItem = new LayoutStructureItem(
-			parentItemId, itemType);
+			itemType, parentItemId);
 
 		_layoutStructureItems.put(
 			layoutStructureItem.getItemId(), layoutStructureItem);

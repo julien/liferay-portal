@@ -54,9 +54,9 @@ public class LayoutStructureItem {
 		_itemConfigJSONObject = JSONFactoryUtil.createJSONObject();
 	}
 
-	public LayoutStructureItem(String parentItemId, String itemType) {
-		_parentItemId = parentItemId;
+	public LayoutStructureItem(String itemType, String parentItemId) {
 		_itemType = itemType;
+		_parentItemId = parentItemId;
 
 		_itemId = String.valueOf(UUID.randomUUID());
 		_childrenItemIds = new ArrayList<>();
