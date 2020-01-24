@@ -125,17 +125,10 @@ export default {
 	 * Duplicates a fragmentEntryLink
 	 * @param {object} options
 	 * @param {object} options.config Application config
-	 * @param {string} options.fragmentEntryLinkId Id of the fragmentEntryLink
 	 * @param {string} options.itemId id of the item
 	 * @param {string} options.segmentsExperienceId Experience id
 	 */
-	duplicateItem({
-		config,
-		fragmentEntryLinkId,
-		itemId,
-		onNetworkStatus,
-		segmentsExperienceId
-	}) {
+	duplicateItem({config, itemId, onNetworkStatus, segmentsExperienceId}) {
 		const {duplicateFragmentEntryLinkURL} = config;
 
 		return serviceFetch(
@@ -143,7 +136,6 @@ export default {
 			duplicateFragmentEntryLinkURL,
 			{
 				body: {
-					fragmentEntryLinkId,
 					itemId,
 					segmentsExperienceId
 				}
