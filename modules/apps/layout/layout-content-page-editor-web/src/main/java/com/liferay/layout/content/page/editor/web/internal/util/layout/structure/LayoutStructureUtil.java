@@ -16,16 +16,53 @@ package com.liferay.layout.content.page.editor.web.internal.util.layout.structur
 
 import com.liferay.layout.page.template.model.LayoutPageTemplateStructure;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalServiceUtil;
+import com.liferay.layout.util.constants.LayoutDataItemTypeConstants;
 import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Víctor Galán
  */
 public class LayoutStructureUtil {
+
+	public static long[] getFragmentEntryLinkIds(
+		List<LayoutStructureItem> layoutStructureItems) {
+
+		List<Long> fragmentEntryLinkIds = new ArrayList<>();
+
+		for (LayoutStructureItem duplicatedLayoutStructureItem :
+				layoutStructureItems) {
+
+			if (!Objects.equals(
+					LayoutDataItemTypeConstants.TYPE_FRAGMENT,
+					duplicatedLayoutStructureItem.getItemType())) {
+
+				continue;
+			}
+
+			JSONObject itemConfigJSONObject =
+				duplicatedLayoutStructureItem.getItemConfigJSONObject();
+
+			long fragmentEntryLinkId = itemConfigJSONObject.getLong(
+				"fragmentEntryLinkId");
+
+			if (fragmentEntryLinkId <= 0) {
+				continue;
+			}
+
+			fragmentEntryLinkIds.add(fragmentEntryLinkId);
+		}
+
+		return ArrayUtil.toLongArray(fragmentEntryLinkIds);
+	}
 
 	public static JSONObject updateLayoutPageTemplateData(
 			long groupId, long segmentsExperienceId, long plid,
