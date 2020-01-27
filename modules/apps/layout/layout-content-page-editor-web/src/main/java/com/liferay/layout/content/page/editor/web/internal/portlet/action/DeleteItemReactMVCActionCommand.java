@@ -80,26 +80,18 @@ public class DeleteItemReactMVCActionCommand
 			LayoutStructureUtil.updateLayoutPageTemplateData(
 				groupId, segmentsExperienceId, plid,
 				layoutStructure -> {
-					List<LayoutStructureItem> deleteLayoutStructureItems =
+					List<LayoutStructureItem> deletedLayoutStructureItems =
 						layoutStructure.deleteLayoutStructureItem(itemId);
 
-					for (LayoutStructureItem layoutStructureItem :
-							deleteLayoutStructureItems) {
+					for (long fragmentEntryLinkId :
+							LayoutStructureUtil.getFragmentEntryLinkIds(
+								deletedLayoutStructureItems)) {
 
-						JSONObject itemConfigJSONObject =
-							layoutStructureItem.getItemConfigJSONObject();
+						FragmentEntryLinkUtil.deleteFragmentEntryLink(
+							companyId, fragmentEntryLinkId, plid,
+							_portletRegistry);
 
-						long fragmentEntryLinkId = itemConfigJSONObject.getLong(
-							"fragmentEntryLinkId");
-
-						if (fragmentEntryLinkId > 0) {
-							FragmentEntryLinkUtil.deleteFragmentEntryLink(
-								companyId, fragmentEntryLinkId, plid,
-								_portletRegistry);
-
-							deletedFragmentEntryLinkIds.add(
-								fragmentEntryLinkId);
-						}
+						deletedFragmentEntryLinkIds.add(fragmentEntryLinkId);
 					}
 				});
 

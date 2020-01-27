@@ -85,25 +85,17 @@ public class UpdateRowColumnsReactMVCActionCommand
 							layoutStructure.updateRowColumnsLayoutStructureItem(
 								itemId, numberOfColumns);
 
-						for (LayoutStructureItem layoutStructureItem :
-								deletedLayoutStructureItems) {
+						for (long fragmentEntryLinkId :
+								LayoutStructureUtil.getFragmentEntryLinkIds(
+									deletedLayoutStructureItems)) {
 
-							JSONObject itemConfigJSONObject =
-								layoutStructureItem.getItemConfigJSONObject();
+							FragmentEntryLinkUtil.deleteFragmentEntryLink(
+								themeDisplay.getCompanyId(),
+								fragmentEntryLinkId, themeDisplay.getPlid(),
+								_portletRegistry);
 
-							long fragmentEntryLinkId =
-								itemConfigJSONObject.getLong(
-									"fragmentEntryLinkId");
-
-							if (fragmentEntryLinkId > 0) {
-								FragmentEntryLinkUtil.deleteFragmentEntryLink(
-									themeDisplay.getCompanyId(),
-									fragmentEntryLinkId, themeDisplay.getPlid(),
-									_portletRegistry);
-
-								deletedFragmentEntryLinkIds.add(
-									fragmentEntryLinkId);
-							}
+							deletedFragmentEntryLinkIds.add(
+								fragmentEntryLinkId);
 						}
 					});
 
