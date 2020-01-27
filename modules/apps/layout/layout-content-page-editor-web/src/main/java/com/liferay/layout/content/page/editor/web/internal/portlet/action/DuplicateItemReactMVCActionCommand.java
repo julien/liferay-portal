@@ -24,13 +24,18 @@ import com.liferay.fragment.service.FragmentEntryLinkService;
 import com.liferay.fragment.util.configuration.FragmentEntryConfigurationParser;
 import com.liferay.layout.content.page.editor.constants.ContentPageEditorPortletKeys;
 import com.liferay.layout.content.page.editor.web.internal.util.FragmentEntryLinkUtil;
+import com.liferay.layout.content.page.editor.web.internal.util.layout.structure.LayoutStructureItem;
 import com.liferay.layout.content.page.editor.web.internal.util.layout.structure.LayoutStructureUtil;
+import com.liferay.layout.util.constants.LayoutDataItemTypeConstants;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.PortletIdException;
+import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.model.PortletPreferencesIds;
 import com.liferay.portal.kernel.portlet.JSONPortletResponseUtil;
@@ -50,6 +55,9 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.segments.constants.SegmentsExperienceConstants;
+
+import java.util.List;
+import java.util.Objects;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -78,8 +86,33 @@ public class DuplicateItemReactMVCActionCommand extends BaseMVCActionCommand {
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
 
-		JSONObject jsonObject = _duplicateFragmentEntryLink(
-			actionRequest, actionResponse);
+		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
+
+		try {
+			jsonObject = _addDuplicateFragmentEntryLinkToLayoutDataJSONObject(
+				actionRequest, actionResponse);
+
+			SessionMessages.add(actionRequest, "fragmentEntryLinkDuplicated");
+		}
+		catch (Exception exception) {
+			String errorMessage = "an-unexpected-error-occurred";
+
+			if (exception instanceof NoSuchEntryLinkException) {
+				errorMessage =
+					"the-section-could-not-be-duplicated-because-it-has-been-" +
+						"deleted";
+			}
+			else if (exception instanceof PortletIdException) {
+				errorMessage = "uninstanceable-widget-cannot-be-duplicated";
+			}
+
+			ThemeDisplay themeDisplay =
+				(ThemeDisplay)actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
+
+			jsonObject.put(
+				"error",
+				LanguageUtil.get(themeDisplay.getRequest(), errorMessage));
+		}
 
 		hideDefaultSuccessMessage(actionRequest);
 
@@ -88,7 +121,7 @@ public class DuplicateItemReactMVCActionCommand extends BaseMVCActionCommand {
 	}
 
 	private JSONObject _addDuplicateFragmentEntryLinkToLayoutDataJSONObject(
-			ActionRequest actionRequest, FragmentEntryLink fragmentEntryLink)
+			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws PortalException {
 
 		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
@@ -99,11 +132,64 @@ public class DuplicateItemReactMVCActionCommand extends BaseMVCActionCommand {
 			SegmentsExperienceConstants.ID_DEFAULT);
 		String itemId = ParamUtil.getString(actionRequest, "itemId");
 
-		return LayoutStructureUtil.updateLayoutPageTemplateData(
-			themeDisplay.getScopeGroupId(), segmentsExperienceId,
-			themeDisplay.getPlid(),
-			layoutStructure -> layoutStructure.duplicateLayoutStructureItem(
-				fragmentEntryLink.getFragmentEntryLinkId(), itemId));
+		JSONArray duplicatedFragmentEntryLinksJSONArray =
+			JSONFactoryUtil.createJSONArray();
+
+		JSONObject layoutDataJSONObject =
+			LayoutStructureUtil.updateLayoutPageTemplateData(
+				themeDisplay.getScopeGroupId(), segmentsExperienceId,
+				themeDisplay.getPlid(),
+				layoutStructure -> {
+					List<LayoutStructureItem> duplicatedLayoutStructureItems =
+						layoutStructure.duplicateLayoutStructureItem(itemId);
+
+					for (LayoutStructureItem duplicatedLayoutStructureItem :
+							duplicatedLayoutStructureItems) {
+
+						if (!Objects.equals(
+								LayoutDataItemTypeConstants.TYPE_FRAGMENT,
+								duplicatedLayoutStructureItem.getItemType())) {
+
+							continue;
+						}
+
+						JSONObject itemConfigJSONObject =
+							duplicatedLayoutStructureItem.
+								getItemConfigJSONObject();
+
+						long fragmentEntryLinkId = itemConfigJSONObject.getLong(
+							"fragmentEntryLinkId");
+
+						try {
+							JSONObject fragmentEntryLinkJSONObject =
+								_duplicateFragmentEntryLink(
+									actionRequest, actionResponse,
+									fragmentEntryLinkId);
+
+							duplicatedLayoutStructureItem.
+								updateItemConfigJSONObject(
+									JSONUtil.put(
+										"fragmentEntryLinkId",
+										fragmentEntryLinkJSONObject.get(
+											"fragmentEntryLinkId")));
+
+							duplicatedFragmentEntryLinksJSONArray.put(
+								fragmentEntryLinkJSONObject);
+						}
+						catch (Exception exception) {
+							if (_log.isDebugEnabled()) {
+								_log.debug(exception, exception);
+							}
+						}
+					}
+				});
+
+		return JSONUtil.put(
+			"duplicatedFragmentEntryLinks",
+			duplicatedFragmentEntryLinksJSONArray
+		).put(
+			"layoutData", layoutDataJSONObject
+		);
 	}
 
 	private void _copyPortletPreferences(
@@ -131,98 +217,61 @@ public class DuplicateItemReactMVCActionCommand extends BaseMVCActionCommand {
 	}
 
 	private JSONObject _duplicateFragmentEntryLink(
-		ActionRequest actionRequest, ActionResponse actionResponse) {
+			ActionRequest actionRequest, ActionResponse actionResponse,
+			long fragmentEntryLinkId)
+		throws Exception {
 
-		long fragmentEntryLinkId = ParamUtil.getLong(
-			actionRequest, "fragmentEntryLinkId");
+		FragmentEntryLink fragmentEntryLink =
+			_fragmentEntryLinkLocalService.getFragmentEntryLink(
+				fragmentEntryLinkId);
 
-		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
+		JSONObject editableValuesJSONObject = JSONFactoryUtil.createJSONObject(
+			fragmentEntryLink.getEditableValues());
 
-		try {
-			FragmentEntryLink fragmentEntryLink =
-				_fragmentEntryLinkLocalService.getFragmentEntryLink(
-					fragmentEntryLinkId);
+		String portletId = editableValuesJSONObject.getString("portletId");
 
-			JSONObject editableValuesJSONObject =
-				JSONFactoryUtil.createJSONObject(
-					fragmentEntryLink.getEditableValues());
+		ServiceContext serviceContext = ServiceContextFactory.getInstance(
+			actionRequest);
 
-			String portletId = editableValuesJSONObject.getString("portletId");
+		if (Validator.isNotNull(portletId)) {
+			Portlet portlet = _portletLocalService.getPortletById(portletId);
 
-			ServiceContext serviceContext = ServiceContextFactory.getInstance(
-				actionRequest);
-
-			if (Validator.isNotNull(portletId)) {
-				Portlet portlet = _portletLocalService.getPortletById(
-					portletId);
-
-				if (!portlet.isInstanceable()) {
-					throw new PortletIdException();
-				}
-
-				String oldInstanceId = editableValuesJSONObject.getString(
-					"instanceId");
-
-				String newInstanceId = PortletIdCodec.generateInstanceId();
-
-				editableValuesJSONObject.put("instanceId", newInstanceId);
-
-				_copyPortletPreferences(
-					serviceContext.getRequest(), portletId, oldInstanceId,
-					newInstanceId);
+			if (!portlet.isInstanceable()) {
+				throw new PortletIdException();
 			}
 
-			FragmentEntryLink duplicateFragmentEntryLink =
-				_fragmentEntryLinkService.addFragmentEntryLink(
-					fragmentEntryLink.getGroupId(),
-					fragmentEntryLink.getOriginalFragmentEntryLinkId(),
-					fragmentEntryLink.getFragmentEntryId(),
-					fragmentEntryLink.getClassNameId(),
-					fragmentEntryLink.getClassPK(), fragmentEntryLink.getCss(),
-					fragmentEntryLink.getHtml(), fragmentEntryLink.getJs(),
-					fragmentEntryLink.getConfiguration(),
-					editableValuesJSONObject.toString(), StringUtil.randomId(),
-					0, fragmentEntryLink.getRendererKey(), serviceContext);
+			String oldInstanceId = editableValuesJSONObject.getString(
+				"instanceId");
 
-			SessionMessages.add(actionRequest, "fragmentEntryLinkDuplicated");
+			String newInstanceId = PortletIdCodec.generateInstanceId();
 
-			jsonObject = JSONUtil.put(
-				"fragmentEntryLink",
-				FragmentEntryLinkUtil.getFragmentEntryLinkJSONObject(
-					actionRequest, actionResponse,
-					_fragmentEntryConfigurationParser,
-					duplicateFragmentEntryLink,
-					_fragmentCollectionContributorTracker,
-					_fragmentRendererController, _fragmentRendererTracker,
-					portletId)
-			).put(
-				"layoutData",
-				_addDuplicateFragmentEntryLinkToLayoutDataJSONObject(
-					actionRequest, duplicateFragmentEntryLink)
-			);
-		}
-		catch (Exception exception) {
-			String errorMessage = "an-unexpected-error-occurred";
+			editableValuesJSONObject.put("instanceId", newInstanceId);
 
-			if (exception instanceof NoSuchEntryLinkException) {
-				errorMessage =
-					"the-section-could-not-be-duplicated-because-it-has-been-" +
-						"deleted";
-			}
-			else if (exception instanceof PortletIdException) {
-				errorMessage = "uninstanceable-widget-cannot-be-duplicated";
-			}
-
-			ThemeDisplay themeDisplay =
-				(ThemeDisplay)actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
-
-			jsonObject.put(
-				"error",
-				LanguageUtil.get(themeDisplay.getRequest(), errorMessage));
+			_copyPortletPreferences(
+				serviceContext.getRequest(), portletId, oldInstanceId,
+				newInstanceId);
 		}
 
-		return jsonObject;
+		FragmentEntryLink duplicateFragmentEntryLink =
+			_fragmentEntryLinkService.addFragmentEntryLink(
+				fragmentEntryLink.getGroupId(),
+				fragmentEntryLink.getOriginalFragmentEntryLinkId(),
+				fragmentEntryLink.getFragmentEntryId(),
+				fragmentEntryLink.getClassNameId(),
+				fragmentEntryLink.getClassPK(), fragmentEntryLink.getCss(),
+				fragmentEntryLink.getHtml(), fragmentEntryLink.getJs(),
+				fragmentEntryLink.getConfiguration(),
+				editableValuesJSONObject.toString(), StringUtil.randomId(), 0,
+				fragmentEntryLink.getRendererKey(), serviceContext);
+
+		return FragmentEntryLinkUtil.getFragmentEntryLinkJSONObject(
+			actionRequest, actionResponse, _fragmentEntryConfigurationParser,
+			duplicateFragmentEntryLink, _fragmentCollectionContributorTracker,
+			_fragmentRendererController, _fragmentRendererTracker, portletId);
 	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		DuplicateItemReactMVCActionCommand.class);
 
 	@Reference
 	private FragmentCollectionContributorTracker
