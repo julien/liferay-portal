@@ -15,12 +15,16 @@
 import {ClayButtonWithIcon} from '@clayui/button';
 import ClayDropDown from '@clayui/drop-down';
 import classNames from 'classnames';
-import React, {useState, useMemo} from 'react';
+import React, {useState, useMemo, useContext} from 'react';
 
 import {updateLanguageId} from '../actions/index';
 import {BACKGROUND_IMAGE_FRAGMENT_ENTRY_PROCESSOR} from '../config/constants/backgroundImageFragmentEntryProcessor';
 import {EDITABLE_FRAGMENT_ENTRY_PROCESSOR} from '../config/constants/editableFragmentEntryProcessor';
 import {TRANSLATION_STATUS_TYPE} from '../config/constants/translationStatusType';
+import {ConfigContext} from '../config/index';
+import selectPrefixedDefaultSegmentsExperienceId from '../selectors/selectPrefixedDefaultSegmentsExperienceId';
+import selectPrefixedSegmentsExperienceId from '../selectors/selectPrefixedSegmentsExperienceId';
+import {StoreContext} from '../store/index';
 
 const getEditableValues = fragmentEntryLinks =>
 	Object.values(fragmentEntryLinks)
@@ -112,7 +116,7 @@ const TranslationItem = ({
 					{TRANSLATION_STATUS_LANGUAGE[status]}
 					{TRANSLATION_STATUS_TYPE[status] ===
 						TRANSLATION_STATUS_TYPE.translating &&
-						`${translatedValuesLength}/${editableValuesLength}`}
+						` ${translatedValuesLength}/${editableValuesLength}`}
 				</div>
 			</span>
 		</ClayDropDown.Item>
@@ -124,10 +128,12 @@ export default function Translation({
 	defaultLanguageId,
 	dispatch,
 	fragmentEntryLinks,
-	languageId,
-	segmentsExperienceId
+	languageId
 }) {
 	const [active, setActive] = useState(false);
+	const config = useContext(ConfigContext);
+	const store = useContext(StoreContext);
+
 	const editableValues = useMemo(
 		() => getEditableValues(fragmentEntryLinks),
 		[fragmentEntryLinks]
@@ -145,15 +151,15 @@ export default function Translation({
 		}).map(languageId => ({
 			languageId,
 			values: editableValues.filter(editableValue =>
-				isTranslated(editableValue, languageId, segmentsExperienceId)
+				isTranslated(
+					editableValue,
+					languageId,
+					selectPrefixedSegmentsExperienceId(store) ||
+						selectPrefixedDefaultSegmentsExperienceId(config)
+				)
 			)
 		}));
-	}, [
-		availableLanguages,
-		defaultLanguageId,
-		editableValues,
-		segmentsExperienceId
-	]);
+	}, [availableLanguages, config, defaultLanguageId, editableValues, store]);
 
 	const {languageIcon} = availableLanguages[languageId];
 
@@ -197,7 +203,7 @@ export default function Translation({
 							);
 							setActive(false);
 						}}
-						translatedValuesLength={languageValues.values.length}
+						translatedValuesLength={language.values.length}
 					/>
 				))}
 			</ClayDropDown.ItemList>
