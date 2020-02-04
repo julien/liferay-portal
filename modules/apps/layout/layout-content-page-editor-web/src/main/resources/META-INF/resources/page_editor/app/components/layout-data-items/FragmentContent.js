@@ -15,7 +15,13 @@
 import {useIsMounted} from 'frontend-js-react-web';
 import {debounce} from 'frontend-js-web';
 import {closest} from 'metal-dom';
-import React, {useContext, useEffect, useLayoutEffect, useState} from 'react';
+import React, {
+	useContext,
+	useEffect,
+	useLayoutEffect,
+	useState,
+	useRef
+} from 'react';
 
 import {BACKGROUND_IMAGE_FRAGMENT_ENTRY_PROCESSOR} from '../../config/constants/backgroundImageFragmentEntryProcessor';
 import {EDITABLE_FLOATING_TOOLBAR_BUTTONS} from '../../config/constants/editableFloatingToolbarButtons';
@@ -169,6 +175,36 @@ function FragmentContent({fragmentEntryLink, itemId}, ref) {
 			);
 		}
 	}, [activeItemId, ref]);
+
+	ref = useRef(null);
+
+	useEffect(() => {
+		const element = ref.current;
+
+		if (!element) {
+			return;
+		}
+
+		const handleFragmentEntryLinkContentClick = event => {
+			const closestElement = closest(event.target, '[href]');
+
+			if (
+				closestElement &&
+				!('data-lfr-page-editor-href-enabled' in element.dataset)
+			) {
+				event.preventDefault();
+			}
+		};
+
+		element.addEventListener('click', handleFragmentEntryLinkContentClick);
+
+		return () => {
+			element.removeEventListener(
+				'click',
+				handleFragmentEntryLinkContentClick
+			);
+		};
+	});
 
 	useEffect(() => {
 		let element = document.createElement('div');
