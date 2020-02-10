@@ -49,19 +49,14 @@ export default function addFragment({
 				})
 			);
 
-			let itemId;
-
-			Object.values(layoutData.items).forEach(layoutDataItem => {
-				if (
+			const item = Object.values(layoutData.items).find(
+				layoutDataItem =>
 					layoutDataItem.config.fragmentEntryLinkId ===
 					parseInt(fragmentEntryLink.fragmentEntryLinkId, 10)
-				) {
-					itemId = layoutDataItem.itemId;
-				}
-			});
+			);
 
-			if (itemId) {
-				selectItem(itemId);
+			if (item) {
+				selectItem(item.itemId);
 			}
 		});
 	};
