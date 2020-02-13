@@ -5,8 +5,6 @@ import com.liferay.gradle.util.tasks.ConcatenateTask
 task buildCKEditor(type: Copy)
 task buildCKEditorBBCode(type: ConcatenateTask)
 task buildCKEditorPlugins(type: Copy)
-task buildCKEditorScayt(type: Copy)
-task buildCKEditorWsc(type: Copy)
 
 String ckEditorVersion = "4.13.1"
 
@@ -57,32 +55,8 @@ buildCKEditorPlugins {
 	into ckEditorDestinationDir
 }
 
-buildCKEditorScayt {
-	dependsOn buildCKEditor
-
-	from {
-		File ckEditorScaytFile = FileUtil.get(project, ckEditorScaytUrl)
-
-		zipTree(ckEditorScaytFile)
-	}
-
-	into new File(editorDestinationDir, "ckeditor/plugins")
-}
-
-buildCKEditorWsc {
-	dependsOn buildCKEditor
-
-	from {
-		File ckEditorWscFile = FileUtil.get(project, ckEditorWscUrl)
-
-		zipTree(ckEditorWscFile)
-	}
-
-	into new File(editorDestinationDir, "ckeditor/plugins")
-}
-
 classes {
-	dependsOn buildCKEditor, buildCKEditorPlugins, buildCKEditorScayt, buildCKEditorWsc
+	dependsOn buildCKEditor, buildCKEditorPlugins
 }
 
 clean {
