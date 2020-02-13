@@ -101,9 +101,7 @@ const LayoutElementCard = ({label, layoutColumns, type}) => {
 						))}
 					</div>
 				</div>
-				<div className="card-title pt-3 text-truncate" title={label}>
-					{label}
-				</div>
+				<div className="card-title pt-3 text-truncate">{label}</div>
 			</div>
 		</button>
 	);

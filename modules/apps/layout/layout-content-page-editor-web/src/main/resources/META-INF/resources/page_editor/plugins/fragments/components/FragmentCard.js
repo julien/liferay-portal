@@ -101,9 +101,7 @@ export default function FragmentCard({
 			<div className="card-body">
 				<div className="card-row">
 					<div className="autofit-col autofit-col-expand autofit-row-center">
-						<div className="card-title text-truncate" title={name}>
-							{name}
-						</div>
+						<div className="card-title text-truncate">{name}</div>
 					</div>
 				</div>
 			</div>
