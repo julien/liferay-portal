@@ -14,8 +14,6 @@
 
 import {ClayModalProvider} from '@clayui/modal';
 import React from 'react';
-import {DragDropContext as dragDropContext} from 'react-dnd';
-import HTML5Backend from 'react-dnd-html5-backend';
 import {HashRouter as Router, Route, Switch} from 'react-router-dom';
 
 import {AppContextProvider} from './AppContext.es';
@@ -23,29 +21,27 @@ import {ToastContextProvider} from './components/toast/ToastContext.es';
 import ListCustomObjects from './pages/custom-object/ListCustomObjects.es';
 import ViewCustomObject from './pages/custom-object/ViewCustomObject.es';
 
-export default dragDropContext(HTML5Backend)(props => {
-	return (
-		<AppContextProvider {...props}>
-			<ToastContextProvider>
-				<ClayModalProvider>
-					<Router>
-						<div className="custom-object-app">
-							<Switch>
-								<Route
-									component={ListCustomObjects}
-									exact
-									path="/"
-								/>
+export default props => (
+	<AppContextProvider {...props}>
+		<ToastContextProvider>
+			<ClayModalProvider>
+				<Router>
+					<div className="custom-object-app">
+						<Switch>
+							<Route
+								component={ListCustomObjects}
+								exact
+								path="/"
+							/>
 
-								<Route
-									component={ViewCustomObject}
-									path="/custom-object/:dataDefinitionId(\d+)"
-								/>
-							</Switch>
-						</div>
-					</Router>
-				</ClayModalProvider>
-			</ToastContextProvider>
-		</AppContextProvider>
-	);
-});
+							<Route
+								component={ViewCustomObject}
+								path="/custom-object/:dataDefinitionId(\d+)"
+							/>
+						</Switch>
+					</div>
+				</Router>
+			</ClayModalProvider>
+		</ToastContextProvider>
+	</AppContextProvider>
+);
