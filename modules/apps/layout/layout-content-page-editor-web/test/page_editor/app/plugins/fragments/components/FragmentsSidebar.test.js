@@ -56,11 +56,11 @@ jest.mock(
 
 const renderFragmentsSidebar = () =>
 	render(
-		<DragDropContextProvider backend={HTML5Backend}>
+		<DndProvider backend={HTML5Backend}>
 			<StoreAPIContextProvider>
 				<FragmentsSidebar />
 			</StoreAPIContextProvider>
-		</DragDropContextProvider>
+		</DndProvider>
 	);
 
 describe('FragmentsSidebar', () => {
