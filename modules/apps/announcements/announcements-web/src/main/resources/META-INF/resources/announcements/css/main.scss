@@ -1,7 +1,36 @@
+$input-color: #b0b4bb;
+
 .portlet-announcements,
 .portlet-alerts {
 	.entry-content {
 		padding: 1em;
+	}
+
+	.form-control {
+		background-color: white;
+		border-radius: 0;
+		border-style: none;
+		font-size: 1.65rem;
+		font-weight: 700;
+	}
+
+	.form-control:focus {
+		-webkit-box-shadow: none;
+		box-shadow: none;
+	}
+
+	.form-control::-moz-placeholder { 
+		color: $input-color;
+	}
+
+	.form-control::-webkit-input-placeholder {
+		color: $input-color;
+	}
+
+	.form-control-edit-title {
+		border-left: 2px solid;
+		color: $input-color;
+		padding-left: 10px;
 	}
 
 	.important {
