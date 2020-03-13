@@ -145,13 +145,13 @@ BlogsGroupServiceSettings blogsGroupServiceSettings = BlogsGroupServiceSettings.
 							String onChangeTitle = renderResponse.getNamespace() + "onChangeTitle(event.target.value)";
 							%>
 
-							<aui:input cssClass="form-control-edit-title form-control-unstyled" inlineLabel="left" label="" name="titleEditor" onChange="<%= onChangeTitle %>" placeholder="Title *" required="<%= true %>" showRequiredLabel="<%= true %>" type="textarea" value="<%= HtmlUtil.escape(title) %>" />
+							<aui:input cssClass="form-control-edit form-control-edit-title form-control-unstyled" label="" name="titleEditor" onChange="<%= onChangeTitle %>" placeholder="Title *" required="<%= true %>" showRequiredLabel="<%= true %>" type="textarea" value="<%= HtmlUtil.escape(title) %>" />
 						</div>
 
 						<aui:input name="title" type="hidden" />
 
 						<div class="entry-subtitle">
-							<aui:input cssClass="form-control-edit-subtitle form-control-unstyled" inlineLabel="left" label="" name="subtitleEditor" placeholder="Subtitle" type="text" />
+							<aui:input cssClass="form-control-edit form-control-edit-subtitle form-control-unstyled" label="" name="subtitleEditor" placeholder="Subtitle" type="text" />
 						</div>
 
 						<aui:input name="subtitle" type="hidden" />
