@@ -1,7 +1,56 @@
+@import '_variables';
+
 .portlet-announcements,
 .portlet-alerts {
 	.entry-content {
 		padding: 1em;
+	}
+
+	.form-control.form-control-edit-title {
+		background-color: white;
+		border-radius: 0;
+		border-style: none;
+		color: $aui-input-edit-text-color;
+		font-size: 1.65rem;
+		font-weight: 700;
+		overflow: hidden;
+		padding-left: 0;
+		resize: none;
+		width: 100%;
+	}
+
+	.form-control:focus,
+	.form-control-edit-title {
+		-webkit-box-shadow: none;
+		box-shadow: none;
+		color: $aui-input-edit-text-color;
+	}
+
+	.form-control:focus,
+	.form-control::-webkit-input-placeholder,
+	.form-control::-moz-placeholder {
+		color: $aui-input-edit-text-color;
+	}
+
+	.form-control:-ms-input-placeholder,
+	.form-control-edit-title {
+		border-left: 2px solid;
+		color: $aui-input-color;
+		padding-left: 10px;
+	}
+
+	.form-control::-moz-placeholder,
+	.form-control-edit-title {
+		border-left: 2px solid;
+		color: $aui-input-color;
+		padding-left: 10px;
+	}
+
+	.form-control::-webkit-input-placeholder,
+	.form-control-edit-title {
+		border-left: 2px solid;
+		color: $aui-input-color;
+		padding-left: 10px;
 	}
 
 	.important {

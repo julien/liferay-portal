@@ -78,7 +78,9 @@ if (portletTitleBasedNavigation) {
 
 		<aui:fieldset-group markupView="lexicon">
 			<aui:fieldset>
-				<h1><liferay-ui:input-editor contents="<%= HtmlUtil.escape(title) %>" editorName="alloyeditor" name="titleEditor" placeholder="title" showSource="<%= false %>" /></h1>
+				<h1>
+					<aui:input autocomplete="off" cssClass="form-control-edit-title form-control-unstyled" inlineLabel="left" label="" name="titleEditor" placeholder='<%= LanguageUtil.get(request, "title") %>' required="<%= false %>" showRequiredLabel="<%= false %>" title="" type="textarea" value="<%= HtmlUtil.escape(title) %>" />
+				</h1>
 
 				<aui:input name="title" type="hidden" />
 
@@ -163,6 +165,17 @@ if (portletTitleBasedNavigation) {
 </div>
 
 <aui:script>
+	const textarea = document.getElementsByTagName('textarea');
+	for (let i = 0; i < textarea.length; i++) {
+		textarea[i].setAttribute('style', 'height:' + (textarea[i].scrollHeight) + 'px;overflow-y:hidden;');
+		textarea[i].addEventListener("input", OnInput, false);
+	}
+
+	function OnInput() {
+		this.style.height = 'auto';
+		this.style.height = (this.scrollHeight) + 'px';
+	}
+
 	function <portlet:namespace />saveEntry() {
 		var form = document.getElementById('<portlet:namespace />fm');
 
@@ -196,7 +209,7 @@ if (portletTitleBasedNavigation) {
 			if (title) {
 				title.setAttribute(
 					'value',
-					window.<portlet:namespace />titleEditor.getText()
+					window.<portlet:namespace />titleEditor.value
 				);
 			}
 
