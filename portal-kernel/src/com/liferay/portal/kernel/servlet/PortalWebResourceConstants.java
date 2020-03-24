@@ -25,9 +25,6 @@ public class PortalWebResourceConstants {
 
 	public static final String RESOURCE_TYPE_EDITOR_CKEDITOR = "ckeditor";
 
-	public static final String RESOURCE_TYPE_EDITOR_SIMPLEEDITOR =
-		"simpleeditor";
-
 	public static final String RESOURCE_TYPE_EDITOR_TINYMCEEDITOR =
 		"tinymceeditor";
 
