@@ -20,7 +20,6 @@
 	# not touch them.
 	#
 	*.soy.js
-	apps/frontend-editor/frontend-editor-tinymce-web
 	apps/frontend-js/frontend-js-jquery-web
 	build/**
 	classes/**

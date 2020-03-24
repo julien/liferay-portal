@@ -14,7 +14,7 @@
 
 package com.liferay.frontend.editor.tinymce.web.internal;
 
-import com.liferay.portal.kernel.servlet.PortalWebResourceConstants;
+import com.liferay.frontend.editor.tinymce.web.internal.constants.TinyMCEEditorConstants;
 import com.liferay.portal.kernel.servlet.PortalWebResources;
 
 import javax.servlet.ServletContext;
@@ -43,7 +43,7 @@ public class TinyMCEEditorPortalWebResources implements PortalWebResources {
 
 	@Override
 	public String getResourceType() {
-		return PortalWebResourceConstants.RESOURCE_TYPE_EDITOR_TINYMCEEDITOR;
+		return TinyMCEEditorConstants.RESOURCE_TYPE;
 	}
 
 	@Override
