@@ -25,7 +25,6 @@ taglib uri="http://liferay.com/tld/util" prefix="liferay-util" %>
 <%@ page import="com.liferay.frontend.editor.tinymce.web.internal.constants.TinyMCEEditorConstants" %><%@
 page import="com.liferay.petra.string.StringPool" %><%@
 page import="com.liferay.portal.kernel.json.JSONObject" %><%@
-page import="com.liferay.portal.kernel.servlet.PortalWebResourceConstants" %><%@
 page import="com.liferay.portal.kernel.servlet.PortalWebResourcesUtil" %><%@
 page import="com.liferay.portal.kernel.util.GetterUtil" %><%@
 page import="com.liferay.portal.kernel.util.HtmlUtil" %><%@
