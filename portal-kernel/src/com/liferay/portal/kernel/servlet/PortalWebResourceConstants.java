@@ -26,8 +26,8 @@ public class PortalWebResourceConstants {
 	public static final String RESOURCE_TYPE_EDITOR_CKEDITOR = "ckeditor";
 
 	/**
-	* @deprecated As of 7.3.x
-	*/
+	 * @deprecated As of Athanasius (7.3.x)
+	 */
 	@Deprecated
 	public static final String RESOURCE_TYPE_EDITOR_SIMPLEEDITOR =
 		"simpleeditor";
