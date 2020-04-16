@@ -3,8 +3,11 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import DragEvent from './DragEvent.es';
+//import DragEvent from './DragEvent.es';
 
+(function() {
+
+const DragEvent = CKEEDITOR.DragEvent;
 const IMAGE_HANDLES = ['tl', 'tr', 'bl', 'br'];
 
 const POSITION_ELEMENT_FN = {
@@ -312,5 +315,9 @@ class Resizer {
 	}
 }
 
-export {Resizer};
-export default Resizer;
+CKEDITOR.Resizer = Resizer;
+
+})();
+
+//export {Resizer};
+//export default Resizer;
