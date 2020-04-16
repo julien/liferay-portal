@@ -3,9 +3,12 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import Resizer from './Resizer.es';
+//import Resizer from './Resizer.es';
 
 (function() {
+	console.log('plugin.js de embedurl');
+	const Resizer = CKEDITOR.Resizer;
+
 	const REGEX_HTTP = /^https?/;
 
 	CKEDITOR.DEFAULT_LFR_EMBED_WIDGET_TPL =
@@ -289,7 +292,7 @@ import Resizer from './Resizer.es';
 			const generateEmbedContent = (url, content) => {
 				return LFR_EMBED_WIDGET_TPL.output({
 					content,
-					helpMessage: AlloyEditor.Strings.videoPlaybackDisabled,
+					helpMessage: "AlloyEditor.Strings.videoPlaybackDisabled", //TODO
 					helpMessageIcon: Liferay.Util.getLexiconIconTpl(
 						'info-circle'
 					),
@@ -353,6 +356,7 @@ import Resizer from './Resizer.es';
 
 			editor.addCommand('embedUrl', {
 				exec: (editor, data) => {
+					debugger;
 					const type = data.type;
 					const url = data.url;
 					let content;
@@ -388,10 +392,10 @@ import Resizer from './Resizer.es';
 
 							editor.insertHtml(embedContent);
 						} else {
-							showError(AlloyEditor.Strings.platformNotSupported);
+							showError("AlloyEditor.Strings.platformNotSupported");//TODO
 						}
 					} else {
-						showError(AlloyEditor.Strings.enterValidUrl);
+						showError("AlloyEditor.Strings.enterValidUrl");//TODO
 					}
 				},
 			});
@@ -464,6 +468,14 @@ import Resizer from './Resizer.es';
 					return embedWidgetUpcastFn(element, data);
 				},
 			});
+
+			if (editor.ui.addButton) {
+				editor.ui.addButton('Video', {
+					command: 'embedUrl',
+					icon: instance.path + 'assets/video.png',
+					label: editor.lang.common.image,
+				});
+			}
 
 			window.addEventListener(
 				'resize',

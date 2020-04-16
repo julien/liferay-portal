@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
+(function() {
 class DragEvent {
 	constructor(window, document) {
 		this.document = document;
@@ -115,6 +116,7 @@ class DragEvent {
 		}
 	}
 }
-
-export {DragEvent};
-export default DragEvent;
+CKEEDITOR.DragEvent = DragEvent;
+})();
+//export {DragEvent};
+//export default DragEvent;
