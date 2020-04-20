@@ -61,10 +61,10 @@ public class KBContentCKEditorConfigContributor
 		String extraPlugins = jsonObject.getString("extraPlugins");
 
 		if (Validator.isNotNull(extraPlugins)) {
-			extraPlugins = extraPlugins + ",embedurl";
+			extraPlugins = extraPlugins + ",videoembed";
 		}
 		else {
-			extraPlugins = "embedurl";
+			extraPlugins = "videoembed";
 		}
 
 		jsonObject.put("extraPlugins", extraPlugins);
@@ -79,7 +79,7 @@ public class KBContentCKEditorConfigContributor
 			super.toJSONArray("['Styles']"),
 			super.toJSONArray("['Link', 'Unlink']"),
 			super.toJSONArray(
-				"['Table','ImageSelector','Video', 'HorizontalRule']"));
+				"['Table','ImageSelector','VideoEmbed', 'HorizontalRule']"));
 
 		if (_isShowSource(inputEditorTaglibAttributes)) {
 			jsonArray.put(toJSONArray("['Source']"));

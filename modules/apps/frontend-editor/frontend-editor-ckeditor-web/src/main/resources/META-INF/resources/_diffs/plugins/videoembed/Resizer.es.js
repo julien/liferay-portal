@@ -5,7 +5,7 @@
 
 //import DragEvent from './DragEvent.es';
 
-(function() {
+(function() {console.log('inicio Resizer');
 
 const DragEvent = CKEEDITOR.DragEvent;
 const IMAGE_HANDLES = ['tl', 'tr', 'bl', 'br'];
@@ -315,7 +315,7 @@ class Resizer {
 	}
 }
 
-CKEDITOR.Resizer = Resizer;
+CKEDITOR.Resizer = Resizer;console.log(Resizer);
 
 })();
 
