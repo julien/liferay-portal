@@ -264,11 +264,56 @@
 	 * @class CKEDITOR.plugins.embedurl
 	 */
 
-	CKEDITOR.plugins.add('embedurl', {
+	CKEDITOR.plugins.add('videoembed', {
 		requires: 'widget',
 
-		init: editor => {
-			var instance = this;
+		_onOkVideo(editor, data) {
+			debugger;
+			const type = data.type;
+			const url = data.url;
+			let content;
+
+			if (REGEX_HTTP.test(url)) {
+				const validProvider = providers
+					.filter(provider => {
+						return type ? provider.type === type : true;
+					})
+					.some(provider => {
+						const scheme = provider.urlSchemes.find(
+							scheme => scheme.test(url)
+						);
+
+						if (scheme) {
+							const embedId = scheme.exec(url)[1];
+
+							content = provider.tpl.output({
+								embedId,
+							});
+						}
+
+						return scheme;
+					});
+
+				if (validProvider) {
+					editor._selectEmbedWidget = url;
+
+					const embedContent = generateEmbedContent(
+						url,
+						content
+					);
+
+					editor.insertHtml(embedContent);
+				} else {
+					showError("AlloyEditor.Strings.platformNotSupported");//TODO
+				}
+			} else {
+				showError("AlloyEditor.Strings.enterValidUrl");//TODO
+			}
+
+		},
+
+		init(editor) {
+			const instance = this;console.log(instance.path);
 
 			const LFR_EMBED_WIDGET_TPL = new CKEDITOR.template(
 				editor.config.embedWidgetTpl ||
@@ -355,7 +400,7 @@
 				}, 0);
 			};
 
-			editor.addCommand('embedUrl', {
+			/*editor.addCommand('embedurl', {
 				exec: (editor, data) => {
 					debugger;
 					const type = data.type;
@@ -399,7 +444,7 @@
 						showError("AlloyEditor.Strings.enterValidUrl");//TODO
 					}
 				},
-			});
+			});*/
 
 			editor.widgets.add('embedurl', {
 				draggable: false,
@@ -470,13 +515,20 @@
 				},
 			});
 
+			// Command
+       		editor.addCommand('videoembed', new CKEDITOR.dialogCommand('videoembedDialog'));
+
+       		// Toolbar button
 			if (editor.ui.addButton) {
-				editor.ui.addButton('Video', {
-					command: 'embedUrl',
-					icon: instance.path + 'assets/video.png',
+				editor.ui.addButton('VideoEmbed', {
+					command: 'videoembed',
+					icon:  instance.path + 'icons/video.png',
 					label: Liferay.Language.get('video'),
 				});
 			}
+
+			// Dialog window
+        	CKEDITOR.dialog.add('videoembedDialog', instance.path + 'dialogs/videoembedDialog.js');
 
 			/*window.addEventListener(
 				'resize',
@@ -576,7 +628,7 @@
 			document.addEventListener('mousedown', mouseDownListener, false);
 		},
 
-		afterInit: editor => {
+		afterInit(editor) {
 			ALIGN_VALUES.forEach(alignValue => {
 				const command = editor.getCommand('justify' + alignValue);
 
