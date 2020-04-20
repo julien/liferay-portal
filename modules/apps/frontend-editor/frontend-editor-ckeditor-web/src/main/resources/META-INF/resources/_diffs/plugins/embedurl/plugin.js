@@ -6,7 +6,6 @@
 //import Resizer from './Resizer.es';
 
 (function() {
-	console.log('plugin.js de embedurl');
 	const Resizer = CKEDITOR.Resizer;
 
 	const REGEX_HTTP = /^https?/;
@@ -269,6 +268,8 @@
 		requires: 'widget',
 
 		init: editor => {
+			var instance = this;
+
 			const LFR_EMBED_WIDGET_TPL = new CKEDITOR.template(
 				editor.config.embedWidgetTpl ||
 					CKEDITOR.DEFAULT_LFR_EMBED_WIDGET_TPL
@@ -350,7 +351,7 @@
 
 					editor.focus();
 
-					resizer.hide();
+					//resizer.hide();
 				}, 0);
 			};
 
@@ -473,18 +474,18 @@
 				editor.ui.addButton('Video', {
 					command: 'embedUrl',
 					icon: instance.path + 'assets/video.png',
-					label: editor.lang.common.image,
+					label: Liferay.Language.get('video'),
 				});
 			}
 
-			window.addEventListener(
+			/*window.addEventListener(
 				'resize',
 				() => {
 					resizer.hide();
 					selectWidget(editor);
 				},
 				false
-			);
+			);*/
 
 			editor.on('selectionChange', _event => {
 				const selection = editor.getSelection();
@@ -522,10 +523,10 @@
 						);
 
 						if (imageElement) {
-							resizer.show(imageElement.$);
+						//	resizer.show(imageElement.$);
 						}
 					} else {
-						resizer.hide();
+						//resizer.hide();
 					}
 				}
 			});
@@ -541,7 +542,7 @@
 			});
 
 			editor.on('blur', () => {
-				resizer.hide();
+				//resizer.hide();
 			});
 
 			editor.filter.addElementCallback(element => {
@@ -556,12 +557,12 @@
 				currentAlignment = result.alignment;
 				currentElement = result.element;
 
-				if (resizer.isHandle(event.target)) {
+				/*if (resizer.isHandle(event.target)) {
 					resizer.initDrag(event);
-				}
+				}*/
 			};
 
-			resizer = new Resizer(editor, {
+			/*resizer = new Resizer(editor, {
 				onComplete(element, width, height) {
 					resizeElement(element, width, height);
 
@@ -570,7 +571,7 @@
 					}
 					selectWidget(editor);
 				},
-			});
+			});*/
 
 			document.addEventListener('mousedown', mouseDownListener, false);
 		},
@@ -622,7 +623,7 @@
 								);
 
 								if (imageElement) {
-									resizer.show(imageElement.$);
+									//resizer.show(imageElement.$);
 								}
 
 								event.cancel();
