@@ -37,9 +37,12 @@ CKEDITOR.dialog.add('videoembedDialog', function (editor) {
 		minWidth: 400,
 
 		onOk() {
-			var instance = this;
+			data = {
+				type: 'video',
+				url: this.getValueOf('info', 'url_video')
+			}
 
-			editor.plugins.media._onOkVideo(instance, editor);
+			editor.plugins.videoembed._onOkVideo(editor, data);
 		},
 
 		title: Liferay.Language.get('video-properties'),
