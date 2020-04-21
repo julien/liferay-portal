@@ -5,7 +5,7 @@
 
 //import Resizer from './Resizer.es';
 
-(function() {
+if (!CKEDITOR.plugins.get('videoembed')) {
 	const Resizer = CKEDITOR.Resizer;
 
 	const REGEX_HTTP = /^https?/;
@@ -255,6 +255,60 @@
 	let currentElement = null;
 	let resizer = null;
 
+	const EMBED_VIDEO_WIDTH = 560;
+	const EMBED_VIDEO_HEIGHT = 315;
+
+	const embedProviders = [
+		{
+			id: 'facebook',
+			tpl: `<iframe allowFullScreen="true" allowTransparency="true"
+				 frameborder="0" height="${EMBED_VIDEO_HEIGHT}"
+				 src="https://www.facebook.com/plugins/video.php?href={embedId}'
+				 &show_text=0&width=${EMBED_VIDEO_WIDTH}&height=${EMBED_VIDEO_HEIGHT}" scrolling="no"
+				 style="border:none;overflow:hidden" width="${EMBED_VIDEO_WIDTH}}"></iframe>`,
+			type: 'video',
+			urlSchemes: [
+				'(https?:\\/\\/(?:www\\.)?facebook.com\\/\\S*\\/videos\\/\\S*)',
+			],
+		},
+		{
+			id: 'twitch',
+			tpl: `<iframe allowfullscreen="true" frameborder="0"
+				 height="${EMBED_VIDEO_HEIGHT}"
+				 src="https://player.twitch.tv/?autoplay=false&video={embedId}"
+				 scrolling="no" width="${EMBED_VIDEO_WIDTH}"></iframe>`,
+			type: 'video',
+			urlSchemes: [
+				'https?:\\/\\/(?:www\\.)?twitch.tv\\/videos\\/(\\S*)$',
+			],
+		},
+		{
+			id: 'vimeo',
+			tpl: `<iframe allowfullscreen frameborder="0" height="${EMBED_VIDEO_HEIGHT}"
+				 mozallowfullscreen src="https://player.vimeo.com/video/{embedId}"
+				 webkitallowfullscreen width="${EMBED_VIDEO_WIDTH}"></iframe>`,
+			type: 'video',
+			urlSchemes: [
+				'https?:\\/\\/(?:www\\.)?vimeo\\.com\\/album\\/.*\\/video\\/(\\S*)',
+				'https?:\\/\\/(?:www\\.)?vimeo\\.com\\/channels\\/.*\\/(\\S*)',
+				'https?:\\/\\/(?:www\\.)?vimeo\\.com\\/groups\\/.*\\/videos\\/(\\S*)',
+				'https?:\\/\\/(?:www\\.)?vimeo\\.com\\/(\\S*)$',
+			],
+		},
+		{
+			id: 'youtube',
+			tpl: `<iframe allow="autoplay; encrypted-media" allowfullscreen
+				 height="${EMBED_VIDEO_HEIGHT}" frameborder="0"
+				 src="https://www.youtube.com/embed/{embedId}?rel=0"
+				 width="${EMBED_VIDEO_WIDTH}"></iframe>`,
+			type: 'video',
+			urlSchemes: [
+				'https?:\\/\\/(?:www\\.)?youtube.com\\/watch\\?v=(\\S*)$',
+			],
+		},
+	];
+
+
 	/**
 	 * CKEditor plugin which adds the infrastructure to embed urls as media objects
 	 *
@@ -267,14 +321,100 @@
 	CKEDITOR.plugins.add('videoembed', {
 		requires: 'widget',
 
+		_getProviders(editor) {
+			return embedProviders.map(provider => {
+				return {
+					id: provider.id,
+					tpl: new CKEDITOR.template(
+						`<div data-embed-id="{embedId}">${provider.tpl}</div>`
+					),
+					type: provider.type,
+					urlSchemes: provider.urlSchemes.map(
+						scheme => new RegExp(scheme)
+					),
+				};
+			});
+		},
+
+		_getWidgetTemplate(editor) {
+			return new CKEDITOR.template(
+				editor.config.embedWidgetTpl ||
+					CKEDITOR.DEFAULT_LFR_EMBED_WIDGET_TPL
+			);
+		},
+
+		_generateEmbedContent(editor, url, content) {
+			return this._getWidgetTemplate(editor).output({
+				content,
+				helpMessage: "AlloyEditor.Strings.videoPlaybackDisabled", //TODO
+				helpMessageIcon: Liferay.Util.getLexiconIconTpl(
+					'info-circle'
+				),
+				url,
+			});
+		},
+
+		_defaultEmbedWidgetUpcastFn(element, data) {
+			let upcastWidget = false;
+
+			if (
+				element.name === 'div' &&
+				element.attributes['data-embed-url']
+			) {
+				data.url = element.attributes['data-embed-url'];
+
+				upcastWidget = true;
+			} else if (
+				element.name === 'div' &&
+				element.attributes['data-embed-id']
+			) {
+				const iframe = element.children[0];
+
+				data.url = iframe.attributes.src;
+
+				delete element.attributes.style;
+
+				const embedContent = generateEmbedContent(
+					data.url,
+					element.getOuterHtml()
+				);
+
+				const widgetFragment = new CKEDITOR.htmlParser.fragment.fromHtml(
+					embedContent
+				);
+
+				upcastWidget = widgetFragment.children[0];
+
+				upcastWidget.attributes['data-styles'] =
+					element.attributes['data-styles'];
+				upcastWidget.removeClass('embed-responsive');
+				upcastWidget.removeClass('embed-responsive-16by9');
+
+				element.replaceWith(upcastWidget);
+			}
+
+			return upcastWidget;
+		},
+
+		_showError(editor, errorMsg) {
+			editor.fire('error', errorMsg);
+
+			setTimeout(() => {
+				editor.getSelection().removeAllRanges();
+
+				editor.focus();
+
+				//resizer.hide();
+			}, 0);
+		},
+
 		_onOkVideo(editor, data) {
-			debugger;
 			const type = data.type;
 			const url = data.url;
 			let content;
 
 			if (REGEX_HTTP.test(url)) {
-				const validProvider = providers
+				const validProvider = this._getProviders(editor)
 					.filter(provider => {
 						return type ? provider.type === type : true;
 					})
@@ -297,154 +437,24 @@
 				if (validProvider) {
 					editor._selectEmbedWidget = url;
 
-					const embedContent = generateEmbedContent(
+					const embedContent = this._generateEmbedContent(
+						editor,
 						url,
 						content
 					);
 
 					editor.insertHtml(embedContent);
 				} else {
-					showError("AlloyEditor.Strings.platformNotSupported");//TODO
+					this._showError(editor, "AlloyEditor.Strings.platformNotSupported");//TODO
 				}
 			} else {
-				showError("AlloyEditor.Strings.enterValidUrl");//TODO
+				this._showError(editor, "AlloyEditor.Strings.enterValidUrl");//TODO
 			}
 
 		},
 
 		init(editor) {
-			const instance = this;console.log(instance.path);
-
-			const LFR_EMBED_WIDGET_TPL = new CKEDITOR.template(
-				editor.config.embedWidgetTpl ||
-					CKEDITOR.DEFAULT_LFR_EMBED_WIDGET_TPL
-			);
-
-			let providers = editor.config.embedProviders || [];
-
-			providers = providers.map(provider => {
-				return {
-					id: provider.id,
-					tpl: new CKEDITOR.template(
-						`<div data-embed-id="{embedId}">${provider.tpl}</div>`
-					),
-					type: provider.type,
-					urlSchemes: provider.urlSchemes.map(
-						scheme => new RegExp(scheme)
-					),
-				};
-			});
-
-			const generateEmbedContent = (url, content) => {
-				return LFR_EMBED_WIDGET_TPL.output({
-					content,
-					helpMessage: "AlloyEditor.Strings.videoPlaybackDisabled", //TODO
-					helpMessageIcon: Liferay.Util.getLexiconIconTpl(
-						'info-circle'
-					),
-					url,
-				});
-			};
-
-			const defaultEmbedWidgetUpcastFn = (element, data) => {
-				let upcastWidget = false;
-
-				if (
-					element.name === 'div' &&
-					element.attributes['data-embed-url']
-				) {
-					data.url = element.attributes['data-embed-url'];
-
-					upcastWidget = true;
-				} else if (
-					element.name === 'div' &&
-					element.attributes['data-embed-id']
-				) {
-					const iframe = element.children[0];
-
-					data.url = iframe.attributes.src;
-
-					delete element.attributes.style;
-
-					const embedContent = generateEmbedContent(
-						data.url,
-						element.getOuterHtml()
-					);
-
-					const widgetFragment = new CKEDITOR.htmlParser.fragment.fromHtml(
-						embedContent
-					);
-
-					upcastWidget = widgetFragment.children[0];
-
-					upcastWidget.attributes['data-styles'] =
-						element.attributes['data-styles'];
-					upcastWidget.removeClass('embed-responsive');
-					upcastWidget.removeClass('embed-responsive-16by9');
-
-					element.replaceWith(upcastWidget);
-				}
-
-				return upcastWidget;
-			};
-
-			const showError = errorMsg => {
-				editor.fire('error', errorMsg);
-
-				setTimeout(() => {
-					editor.getSelection().removeAllRanges();
-
-					editor.focus();
-
-					//resizer.hide();
-				}, 0);
-			};
-
-			/*editor.addCommand('embedurl', {
-				exec: (editor, data) => {
-					debugger;
-					const type = data.type;
-					const url = data.url;
-					let content;
-
-					if (REGEX_HTTP.test(url)) {
-						const validProvider = providers
-							.filter(provider => {
-								return type ? provider.type === type : true;
-							})
-							.some(provider => {
-								const scheme = provider.urlSchemes.find(
-									scheme => scheme.test(url)
-								);
-
-								if (scheme) {
-									const embedId = scheme.exec(url)[1];
-
-									content = provider.tpl.output({
-										embedId,
-									});
-								}
-
-								return scheme;
-							});
-
-						if (validProvider) {
-							editor._selectEmbedWidget = url;
-
-							const embedContent = generateEmbedContent(
-								url,
-								content
-							);
-
-							editor.insertHtml(embedContent);
-						} else {
-							showError("AlloyEditor.Strings.platformNotSupported");//TODO
-						}
-					} else {
-						showError("AlloyEditor.Strings.enterValidUrl");//TODO
-					}
-				},
-			});*/
+			const instance = this;
 
 			editor.widgets.add('embedurl', {
 				draggable: false,
@@ -509,7 +519,7 @@
 				upcast(element, data) {
 					const embedWidgetUpcastFn =
 						editor.config.embedWidgetUpcastFn ||
-						defaultEmbedWidgetUpcastFn;
+						instance._defaultEmbedWidgetUpcastFn;
 
 					return embedWidgetUpcastFn(element, data);
 				},
@@ -724,4 +734,4 @@
 			});
 		},
 	});
-})();
+}
