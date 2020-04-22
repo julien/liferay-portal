@@ -354,7 +354,7 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 			});
 		},
 
-		_defaultEmbedWidgetUpcastFn(element, data) {
+		_defaultEmbedWidgetUpcastFn(editor, element, data) {
 			let upcastWidget = false;
 
 			if (
@@ -374,7 +374,8 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 
 				delete element.attributes.style;
 
-				const embedContent = generateEmbedContent(
+				const embedContent = this._generateEmbedContent(
+					editor,
 					data.url,
 					element.getOuterHtml()
 				);
@@ -519,9 +520,9 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 				upcast(element, data) {
 					const embedWidgetUpcastFn =
 						editor.config.embedWidgetUpcastFn ||
-						instance._defaultEmbedWidgetUpcastFn;
+						instance._defaultEmbedWidgetUpcastFn.bind(instance);
 
-					return embedWidgetUpcastFn(element, data);
+					return embedWidgetUpcastFn(editor, element, data);
 				},
 			});
 
