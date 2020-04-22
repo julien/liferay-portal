@@ -190,7 +190,7 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 			wrapperElement.setAttribute('style', style);
 
 			const widgetElement = wrapperElement.querySelector(
-				'[data-widget="embedurl"]'
+				'[data-widget="videoembed"]'
 			);
 
 			if (widgetElement) {
@@ -233,7 +233,7 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 
 						const imageElement = lastElement.findOne('img');
 						const widgetElement = lastElement.findOne(
-							'[data-widget="embedurl"]'
+							'[data-widget="videoembed"]'
 						);
 
 						if (imageElement && widgetElement) {
@@ -312,10 +312,10 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 	/**
 	 * CKEditor plugin which adds the infrastructure to embed urls as media objects
 	 *
-	 * This plugin adds an `embedUrl` command that can be used to easily embed a URL and transform it
+	 * This plugin adds an `videoembed` button that can be used to easily embed a URL and transform it
 	 * to an embedded content.
 	 *
-	 * @class CKEDITOR.plugins.embedurl
+	 * @class CKEDITOR.plugins.videoembed
 	 */
 
 	CKEDITOR.plugins.add('videoembed', {
@@ -456,7 +456,7 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 		init(editor) {
 			const instance = this;
 
-			editor.widgets.add('embedurl', {
+			editor.widgets.add('videoembed', {
 				draggable: false,
 				mask: true,
 				requiredContent: 'div[data-embed-url]',
@@ -557,7 +557,7 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 
 					if (element) {
 						const widgetElement = element.findOne(
-							'[data-widget="embedurl"]'
+							'[data-widget="videoembed"]'
 						);
 
 						if (widgetElement) {
@@ -655,7 +655,7 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 							)
 						) {
 							const selectedEmbed = selectedElement.findOne(
-								'[data-widget="embedurl"] [data-embed-id]'
+								'[data-widget="videoembed"] [data-embed-id]'
 							);
 
 							if (selectedEmbed) {
