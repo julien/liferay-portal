@@ -12,22 +12,19 @@
  * details.
  */
 
-CKEDITOR.dialog.add('videoembedDialog', function (editor) {
+CKEDITOR.dialog.add('videoembedDialog', editor => {
 	return {
 		contents: [
 			{
 				elements: [
 					{
-                        id: 'url_video',
-                        label: Liferay.Language.get('video'),
-                        type: 'text',
-                        validate: CKEDITOR.dialog.validate.notEmpty(
-							Liferay.Language.get(
-								'video-field-cannot-be-empty'
-							)
-						)
-                    },
-
+						id: 'url_video',
+						label: Liferay.Language.get('video'),
+						type: 'text',
+						validate: CKEDITOR.dialog.validate.notEmpty(
+							Liferay.Language.get('video-field-cannot-be-empty')
+						),
+					},
 				],
 				id: 'info',
 			},
@@ -37,10 +34,10 @@ CKEDITOR.dialog.add('videoembedDialog', function (editor) {
 		minWidth: 400,
 
 		onOk() {
-			data = {
+			const data = {
 				type: 'video',
-				url: this.getValueOf('info', 'url_video')
-			}
+				url: this.getValueOf('info', 'url_video'),
+			};
 
 			editor.plugins.videoembed._onOkVideo(editor, data);
 		},

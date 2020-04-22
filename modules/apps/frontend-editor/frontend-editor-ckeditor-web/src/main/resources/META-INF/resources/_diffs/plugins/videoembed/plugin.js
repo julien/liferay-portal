@@ -1,4 +1,18 @@
 /**
+ * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
+/**
  * SPDX-FileCopyrightText: © 2014 Liferay, Inc. <https://liferay.com>
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
@@ -111,7 +125,8 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 			if (embedAlignment === getEmbedAlignment(embed)) {
 				embed.removeAttribute('align');
 			}
-		} else if (embedAlignment === EMBED_ALIGNMENT.CENTER) {
+		}
+		else if (embedAlignment === EMBED_ALIGNMENT.CENTER) {
 			CENTERED_EMBED_STYLE.forEach(style => {
 				embed.removeStyle(style.name);
 
@@ -139,7 +154,8 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 			embedAlignment === EMBED_ALIGNMENT.RIGHT
 		) {
 			embed.setStyle('float', embedAlignment);
-		} else if (embedAlignment === EMBED_ALIGNMENT.CENTER) {
+		}
+		else if (embedAlignment === EMBED_ALIGNMENT.CENTER) {
 			CENTERED_EMBED_STYLE.forEach(style => {
 				embed.setStyle(style.name, style.value);
 
@@ -253,7 +269,7 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 
 	let currentAlignment = null;
 	let currentElement = null;
-	let resizer = null;
+	const resizer = null;
 
 	const EMBED_VIDEO_WIDTH = 560;
 	const EMBED_VIDEO_HEIGHT = 315;
@@ -308,7 +324,6 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 		},
 	];
 
-
 	/**
 	 * CKEditor plugin which adds the infrastructure to embed urls as media objects
 	 *
@@ -322,7 +337,9 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 		requires: 'widget',
 
 		_getProviders(editor) {
-			return embedProviders.map(provider => {
+			const providers = editor.config.embedProviders || embedProviders;
+
+			return providers.map(provider => {
 				return {
 					id: provider.id,
 					tpl: new CKEDITOR.template(
@@ -346,10 +363,10 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 		_generateEmbedContent(editor, url, content) {
 			return this._getWidgetTemplate(editor).output({
 				content,
-				helpMessage: "AlloyEditor.Strings.videoPlaybackDisabled", //TODO
-				helpMessageIcon: Liferay.Util.getLexiconIconTpl(
-					'info-circle'
+				helpMessage: Liferay.Language.get(
+					'video-playback-is-disabled-during-edit-mode'
 				),
+				helpMessageIcon: Liferay.Util.getLexiconIconTpl('info-circle'),
 				url,
 			});
 		},
@@ -364,7 +381,8 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 				data.url = element.attributes['data-embed-url'];
 
 				upcastWidget = true;
-			} else if (
+			}
+			else if (
 				element.name === 'div' &&
 				element.attributes['data-embed-id']
 			) {
@@ -398,7 +416,11 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 		},
 
 		_showError(editor, errorMsg) {
-			editor.fire('error', errorMsg);
+			Liferay.Util.openToast({
+				message: errorMsg,
+				title: Liferay.Language.get('error'),
+				type: 'danger',
+			});
 
 			setTimeout(() => {
 				editor.getSelection().removeAllRanges();
@@ -420,8 +442,8 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 						return type ? provider.type === type : true;
 					})
 					.some(provider => {
-						const scheme = provider.urlSchemes.find(
-							scheme => scheme.test(url)
+						const scheme = provider.urlSchemes.find(scheme =>
+							scheme.test(url)
 						);
 
 						if (scheme) {
@@ -445,13 +467,22 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 					);
 
 					editor.insertHtml(embedContent);
-				} else {
-					this._showError(editor, "AlloyEditor.Strings.platformNotSupported");//TODO
 				}
-			} else {
-				this._showError(editor, "AlloyEditor.Strings.enterValidUrl");//TODO
+				else {
+					this._showError(
+						editor,
+						Liferay.Language.get(
+							'sorry,-this-platform-is-not-supported'
+						)
+					);
+				}
 			}
-
+			else {
+				this._showError(
+					editor,
+					Liferay.Language.get('enter-a-valid-url')
+				);
+			}
 		},
 
 		init(editor) {
@@ -527,19 +558,25 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 			});
 
 			// Command
-       		editor.addCommand('videoembed', new CKEDITOR.dialogCommand('videoembedDialog'));
+			editor.addCommand(
+				'videoembed',
+				new CKEDITOR.dialogCommand('videoembedDialog')
+			);
 
-       		// Toolbar button
+			// Toolbar button
 			if (editor.ui.addButton) {
 				editor.ui.addButton('VideoEmbed', {
 					command: 'videoembed',
-					icon:  instance.path + 'icons/video.png',
+					icon: instance.path + 'icons/video.png',
 					label: Liferay.Language.get('video'),
 				});
 			}
 
 			// Dialog window
-        	CKEDITOR.dialog.add('videoembedDialog', instance.path + 'dialogs/videoembedDialog.js');
+			CKEDITOR.dialog.add(
+				'videoembedDialog',
+				instance.path + 'dialogs/videoembedDialog.js'
+			);
 
 			/*window.addEventListener(
 				'resize',
@@ -586,9 +623,10 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 						);
 
 						if (imageElement) {
-						//	resizer.show(imageElement.$);
+							//	resizer.show(imageElement.$);
 						}
-					} else {
+					}
+					else {
 						//resizer.hide();
 					}
 				}
@@ -669,7 +707,8 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 										selectedElement,
 										alignValue
 									);
-								} else {
+								}
+								else {
 									setEmbedAlignment(
 										selectedElement,
 										alignValue
