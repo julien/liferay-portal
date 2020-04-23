@@ -263,43 +263,6 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 	 */
 
 	CKEDITOR.plugins.add('videoembed', {
-		requires: 'widget',
-
-		_getProviders(editor) {
-			const providers = editor.config.embedProviders || embedProviders;
-
-			return providers.map(provider => {
-				return {
-					id: provider.id,
-					tpl: new CKEDITOR.template(
-						`<div data-embed-id="{embedId}">${provider.tpl}</div>`
-					),
-					type: provider.type,
-					urlSchemes: provider.urlSchemes.map(
-						scheme => new RegExp(scheme)
-					),
-				};
-			});
-		},
-
-		_getWidgetTemplate(editor) {
-			return new CKEDITOR.template(
-				editor.config.embedWidgetTpl ||
-					CKEDITOR.DEFAULT_LFR_EMBED_WIDGET_TPL
-			);
-		},
-
-		_generateEmbedContent(editor, url, content) {
-			return this._getWidgetTemplate(editor).output({
-				content,
-				helpMessage: Liferay.Language.get(
-					'video-playback-is-disabled-during-edit-mode'
-				),
-				helpMessageIcon: Liferay.Util.getLexiconIconTpl('info-circle'),
-				url,
-			});
-		},
-
 		_defaultEmbedWidgetUpcastFn(editor, element, data) {
 			let upcastWidget = false;
 
@@ -344,6 +307,41 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 			return upcastWidget;
 		},
 
+		_generateEmbedContent(editor, url, content) {
+			return this._getWidgetTemplate(editor).output({
+				content,
+				helpMessage: Liferay.Language.get(
+					'video-playback-is-disabled-during-edit-mode'
+				),
+				helpMessageIcon: Liferay.Util.getLexiconIconTpl('info-circle'),
+				url,
+			});
+		},
+
+		_getProviders(editor) {
+			const providers = editor.config.embedProviders || embedProviders;
+
+			return providers.map(provider => {
+				return {
+					id: provider.id,
+					tpl: new CKEDITOR.template(
+						`<div data-embed-id="{embedId}">${provider.tpl}</div>`
+					),
+					type: provider.type,
+					urlSchemes: provider.urlSchemes.map(
+						scheme => new RegExp(scheme)
+					),
+				};
+			});
+		},
+
+		_getWidgetTemplate(editor) {
+			return new CKEDITOR.template(
+				editor.config.embedWidgetTpl ||
+					CKEDITOR.DEFAULT_LFR_EMBED_WIDGET_TPL
+			);
+		},
+
 		_showError(editor, errorMsg) {
 			Liferay.Util.openToast({
 				message: errorMsg,
@@ -356,194 +354,6 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 
 				editor.focus();
 			}, 0);
-		},
-
-		_onOkVideo(editor, data) {
-			const type = data.type;
-			const url = data.url;
-			let content;
-
-			if (REGEX_HTTP.test(url)) {
-				const validProvider = this._getProviders(editor)
-					.filter(provider => {
-						return type ? provider.type === type : true;
-					})
-					.some(provider => {
-						const scheme = provider.urlSchemes.find(scheme =>
-							scheme.test(url)
-						);
-
-						if (scheme) {
-							const embedId = scheme.exec(url)[1];
-
-							content = provider.tpl.output({
-								embedId,
-							});
-						}
-
-						return scheme;
-					});
-
-				if (validProvider) {
-					editor._selectEmbedWidget = url;
-
-					const embedContent = this._generateEmbedContent(
-						editor,
-						url,
-						content
-					);
-
-					editor.insertHtml(embedContent);
-				}
-				else {
-					this._showError(
-						editor,
-						Liferay.Language.get(
-							'sorry,-this-platform-is-not-supported'
-						)
-					);
-				}
-			}
-			else {
-				this._showError(
-					editor,
-					Liferay.Language.get('enter-a-valid-url')
-				);
-			}
-		},
-
-		init(editor) {
-			const instance = this;
-
-			editor.widgets.add('videoembed', {
-				draggable: false,
-				mask: true,
-				requiredContent: 'div[data-embed-url]',
-
-				data(event) {
-					const instance = this;
-
-					// Sync dimensions and alignment with editor wrapper
-
-					const stylesJSON = instance.element.getAttribute(
-						'data-styles'
-					);
-
-					let styles = stylesJSON ? JSON.parse(stylesJSON) : null;
-
-					if (!styles) {
-						const iframe = instance.wrapper.findOne('iframe');
-
-						const bounds = instance.wrapper.$.getBoundingClientRect();
-						const width = iframe.getAttribute('width');
-
-						const pwidth =
-							width >= bounds.width
-								? 100
-								: Math.round((width / bounds.width) * 100);
-
-						styles = {
-							width: `${pwidth}%`,
-						};
-					}
-
-					instance.wrapper.setAttribute(
-						'style',
-						CKEDITOR.tools.writeCssText(styles)
-					);
-
-					if (editor._selectEmbedWidget === event.data.url) {
-						selectWidget(editor);
-					}
-				},
-
-				downcast(widget) {
-					const embedContent = widget.children[0];
-
-					embedContent.attributes.class =
-						'embed-responsive embed-responsive-16by9';
-
-					embedContent.attributes['data-styles'] = JSON.stringify(
-						CKEDITOR.tools.parseCssText(
-							widget.parent.attributes.style
-						)
-					);
-
-					embedContent.attributes.style =
-						widget.parent.attributes.style;
-
-					return embedContent;
-				},
-
-				upcast(element, data) {
-					const embedWidgetUpcastFn =
-						editor.config.embedWidgetUpcastFn ||
-						instance._defaultEmbedWidgetUpcastFn.bind(instance);
-
-					return embedWidgetUpcastFn(editor, element, data);
-				},
-			});
-
-			// Command
-			editor.addCommand(
-				'videoembed',
-				new CKEDITOR.dialogCommand('videoembedDialog')
-			);
-
-			// Toolbar button
-			if (editor.ui.addButton) {
-				editor.ui.addButton('VideoEmbed', {
-					command: 'videoembed',
-					icon: instance.path + 'icons/video.png',
-					label: Liferay.Language.get('video'),
-				});
-			}
-
-			// Dialog window
-			CKEDITOR.dialog.add(
-				'videoembedDialog',
-				instance.path + 'dialogs/videoembedDialog.js'
-			);
-
-			editor.on('selectionChange', _event => {
-				const selection = editor.getSelection();
-
-				if (selection) {
-					const element = selection.getSelectedElement();
-
-					if (element) {
-						const widgetElement = element.findOne(
-							'[data-widget="videoembed"]'
-						);
-
-						if (widgetElement) {
-							const scrollPosition = new CKEDITOR.dom.window(
-								window
-							).getScrollPosition();
-
-							const region = element.getClientRect();
-
-							region.direction = CKEDITOR.SELECTION_BOTTOM_TO_TOP;
-							region.left -= scrollPosition.x;
-							region.top += scrollPosition.y;
-
-							editor.fire('editorInteraction', {
-								nativeEvent: {},
-								selectionData: {
-									element: widgetElement,
-									region,
-								},
-							});
-						}
-					}
-				}
-			});
-
-			editor.filter.addElementCallback(element => {
-				if ('data-embed-url' in element.attributes) {
-					return CKEDITOR.FILTER_SKIP_TREE;
-				}
-			});
 		},
 
 		afterInit(editor) {
@@ -629,5 +439,192 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 				}
 			});
 		},
+
+		init(editor) {
+			const instance = this;
+
+			editor.widgets.add('videoembed', {
+				data(event) {
+					const instance = this;
+
+					const stylesJSON = instance.element.getAttribute(
+						'data-styles'
+					);
+
+					let styles = stylesJSON ? JSON.parse(stylesJSON) : null;
+
+					if (!styles) {
+						const iframe = instance.wrapper.findOne('iframe');
+
+						const bounds = instance.wrapper.$.getBoundingClientRect();
+						const width = iframe.getAttribute('width');
+
+						const pwidth =
+							width >= bounds.width
+								? 100
+								: Math.round((width / bounds.width) * 100);
+
+						styles = {
+							width: `${pwidth}%`,
+						};
+					}
+
+					instance.wrapper.setAttribute(
+						'style',
+						CKEDITOR.tools.writeCssText(styles)
+					);
+
+					if (editor._selectEmbedWidget === event.data.url) {
+						selectWidget(editor);
+					}
+				},
+
+				downcast(widget) {
+					const embedContent = widget.children[0];
+
+					embedContent.attributes.class =
+						'embed-responsive embed-responsive-16by9';
+
+					embedContent.attributes['data-styles'] = JSON.stringify(
+						CKEDITOR.tools.parseCssText(
+							widget.parent.attributes.style
+						)
+					);
+
+					embedContent.attributes.style =
+						widget.parent.attributes.style;
+
+					return embedContent;
+				},
+
+				draggable: false,
+
+				mask: true,
+
+				requiredContent: 'div[data-embed-url]',
+
+				upcast(element, data) {
+					const embedWidgetUpcastFn =
+						editor.config.embedWidgetUpcastFn ||
+						instance._defaultEmbedWidgetUpcastFn.bind(instance);
+
+					return embedWidgetUpcastFn(editor, element, data);
+				},
+			});
+
+			editor.addCommand(
+				'videoembed',
+				new CKEDITOR.dialogCommand('videoembedDialog')
+			);
+
+			if (editor.ui.addButton) {
+				editor.ui.addButton('VideoEmbed', {
+					command: 'videoembed',
+					icon: instance.path + 'icons/video.png',
+					label: Liferay.Language.get('video'),
+				});
+			}
+
+			CKEDITOR.dialog.add(
+				'videoembedDialog',
+				instance.path + 'dialogs/videoembedDialog.js'
+			);
+
+			editor.on('selectionChange', _event => {
+				const selection = editor.getSelection();
+
+				if (selection) {
+					const element = selection.getSelectedElement();
+
+					if (element) {
+						const widgetElement = element.findOne(
+							'[data-widget="videoembed"]'
+						);
+
+						if (widgetElement) {
+							const scrollPosition = new CKEDITOR.dom.window(
+								window
+							).getScrollPosition();
+
+							const region = element.getClientRect();
+
+							region.direction = CKEDITOR.SELECTION_BOTTOM_TO_TOP;
+							region.left -= scrollPosition.x;
+							region.top += scrollPosition.y;
+
+							editor.fire('editorInteraction', {
+								nativeEvent: {},
+								selectionData: {
+									element: widgetElement,
+									region,
+								},
+							});
+						}
+					}
+				}
+			});
+
+			editor.filter.addElementCallback(element => {
+				if ('data-embed-url' in element.attributes) {
+					return CKEDITOR.FILTER_SKIP_TREE;
+				}
+			});
+		},
+
+		onOkVideo(editor, data) {
+			const type = data.type;
+			const url = data.url;
+			let content;
+
+			if (REGEX_HTTP.test(url)) {
+				const validProvider = this._getProviders(editor)
+					.filter(provider => {
+						return type ? provider.type === type : true;
+					})
+					.some(provider => {
+						const scheme = provider.urlSchemes.find(scheme =>
+							scheme.test(url)
+						);
+
+						if (scheme) {
+							const embedId = scheme.exec(url)[1];
+
+							content = provider.tpl.output({
+								embedId,
+							});
+						}
+
+						return scheme;
+					});
+
+				if (validProvider) {
+					editor._selectEmbedWidget = url;
+
+					const embedContent = this._generateEmbedContent(
+						editor,
+						url,
+						content
+					);
+
+					editor.insertHtml(embedContent);
+				}
+				else {
+					this._showError(
+						editor,
+						Liferay.Language.get(
+							'sorry,-this-platform-is-not-supported'
+						)
+					);
+				}
+			}
+			else {
+				this._showError(
+					editor,
+					Liferay.Language.get('enter-a-valid-url')
+				);
+			}
+		},
+
+		requires: 'widget',
 	});
 }

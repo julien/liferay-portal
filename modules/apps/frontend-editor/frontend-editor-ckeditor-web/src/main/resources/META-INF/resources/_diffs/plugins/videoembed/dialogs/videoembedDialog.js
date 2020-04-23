@@ -39,7 +39,7 @@ CKEDITOR.dialog.add('videoembedDialog', editor => {
 				url: this.getValueOf('info', 'url_video'),
 			};
 
-			editor.plugins.videoembed._onOkVideo(editor, data);
+			editor.plugins.videoembed.onOkVideo(editor, data);
 		},
 
 		title: Liferay.Language.get('video-properties'),
