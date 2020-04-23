@@ -17,11 +17,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-//import Resizer from './Resizer.es';
-
 if (!CKEDITOR.plugins.get('videoembed')) {
-	const Resizer = CKEDITOR.Resizer;
-
 	const REGEX_HTTP = /^https?/;
 
 	CKEDITOR.DEFAULT_LFR_EMBED_WIDGET_TPL =
@@ -168,69 +164,6 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 		}
 	};
 
-	const getSelectedElement = function(editor) {
-		const result = {
-			alignment: null,
-			element: null,
-		};
-
-		const selection = editor.getSelection();
-
-		if (selection) {
-			const selectedElement = selection.getSelectedElement();
-
-			if (
-				selectedElement &&
-				selectedElement.getAttribute('data-cke-widget-wrapper')
-			) {
-				result.alignment = getEmbedAlignment(selectedElement);
-				result.element = selectedElement;
-			}
-		}
-
-		return result;
-	};
-
-	const resizeElement = function(el, width, height) {
-		const wrapperElement = el.parentElement;
-
-		if (wrapperElement && width > 0 && height > 0) {
-			const rect = wrapperElement.getBoundingClientRect();
-
-			const pwidth =
-				width >= rect.width
-					? 100
-					: Math.floor((width / rect.width) * 100);
-			const style = `width:${pwidth}%;`;
-
-			wrapperElement.setAttribute('style', style);
-
-			const widgetElement = wrapperElement.querySelector(
-				'[data-widget="videoembed"]'
-			);
-
-			if (widgetElement) {
-				const styles =
-					JSON.parse(widgetElement.getAttribute('data-styles')) || {};
-
-				styles.width = `${width}px`;
-				styles.height = `${height}px`;
-
-				widgetElement.setAttribute(
-					'data-styles',
-					JSON.stringify(styles)
-				);
-
-				const iframeElement = widgetElement.querySelector('iframe');
-
-				if (iframeElement) {
-					iframeElement.setAttribute('width', width);
-					iframeElement.setAttribute('height', height);
-				}
-			}
-		}
-	};
-
 	const selectWidget = function(editor) {
 		setTimeout(() => {
 			const selection = editor.getSelection();
@@ -266,10 +199,6 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 			}
 		}, 0);
 	};
-
-	let currentAlignment = null;
-	let currentElement = null;
-	const resizer = null;
 
 	const EMBED_VIDEO_WIDTH = 560;
 	const EMBED_VIDEO_HEIGHT = 315;
@@ -426,8 +355,6 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 				editor.getSelection().removeAllRanges();
 
 				editor.focus();
-
-				//resizer.hide();
 			}, 0);
 		},
 
@@ -578,15 +505,6 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 				instance.path + 'dialogs/videoembedDialog.js'
 			);
 
-			/*window.addEventListener(
-				'resize',
-				() => {
-					resizer.hide();
-					selectWidget(editor);
-				},
-				false
-			);*/
-
 			editor.on('selectionChange', _event => {
 				const selection = editor.getSelection();
 
@@ -617,33 +535,8 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 								},
 							});
 						}
-
-						const imageElement = element.findOne(
-							'img.cke_widget_mask'
-						);
-
-						if (imageElement) {
-							//	resizer.show(imageElement.$);
-						}
-					}
-					else {
-						//resizer.hide();
 					}
 				}
-			});
-
-			editor.on('destroy', () => {
-				const resizeElement = document.getElementById('ckimgrsz');
-
-				if (resizeElement) {
-					resizeElement.remove();
-				}
-
-				document.removeEventListener('mousedown', mouseDownListener);
-			});
-
-			editor.on('blur', () => {
-				//resizer.hide();
 			});
 
 			editor.filter.addElementCallback(element => {
@@ -651,30 +544,6 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 					return CKEDITOR.FILTER_SKIP_TREE;
 				}
 			});
-
-			const mouseDownListener = event => {
-				const result = getSelectedElement(editor);
-
-				currentAlignment = result.alignment;
-				currentElement = result.element;
-
-				/*if (resizer.isHandle(event.target)) {
-					resizer.initDrag(event);
-				}*/
-			};
-
-			/*resizer = new Resizer(editor, {
-				onComplete(element, width, height) {
-					resizeElement(element, width, height);
-
-					if (currentAlignment && currentElement) {
-						setEmbedAlignment(currentElement, currentAlignment);
-					}
-					selectWidget(editor);
-				},
-			});*/
-
-			document.addEventListener('mousedown', mouseDownListener, false);
 		},
 
 		afterInit(editor) {
@@ -713,19 +582,6 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 										selectedElement,
 										alignValue
 									);
-								}
-
-								currentElement = selectedElement;
-								currentAlignment = getEmbedAlignment(
-									selectedElement
-								);
-
-								const imageElement = selectedElement.findOne(
-									'img'
-								);
-
-								if (imageElement) {
-									//resizer.show(imageElement.$);
 								}
 
 								event.cancel();
