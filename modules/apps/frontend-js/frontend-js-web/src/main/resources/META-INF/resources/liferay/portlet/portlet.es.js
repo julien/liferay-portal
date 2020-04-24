@@ -14,6 +14,7 @@
 
 import fetch from '../util/fetch.es';
 import objectToFormData from '../util/form/object_to_form_data.es';
+import getPortletId from '../util/get_portlet_id';
 import createPortletURL from '../util/portlet_url/create_portlet_url.es';
 import register from './register.es';
 
@@ -79,7 +80,7 @@ export function minimizePortlet(portletSelector, trigger, options) {
 				}
 			}
 
-			const portletId = Liferay.Util.getPortletId(portlet.id);
+			const portletId = getPortletId(portlet.id);
 
 			const formData = objectToFormData({
 				cmd: 'minimize',

@@ -34,8 +34,6 @@
 		},
 	};
 
-	var REGEX_PORTLET_ID = /^(?:p_p_id)?_(.*)_.*$/;
-
 	var REGEX_SUB = /\{\s*([^|}]+?)\s*(?:\|([^}]*))?\s*\}/g;
 
 	var SRC_HIDE_LINK = {
@@ -567,10 +565,6 @@
 			}
 
 			return openingWindow || window.opener || window.parent;
-		},
-
-		getPortletId(portletId) {
-			return String(portletId).replace(REGEX_PORTLET_ID, '$1');
 		},
 
 		getTop() {

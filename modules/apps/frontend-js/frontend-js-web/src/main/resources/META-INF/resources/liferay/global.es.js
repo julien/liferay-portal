@@ -50,6 +50,7 @@ import setFormValues from './util/form/set_form_values.es';
 import formatStorage from './util/format_storage.es';
 import formatXML from './util/format_xml.es';
 import getCropRegion from './util/get_crop_region.es';
+import getPortletId from './util/get_portlet_id';
 import getPortletNamespace from './util/get_portlet_namespace.es';
 import isPhone from './util/is_phone';
 import isTablet from './util/is_tablet';
@@ -120,6 +121,12 @@ Liferay.Util.formatStorage = formatStorage;
 Liferay.Util.formatXML = formatXML;
 Liferay.Util.getCropRegion = getCropRegion;
 Liferay.Util.getFormElement = getFormElement;
+
+/**
+ * @deprecated As of Athanasius (7.3.x), replaced by `import {getPortletId} from 'frontend-js-web'`
+ */
+Liferay.Util.getPortletId = getPortletId;
+
 Liferay.Util.getPortletNamespace = getPortletNamespace;
 Liferay.Util.groupBy = groupBy;
 Liferay.Util.isEqual = isEqual;
