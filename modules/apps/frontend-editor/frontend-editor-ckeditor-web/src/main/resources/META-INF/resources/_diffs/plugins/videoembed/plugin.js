@@ -481,7 +481,7 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 
 					const body = doc.getBody();
 					if (body) {
-						body.addClass('cke_wysiwyg_frame');
+						body.addClass('cke_editor_content');
 					}
 
 					if (editor._selectEmbedWidget === event.data.url) {
