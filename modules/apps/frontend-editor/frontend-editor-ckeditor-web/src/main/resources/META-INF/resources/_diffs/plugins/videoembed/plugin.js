@@ -474,6 +474,16 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 						CKEDITOR.tools.writeCssText(styles)
 					);
 
+					const doc = instance.wrapper.getDocument();
+					doc.appendStyleSheet(
+						'http://localhost:8080/o/frontend-css-web/main.css'
+					);
+
+					const body = doc.getBody();
+					if (body) {
+						body.addClass('cke_wysiwyg_frame');
+					}
+
 					if (editor._selectEmbedWidget === event.data.url) {
 						selectWidget(editor);
 					}
