@@ -476,7 +476,7 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 
 					const doc = instance.wrapper.getDocument();
 					doc.appendStyleSheet(
-						'http://localhost:8080/o/frontend-css-web/main.css'
+						'/o/frontend-css-web/main.css'
 					);
 
 					const body = doc.getBody();
