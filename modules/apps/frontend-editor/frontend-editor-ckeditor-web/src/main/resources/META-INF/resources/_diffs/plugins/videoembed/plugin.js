@@ -475,9 +475,7 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 					);
 
 					const doc = instance.wrapper.getDocument();
-					doc.appendStyleSheet(
-						'/o/frontend-css-web/main.css'
-					);
+					doc.appendStyleSheet('/o/frontend-css-web/main.css');
 
 					const body = doc.getBody();
 					if (body) {
