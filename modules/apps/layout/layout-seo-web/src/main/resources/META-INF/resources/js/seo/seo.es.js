@@ -12,6 +12,8 @@
  * details.
  */
 
+import {toggleDisabled} from 'frontend-js-web';
+
 import {previewSeoFireChange} from './PreviewSeoEvents.es';
 
 export default function ({namespace}) {
@@ -31,9 +33,9 @@ export default function ({namespace}) {
 
 		canonicalURLAlert.classList.toggle('hide');
 
-		Liferay.Util.toggleDisabled(canonicalURLField, disabled);
+		toggleDisabled(canonicalURLField, disabled);
 
-		Liferay.Util.toggleDisabled(canonicalURLFieldDefaultLocale, disabled);
+		toggleDisabled(canonicalURLFieldDefaultLocale, disabled);
 
 		previewSeoFireChange(namespace, {
 			disabled,

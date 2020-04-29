@@ -963,32 +963,6 @@
 			}
 		},
 
-		toggleDisabled(nodes, state) {
-			if (typeof nodes === 'string') {
-				nodes = document.querySelectorAll(nodes);
-			}
-			else if (nodes._node) {
-				nodes = [nodes.getDOM()];
-			}
-			else if (nodes._nodes) {
-				nodes = nodes.getDOM();
-			}
-			else if (nodes.nodeType === 1) {
-				nodes = [nodes];
-			}
-
-			nodes.forEach((node) => {
-				node.disabled = state;
-
-				if (state) {
-					node.classList.add('disabled');
-				}
-				else {
-					node.classList.remove('disabled');
-				}
-			});
-		},
-
 		toggleRadio(radioId, showBoxIds, hideBoxIds) {
 			const radioButton = document.getElementById(radioId);
 

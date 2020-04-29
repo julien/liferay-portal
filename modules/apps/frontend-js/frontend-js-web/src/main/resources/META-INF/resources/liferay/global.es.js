@@ -68,6 +68,7 @@ import createRenderURL from './util/portlet_url/create_render_url.es';
 import createResourceURL from './util/portlet_url/create_resource_url.es';
 import {getSessionValue, setSessionValue} from './util/session.es';
 import toCharCode from './util/to_char_code.es';
+import toggleDisabled from './util/toggle_disabled';
 
 Liferay = window.Liferay || {};
 
@@ -198,6 +199,11 @@ Liferay.Util.PortletURL = {
 Liferay.Util.postForm = postForm;
 Liferay.Util.setFormValues = setFormValues;
 Liferay.Util.toCharCode = toCharCode;
+
+/**
+ * @deprecated As of Athanasius (7.3.x), replaced by `import {toggleDisabled} from 'frontend-js-web'`
+ */
+Liferay.Util.toggleDisabled = toggleDisabled;
 
 Liferay.Util.openModal = (...args) => {
 	Liferay.Loader.require(
