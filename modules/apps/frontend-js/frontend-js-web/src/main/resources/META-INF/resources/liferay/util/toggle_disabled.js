@@ -27,7 +27,7 @@ export default function toggleDisabled(nodes, state) {
 	else if (nodes._nodes) {
 		nodes = nodes._nodes;
 	}
-	else if (nodes.nodeType === 1) {
+	else if (nodes.nodeType === Node.ELEMENT_NODE) {
 		nodes = [nodes];
 	}
 
