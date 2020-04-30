@@ -17,17 +17,20 @@ import toggleDisabled from '../../../src/main/resources/META-INF/resources/lifer
 describe('Liferay.Uitl.toggleDisabled', () => {
 	beforeEach(() => {
 		const fragment = document.createDocumentFragment();
+
 		for (let i = 0; i < 10; i++) {
 			const button = document.createElement('button');
 			button.setAttribute('id', `button-${i + 1}`);
 			button.classList.add('test-button');
 			fragment.appendChild(button);
 		}
+
 		document.body.appendChild(fragment);
 	});
 
 	afterEach(() => {
 		const buttons = document.querySelectorAll('button.test-button');
+
 		if (buttons) {
 			buttons.forEach((button) => {
 				document.body.removeChild(button);
@@ -39,6 +42,7 @@ describe('Liferay.Uitl.toggleDisabled', () => {
 		toggleDisabled('button.test-button', 'disabled');
 
 		const nodes = document.querySelectorAll('button.test-button');
+
 		nodes.forEach((node) => {
 			expect(node.disabled).toEqual(true);
 		});
