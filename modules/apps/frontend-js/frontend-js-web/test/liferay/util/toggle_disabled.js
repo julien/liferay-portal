@@ -35,17 +35,8 @@ describe('Liferay.Uitl.toggleDisabled', () => {
 		}
 	});
 
-	it("doesn't set the `disabled` attribute on a collection of nodes if the `state` argument is not a boolean", () => {
+	it('sets the `disabled` attribute on a collection of nodes if the `state` argument is passed', () => {
 		toggleDisabled('button.test-button', 'disabled');
-
-		const nodes = document.querySelectorAll('button.test-button');
-		nodes.forEach((node) => {
-			expect(node.disabled).toEqual(false);
-		});
-	});
-
-	it('sets the `disabled` attribute on a collection of nodes if the `state` argument is a boolean', () => {
-		toggleDisabled('button.test-button', true);
 
 		const nodes = document.querySelectorAll('button.test-button');
 		nodes.forEach((node) => {

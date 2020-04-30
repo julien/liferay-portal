@@ -32,10 +32,6 @@ export default function toggleDisabled(nodes, state) {
 	}
 
 	nodes.forEach((node) => {
-		if (typeof state !== 'boolean') {
-			return;
-		}
-
 		node.disabled = state;
 
 		if (state) {
