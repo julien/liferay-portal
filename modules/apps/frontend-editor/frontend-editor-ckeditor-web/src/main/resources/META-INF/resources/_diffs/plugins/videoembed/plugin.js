@@ -17,11 +17,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-//import Resizer from './Resizer.es';
-
 if (!CKEDITOR.plugins.get('videoembed')) {
-	const Resizer = CKEDITOR.Resizer;
-
 	const REGEX_HTTP = /^https?/;
 
 	CKEDITOR.DEFAULT_LFR_EMBED_WIDGET_TPL =
@@ -269,7 +265,7 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 
 	let currentAlignment = null;
 	let currentElement = null;
-	const resizer = null;
+	let resizer = null;
 
 	const EMBED_VIDEO_WIDTH = 560;
 	const EMBED_VIDEO_HEIGHT = 315;
@@ -709,16 +705,25 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 				}*/
 			};
 
-			/*resizer = new Resizer(editor, {
-				onComplete(element, width, height) {
-					resizeElement(element, width, height);
+			var path = instance.path;
 
-					if (currentAlignment && currentElement) {
-						setEmbedAlignment(currentElement, currentAlignment);
-					}
-					selectWidget(editor);
-				},
-			});*/
+			var dependencies = [
+				CKEDITOR.getUrl(path + 'DragEvent.es.js'),
+				CKEDITOR.getUrl(path + 'Resizer.es.js'),
+			];
+
+			CKEDITOR.scriptLoader.load(dependencies, () => {
+				resizer = new Liferay.ResizerCKEditor(editor, {
+					onComplete(element, width, height) {
+						resizeElement(element, width, height);
+
+						if (currentAlignment && currentElement) {
+							setEmbedAlignment(currentElement, currentAlignment);
+						}
+						selectWidget(editor);
+					},
+				});
+			});
 
 			document.addEventListener('mousedown', mouseDownListener, false);
 		},
