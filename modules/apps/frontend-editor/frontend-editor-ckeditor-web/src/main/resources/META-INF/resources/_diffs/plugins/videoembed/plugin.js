@@ -421,7 +421,7 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 
 				editor.focus();
 
-				//resizer.hide();
+				resizer.hide();
 			}, 0);
 		},
 
@@ -473,7 +473,7 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 								);
 
 								if (imageElement) {
-									//resizer.show(imageElement.$);
+									resizer.show(imageElement.$);
 								}
 
 								event.cancel();
@@ -620,14 +620,14 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 				instance.path + 'dialogs/videoembedDialog.js'
 			);
 
-			/*window.addEventListener(
+			window.addEventListener(
 				'resize',
 				() => {
 					resizer.hide();
 					selectWidget(editor);
 				},
 				false
-			);*/
+			);
 
 			editor.on('selectionChange', _event => {
 				const selection = editor.getSelection();
@@ -665,11 +665,11 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 						);
 
 						if (imageElement) {
-							//	resizer.show(imageElement.$);
+							resizer.show(imageElement.$);
 						}
 					}
 					else {
-						//resizer.hide();
+						resizer.hide();
 					}
 				}
 			});
@@ -685,7 +685,7 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 			});
 
 			editor.on('blur', () => {
-				//resizer.hide();
+				resizer.hide();
 			});
 
 			editor.filter.addElementCallback(element => {
@@ -694,15 +694,15 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 				}
 			});
 
-			const mouseDownListener = event => {
+			const mouseDownListener = function(event) {
 				const result = getSelectedElement(editor);
 
 				currentAlignment = result.alignment;
 				currentElement = result.element;
 
-				/*if (resizer.isHandle(event.target)) {
+				if (resizer.isHandle(event.target)) {
 					resizer.initDrag(event);
-				}*/
+				}
 			};
 
 			var path = instance.path;
