@@ -81,7 +81,7 @@
 
 			this.handles = {};
 
-			IMAGE_HANDLES.forEach(handleName => {
+			IMAGE_HANDLES.forEach((handleName) => {
 				this.handles[handleName] = this.createHandle(handleName);
 			});
 
@@ -153,7 +153,10 @@
 				return;
 			}
 
-			const drag = new Liferay.DragEventCKEditor(this.window, this.document);
+			const drag = new Liferay.DragEventCKEditor(
+				this.window,
+				this.document
+			);
 
 			drag.onStart = () => {
 				this.showPreview();
@@ -204,7 +207,12 @@
 			const keys = Object.keys(this.handles);
 
 			for (let i = 0; i < keys.length; i++) {
-				POSITION_ELEMENT_FN[keys[i]](this.handles[keys[i]], left, top, box);
+				POSITION_ELEMENT_FN[keys[i]](
+					this.handles[keys[i]],
+					left,
+					top,
+					box
+				);
 			}
 		}
 
@@ -271,7 +279,10 @@
 			const className = data.target.className;
 
 			if (className.indexOf('r') >= 0) {
-				this.previewBox.width = Math.max(32, this.box.width + data.delta.x);
+				this.previewBox.width = Math.max(
+					32,
+					this.box.width + data.delta.x
+				);
 			}
 
 			if (className.indexOf('b') >= 0) {
@@ -282,7 +293,10 @@
 			}
 
 			if (className.indexOf('l') >= 0) {
-				this.previewBox.width = Math.max(32, this.box.width - data.delta.x);
+				this.previewBox.width = Math.max(
+					32,
+					this.box.width - data.delta.x
+				);
 			}
 
 			if (className.indexOf('t') >= 0) {
@@ -299,7 +313,8 @@
 					this.previewBox.height = Math.round(
 						this.previewBox.width / ratio
 					);
-				} else {
+				}
+				else {
 					this.previewBox.width = Math.round(
 						this.previewBox.height * ratio
 					);

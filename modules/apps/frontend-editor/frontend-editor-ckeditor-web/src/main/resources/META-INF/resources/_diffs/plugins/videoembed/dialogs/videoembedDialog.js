@@ -12,7 +12,7 @@
  * details.
  */
 
-CKEDITOR.dialog.add('videoembedDialog', editor => {
+CKEDITOR.dialog.add('videoembedDialog', (editor) => {
 	return {
 		contents: [
 			{

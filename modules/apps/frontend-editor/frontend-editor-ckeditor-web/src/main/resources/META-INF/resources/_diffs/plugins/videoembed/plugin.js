@@ -72,7 +72,7 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 	 * @return {String} The alignment value
 	 */
 
-	const getEmbedAlignment = function(embed) {
+	const getEmbedAlignment = function (embed) {
 		let embedAlignment = embed.getStyle('float');
 
 		if (
@@ -84,12 +84,12 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 		}
 
 		if (!embedAlignment) {
-			const centeredEmbed = CENTERED_EMBED_STYLE.every(style => {
+			const centeredEmbed = CENTERED_EMBED_STYLE.every((style) => {
 				let styleCheck = embed.getStyle(style.name) === style.value;
 
 				if (!styleCheck && style.vendorPrefixes) {
 					styleCheck = style.vendorPrefixes.some(
-						vendorPrefix =>
+						(vendorPrefix) =>
 							embed.getStyle(vendorPrefix + style.name) ===
 							style.value
 					);
@@ -111,7 +111,7 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 	 * @param {String} embedAlignment The embed alignment value to be removed
 	 */
 
-	const removeEmbedAlignment = function(embed, embedAlignment) {
+	const removeEmbedAlignment = function (embed, embedAlignment) {
 		if (
 			embedAlignment === EMBED_ALIGNMENT.LEFT ||
 			embedAlignment === EMBED_ALIGNMENT.RIGHT
@@ -123,11 +123,11 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 			}
 		}
 		else if (embedAlignment === EMBED_ALIGNMENT.CENTER) {
-			CENTERED_EMBED_STYLE.forEach(style => {
+			CENTERED_EMBED_STYLE.forEach((style) => {
 				embed.removeStyle(style.name);
 
 				if (style.vendorPrefixes) {
-					style.vendorPrefixes.forEach(vendorPrefix =>
+					style.vendorPrefixes.forEach((vendorPrefix) =>
 						embed.removeStyle(vendorPrefix + style.name)
 					);
 				}
@@ -142,7 +142,7 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 	 * @param {String} embedAlignment The embed alignment value to be set
 	 */
 
-	const setEmbedAlignment = function(embed, embedAlignment) {
+	const setEmbedAlignment = function (embed, embedAlignment) {
 		removeEmbedAlignment(embed, getEmbedAlignment(embed));
 
 		if (
@@ -152,11 +152,11 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 			embed.setStyle('float', embedAlignment);
 		}
 		else if (embedAlignment === EMBED_ALIGNMENT.CENTER) {
-			CENTERED_EMBED_STYLE.forEach(style => {
+			CENTERED_EMBED_STYLE.forEach((style) => {
 				embed.setStyle(style.name, style.value);
 
 				if (style.vendorPrefixes) {
-					style.vendorPrefixes.forEach(vendorPrefix =>
+					style.vendorPrefixes.forEach((vendorPrefix) =>
 						embed.setStyle(vendorPrefix + style.name, style.value)
 					);
 				}
@@ -164,7 +164,7 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 		}
 	};
 
-	const getSelectedElement = function(editor) {
+	const getSelectedElement = function (editor) {
 		const result = {
 			alignment: null,
 			element: null,
@@ -187,7 +187,7 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 		return result;
 	};
 
-	const resizeElement = function(el, width, height) {
+	const resizeElement = function (el, width, height) {
 		const wrapperElement = el.parentElement;
 
 		if (wrapperElement && width > 0 && height > 0) {
@@ -227,7 +227,7 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 		}
 	};
 
-	const selectWidget = function(editor) {
+	const selectWidget = function (editor) {
 		setTimeout(() => {
 			const selection = editor.getSelection();
 
@@ -321,9 +321,11 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 	];
 
 	// CSS is added in a compressed form
+
 	CKEDITOR.addCss(
 		'img::selection{color:rgba(0,0,0,0)}img.ckimgrsz{outline:1px dashed #000}#ckimgrsz{position:absolute;width:0;height:0;cursor:default;z-index:10001}#ckimgrsz span{display:none;position:absolute;top:0;left:0;width:0;height:0;background-size:100% 100%;opacity:.65;outline:1px dashed #000}#ckimgrsz i{position:absolute;display:block;width:5px;height:5px;background:#fff;border:1px solid #000}#ckimgrsz i.active,#ckimgrsz i:hover{background:#000}#ckimgrsz i.br,#ckimgrsz i.tl{cursor:nwse-resize}#ckimgrsz i.bm,#ckimgrsz i.tm{cursor:ns-resize}#ckimgrsz i.bl,#ckimgrsz i.tr{cursor:nesw-resize}#ckimgrsz i.lm,#ckimgrsz i.rm{cursor:ew-resize}body.dragging-br,body.dragging-br *,body.dragging-tl,body.dragging-tl *{cursor:nwse-resize!important}body.dragging-bm,body.dragging-bm *,body.dragging-tm,body.dragging-tm *{cursor:ns-resize!important}body.dragging-bl,body.dragging-bl *,body.dragging-tr,body.dragging-tr *{cursor:nesw-resize!important}body.dragging-lm,body.dragging-lm *,body.dragging-rm,body.dragging-rm *{cursor:ew-resize!important}'
 	);
+
 	/**
 	 * CKEditor plugin which adds the infrastructure to embed urls as media objects
 	 *
@@ -392,7 +394,7 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 		_getProviders(editor) {
 			const providers = editor.config.embedProviders || embedProviders;
 
-			return providers.map(provider => {
+			return providers.map((provider) => {
 				return {
 					id: provider.id,
 					tpl: new CKEDITOR.template(
@@ -400,7 +402,7 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 					),
 					type: provider.type,
 					urlSchemes: provider.urlSchemes.map(
-						scheme => new RegExp(scheme)
+						(scheme) => new RegExp(scheme)
 					),
 				};
 			});
@@ -430,11 +432,11 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 		},
 
 		afterInit(editor) {
-			ALIGN_VALUES.forEach(alignValue => {
+			ALIGN_VALUES.forEach((alignValue) => {
 				const command = editor.getCommand('justify' + alignValue);
 
 				if (command) {
-					command.on('exec', event => {
+					command.on('exec', (event) => {
 						const selectedElement = editor
 							.getSelection()
 							.getSelectedElement();
@@ -486,7 +488,7 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 									selectedElement
 								);
 
-								ALIGN_VALUES.forEach(alignValue => {
+								ALIGN_VALUES.forEach((alignValue) => {
 									const command = editor.getCommand(
 										'justify' + alignValue
 									);
@@ -499,7 +501,7 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 						}
 					});
 
-					command.on('refresh', event => {
+					command.on('refresh', (event) => {
 						const lastElement = event.data.path.lastElement;
 
 						if (
@@ -633,7 +635,7 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 				false
 			);
 
-			editor.on('selectionChange', _event => {
+			editor.on('selectionChange', (_event) => {
 				const selection = editor.getSelection();
 
 				if (selection) {
@@ -692,13 +694,13 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 				resizer.hide();
 			});
 
-			editor.filter.addElementCallback(element => {
+			editor.filter.addElementCallback((element) => {
 				if ('data-embed-url' in element.attributes) {
 					return CKEDITOR.FILTER_SKIP_TREE;
 				}
 			});
 
-			const mouseDownListener = function(event) {
+			const mouseDownListener = function (event) {
 				const result = getSelectedElement(editor);
 
 				currentAlignment = result.alignment;
@@ -739,11 +741,11 @@ if (!CKEDITOR.plugins.get('videoembed')) {
 
 			if (REGEX_HTTP.test(url)) {
 				const validProvider = this._getProviders(editor)
-					.filter(provider => {
+					.filter((provider) => {
 						return type ? provider.type === type : true;
 					})
-					.some(provider => {
-						const scheme = provider.urlSchemes.find(scheme =>
+					.some((provider) => {
+						const scheme = provider.urlSchemes.find((scheme) =>
 							scheme.test(url)
 						);
 

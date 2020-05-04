@@ -40,13 +40,21 @@
 
 			this.update(event);
 
-			this.document.addEventListener('keydown', this.events.keydown, false);
+			this.document.addEventListener(
+				'keydown',
+				this.events.keydown,
+				false
+			);
 			this.document.addEventListener(
 				'mousemove',
 				this.events.mousemove,
 				false
 			);
-			this.document.addEventListener('mouseup', this.events.mouseup, false);
+			this.document.addEventListener(
+				'mouseup',
+				this.events.mouseup,
+				false
+			);
 
 			this.document.body.classList.add(`dragging-${this.className}`);
 
