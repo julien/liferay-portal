@@ -12,8 +12,35 @@
  * details.
  */
 
+import ClayChart from '@clayui/charts';
 import React from 'react';
 
+const EMPTY_COLUMNS = [];
+
 export default function () {
-	return <></>;
+	return (
+		<ClayChart
+			axis={{
+				x: {
+					tick: {show: false},
+				},
+				y: {
+					tick: {show: false},
+				},
+			}}
+			data={{
+				columns: EMPTY_COLUMNS,
+				empty: {
+					label: {
+						text: 'No data yet.',
+					},
+				},
+			}}
+			grid={{
+				y: {
+					show: false,
+				},
+			}}
+		/>
+	);
 }
