@@ -121,7 +121,12 @@ class TabsProvider {
 	};
 
 	_getPanel(trigger) {
-		return document.querySelector(trigger.getAttribute('href'));
+		try {
+			return document.querySelector(trigger.getAttribute('href'));
+		}
+		catch (error) {
+			return null;
+		}
 	}
 
 	_getTrigger(panel) {

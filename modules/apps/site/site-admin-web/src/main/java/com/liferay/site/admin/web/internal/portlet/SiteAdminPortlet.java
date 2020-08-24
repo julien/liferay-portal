@@ -216,10 +216,6 @@ public class SiteAdminPortlet extends MVCPortlet {
 			throw ctTransactionException;
 		}
 		catch (PortalException portalException) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(portalException, portalException);
-			}
-
 			hideDefaultSuccessMessage(actionRequest);
 
 			groupExceptionRequestHandler.handlePortalException(
