@@ -1,0 +1,4 @@
+Bundle-Name: Liferay Frontend Editor BalloonEditor Sample Web
+Bundle-SymbolicName: com.liferay.frontend.editor.ballooneditor.sample.web
+Bundle-Version: 1.0.0
+Web-ContextPath: /frontend-editor-ballooneditor-sample-web
