@@ -17,3 +17,9 @@
 <%@ include file="/init.jsp" %>
 
 <h1> Welcome to Balloon Editor!</h1>
+
+<div>
+    <react:component
+        module="js/index"
+    />
+</div>

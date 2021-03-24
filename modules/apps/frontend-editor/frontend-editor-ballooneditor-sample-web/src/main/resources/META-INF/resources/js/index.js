@@ -1,4 +1,3 @@
-<%--
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -12,6 +11,10 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
---%>
 
-<%@ taglib uri="http://liferay.com/tld/react" prefix="react" %>
+import {InlineEditor} from 'frontend-editor-ckeditor-web';
+import React from 'react';
+
+export default function({portletNamespace, ...props}) {
+    return <InlineEditor {...props} />;
+}
