@@ -150,7 +150,7 @@ export const PortalControlMenu = ({backURL, title, url}) => {
 		);
 
 		if (headerTitle) {
-			headerTitle.innerHTML = title;
+			headerTitle.innerHTML = Liferay.Util.escape(title);
 		}
 	}, [title]);
 
