@@ -109,6 +109,10 @@ public class InputLocalizedTag extends IncludeTag {
 		return _xml;
 	}
 
+	public boolean isAdminMode() {
+		return _adminMode;
+	}
+
 	public boolean isAutoFocus() {
 		return _autoFocus;
 	}
@@ -123,6 +127,10 @@ public class InputLocalizedTag extends IncludeTag {
 
 	public boolean isIgnoreRequestValue() {
 		return _ignoreRequestValue;
+	}
+
+	public void setAdminMode(boolean adminMode) {
+		_adminMode = adminMode;
 	}
 
 	public void setAutoFocus(boolean autoFocus) {
@@ -221,6 +229,7 @@ public class InputLocalizedTag extends IncludeTag {
 	protected void cleanUp() {
 		super.cleanUp();
 
+		_adminMode = false;
 		_autoFocus = false;
 		_autoSize = false;
 		_availableLocales = null;
@@ -276,6 +285,8 @@ public class InputLocalizedTag extends IncludeTag {
 			id = _name;
 		}
 
+		httpServletRequest.setAttribute(
+			"liferay-ui:input-localized:adminMode", String.valueOf(_adminMode));
 		httpServletRequest.setAttribute(
 			"liferay-ui:input-localized:autoFocus", String.valueOf(_autoFocus));
 		httpServletRequest.setAttribute(
@@ -334,6 +345,7 @@ public class InputLocalizedTag extends IncludeTag {
 	private static final String _PAGE =
 		"/html/taglib/ui/input_localized/page.jsp";
 
+	private boolean _adminMode;
 	private boolean _autoFocus;
 	private boolean _autoSize;
 	private Set<Locale> _availableLocales;

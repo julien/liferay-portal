@@ -45,6 +45,11 @@ AUI.add(
 			_instances: {},
 
 			ATTRS: {
+				adminMode: {
+					validator: Lang.isBoolean,
+					value: false,
+				},
+
 				animateClass: {
 					validator: Lang.isString,
 					value: 'highlight-animation',
@@ -493,8 +498,10 @@ AUI.add(
 					return instance._getInputLanguage(languageId).val();
 				},
 
-				initializer() {
+				initializer(config) {
 					var instance = this;
+
+					instance.set('adminMode', config.adminMode);
 
 					var inputPlaceholder = instance.get(STR_INPUT_PLACEHOLDER);
 

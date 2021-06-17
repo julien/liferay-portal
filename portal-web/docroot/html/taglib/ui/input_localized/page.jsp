@@ -81,8 +81,20 @@
 		<%
 		languageIds.add(defaultLanguageId);
 
+		JSONArray localesJSONArray = JSONFactoryUtil.createJSONArray();
+
 		for (Locale availableLocale : availableLocales) {
 			String curLanguageId = LocaleUtil.toLanguageId(availableLocale);
+
+			JSONObject localeJSONObject = JSONFactoryUtil.createJSONObject();
+
+			String label = availableLocale.toString();
+			String symbol = label.toLowerCase().replace("_", "-");
+
+			localeJSONObject.put("label", label);
+			localeJSONObject.put("symbol", symbol);
+
+			localesJSONArray.put(localeObject);
 
 			if (curLanguageId.equals(defaultLanguageId)) {
 				continue;
@@ -127,102 +139,118 @@
 		}
 		%>
 
+
 		<div class="input-group-item input-group-item-shrink input-localized-content" role="menu">
 
-			<%
-			String normalizedSelectedLanguageId = StringUtil.replace(selectedLanguageId, '_', '-');
-			%>
 
-			<liferay-ui:icon-menu
-				direction="left-side"
-				icon="<%= StringUtil.toLowerCase(normalizedSelectedLanguageId) %>"
-				id='<%= namespace + id + "Menu" %>'
-				markupView="lexicon"
-				message="<%= StringPool.BLANK %>"
-				showWhenSingleIcon="<%= true %>"
-				triggerCssClass="input-localized-trigger"
-				triggerLabel="<%= normalizedSelectedLanguageId %>"
-				triggerType="button"
-			>
-				<div id="<%= namespace + id %>PaletteBoundingBox">
-					<div class="input-localized-palette-container palette-container" id="<%= namespace + id %>PaletteContentBox">
+		<c:choose>
+			<c:when test="<%= adminMode %>">
+				<aui:script require="@liferay/frontend-js-translation-web@1.0.0/index as translationJSWeb">
+					var container = document.querySelector('div[role="menu"]');
 
-						<%
-						LinkedHashSet<String> uniqueLanguageIds = new LinkedHashSet<String>();
+					translationJSWeb.default(container, {
+						locales: <%= localesJSONArray.toString() %>,
+						selectedLocale: <%= localesJSONArray.getJSONObject(0).toString() %>,
+						spritemap: '<%= themeDisplay.getPathThemeImages() %>/clay/icons.svg',
+						translations: {},
+					});
+				</aui:script>
+			</c:when>
+			<c:otherwise>
 
-						uniqueLanguageIds.add(defaultLanguageId);
+				<%
+				String normalizedSelectedLanguageId = StringUtil.replace(selectedLanguageId, '_', '-');
+				%>
 
-						for (Locale availableLocale : availableLocales) {
-							String curLanguageId = LocaleUtil.toLanguageId(availableLocale);
+				<liferay-ui:icon-menu
+					direction="left-side"
+					icon="<%= StringUtil.toLowerCase(normalizedSelectedLanguageId) %>"
+					id='<%= namespace + id + "Menu" %>'
+					markupView="lexicon"
+					message="<%= StringPool.BLANK %>"
+					showWhenSingleIcon="<%= true %>"
+					triggerCssClass="input-localized-trigger"
+					triggerLabel="<%= normalizedSelectedLanguageId %>"
+					triggerType="button"
+				>
+					<div id="<%= namespace + id %>PaletteBoundingBox">
+						<div class="input-localized-palette-container palette-container" id="<%= namespace + id %>PaletteContentBox">
+							<%
+							LinkedHashSet<String> uniqueLanguageIds = new LinkedHashSet<String>();
 
-							uniqueLanguageIds.add(curLanguageId);
-						}
+							uniqueLanguageIds.add(defaultLanguageId);
 
-						int index = 0;
+							for (Locale availableLocale : availableLocales) {
+								String curLanguageId = LocaleUtil.toLanguageId(availableLocale);
 
-						for (String curLanguageId : uniqueLanguageIds) {
-							String linkCssClass = "dropdown-item palette-item";
-
-							Locale curLocale = LocaleUtil.fromLanguageId(curLanguageId);
-
-							if (errorLocales.contains(curLocale) || (curLanguageId.equals(selectedLanguageId) && errorLocales.isEmpty())) {
-								linkCssClass += " active";
+								uniqueLanguageIds.add(curLanguageId);
 							}
 
-							String title = HtmlUtil.escapeAttribute(curLocale.getDisplayName(LocaleUtil.fromLanguageId(LanguageUtil.getLanguageId(request)))) + " " + LanguageUtil.get(LocaleUtil.getDefault(), "translation");
+							int index = 0;
 
-							Map<String, Object> iconData = HashMapBuilder.<String, Object>put(
-								"index", index++
-							).put(
-								"languageid", curLanguageId
-							).put(
-								"value", curLanguageId
-							).build();
+							for (String curLanguageId : uniqueLanguageIds) {
+								String linkCssClass = "dropdown-item palette-item";
 
-							String translationStatus = LanguageUtil.get(request, "untranslated");
-							String translationStatusCssClass = "warning";
+								Locale curLocale = LocaleUtil.fromLanguageId(curLanguageId);
 
-							if (languageIds.contains(curLanguageId)) {
-								translationStatus = LanguageUtil.get(request, "translated");
-								translationStatusCssClass = "success";
-							}
+								if (errorLocales.contains(curLocale) || (curLanguageId.equals(selectedLanguageId) && errorLocales.isEmpty())) {
+									linkCssClass += " active";
+								}
 
-							if (defaultLanguageId.equals(curLanguageId)) {
-								translationStatus = LanguageUtil.get(request, "default");
-								translationStatusCssClass = "info";
-							}
-						%>
+								String title = HtmlUtil.escapeAttribute(curLocale.getDisplayName(LocaleUtil.fromLanguageId(LanguageUtil.getLanguageId(request)))) + " " + LanguageUtil.get(LocaleUtil.getDefault(), "translation");
 
-							<liferay-util:buffer
-								var="linkContent"
-							>
-								<%= StringUtil.replace(curLanguageId, '_', '-') %>
+								Map<String, Object> iconData = HashMapBuilder.<String, Object>put(
+									"index", index++
+								).put(
+									"languageid", curLanguageId
+								).put(
+									"value", curLanguageId
+								).build();
 
-								<span class="label label-<%= translationStatusCssClass %>"><%= translationStatus %></span>
-							</liferay-util:buffer>
+								String translationStatus = LanguageUtil.get(request, "untranslated");
+								String translationStatusCssClass = "warning";
 
-							<liferay-ui:icon
-								alt="<%= title %>"
-								data="<%= iconData %>"
-								icon="<%= StringUtil.toLowerCase(StringUtil.replace(curLanguageId, '_', '-')) %>"
-								iconCssClass="inline-item inline-item-before"
-								linkCssClass="<%= linkCssClass %>"
-								markupView="lexicon"
-								message="<%= linkContent %>"
-								url="javascript:;"
-							>
-							</liferay-ui:icon>
+								if (languageIds.contains(curLanguageId)) {
+									translationStatus = LanguageUtil.get(request, "translated");
+									translationStatusCssClass = "success";
+								}
 
-						<%
-						}
-						%>
+								if (defaultLanguageId.equals(curLanguageId)) {
+									translationStatus = LanguageUtil.get(request, "default");
+									translationStatusCssClass = "info";
+								}
+							%>
 
+								<liferay-util:buffer
+									var="linkContent"
+								>
+									<%= StringUtil.replace(curLanguageId, '_', '-') %>
+
+									<span class="label label-<%= translationStatusCssClass %>"><%= translationStatus %></span>
+								</liferay-util:buffer>
+
+								<liferay-ui:icon
+									alt="<%= title %>"
+									data="<%= iconData %>"
+									icon="<%= StringUtil.toLowerCase(StringUtil.replace(curLanguageId, '_', '-')) %>"
+									iconCssClass="inline-item inline-item-before"
+									linkCssClass="<%= linkCssClass %>"
+									markupView="lexicon"
+									message="<%= linkContent %>"
+									url="javascript:;"
+								>
+								</liferay-ui:icon>
+								<% } %>
+						</div>
 					</div>
-				</div>
-			</liferay-ui:icon-menu>
+				</liferay-ui:icon-menu>
+				</c:otherwise>
+			</c:choose>
 		</div>
 	</c:if>
 </div>
+
+<div id="testing"></div>
 
 <div class="form-text"><%= HtmlUtil.escape(helpMessage) %></div>
 
@@ -291,6 +319,10 @@
 			Liferay.InputLocalized.register(
 				'<%= namespace + id + HtmlUtil.getAUICompatibleId(fieldSuffix) %>',
 				{
+					<c:if test='<%= adminMode %>'>
+						adminMode: true,
+					</c:if>
+
 					boundingBox: '#<%= namespace + id %>PaletteBoundingBox',
 					columns: 20,
 					contentBox: '#<%= namespace + id %>PaletteContentBox',
