@@ -94,7 +94,7 @@
 			localeJSONObject.put("label", label);
 			localeJSONObject.put("symbol", symbol);
 
-			localesJSONArray.put(localeObject);
+			localesJSONArray.put(localeJSONObject);
 
 			if (curLanguageId.equals(defaultLanguageId)) {
 				continue;
