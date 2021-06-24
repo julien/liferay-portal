@@ -1,3 +1,9 @@
+<%@ page
+	import="com.liferay.frontend.js.loader.modules.extender.npm.NPMResolver" %>
+
+<%@ page
+	import="com.liferay.questions.web.internal.portlet.NPMResolverProvider" %>
+
 <%--
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
@@ -16,12 +22,27 @@
 
 <%@ include file="/init.jsp" %>
 
-<portlet:renderURL var="basePortletURL" />
+<portlet:renderURL var="basePortletURL"/>
+
+<%
+	NPMResolver npmResolver = NPMResolverProvider.getNPMResolver();
+%>
+
+<aui:script
+	require='<%= npmResolver.resolveModuleName("@liferay/frontend-js-translation-web/index") + " as translationJSWeb" %>'>
+	console.log(translationJSWeb);
+</aui:script>
+
+<aui:script require="@liferay/frontend-js-translation-web/actions.es as translationJSWeb">
+	console.log(translationJSWeb);
+</aui:script>
 
 <div id="<%= liferayPortletResponse.getNamespace() + "-questions-root" %>">
 
 	<%
-	QuestionsConfiguration questionsConfiguration = portletDisplay.getPortletInstanceConfiguration(QuestionsConfiguration.class);
+		QuestionsConfiguration questionsConfiguration =
+			portletDisplay.getPortletInstanceConfiguration(
+				QuestionsConfiguration.class);
 	%>
 
 	<react:component
