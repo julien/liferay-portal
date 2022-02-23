@@ -1,9 +1,9 @@
 {
 	"dependencies": {
-		"@clayui/autocomplete": "3.45.0",
-		"@clayui/data-provider": "3.45.0",
-		"@clayui/drop-down": "3.45.0",
-		"@clayui/shared": "3.45.0",
+		"@clayui/autocomplete": "3.47.0",
+		"@clayui/data-provider": "3.47.0",
+		"@clayui/drop-down": "3.47.0",
+		"@clayui/shared": "3.47.0",
 		"dynamic-data-mapping-form-field-type": "*",
 		"frontend-js-web": "*",
 		"react": "16.12.0"
