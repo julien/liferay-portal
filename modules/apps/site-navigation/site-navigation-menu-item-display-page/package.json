@@ -1,6 +1,6 @@
 {
 	"dependencies": {
-		"@clayui/localized-input": "3.45.0"
+		"@clayui/localized-input": "3.47.0"
 	},
 	"name": "@liferay/site-navigation-menu-item-display-page",
 	"scripts": {

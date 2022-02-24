@@ -1,6 +1,6 @@
 {
 	"dependencies": {
-		"@clayui/toolbar": "3.45.0",
+		"@clayui/toolbar": "3.47.0",
 		"dagre": "0.8.2",
 		"react-flow-renderer": "9.7.0"
 	},

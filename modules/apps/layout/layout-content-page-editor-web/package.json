@@ -1,7 +1,7 @@
 {
 	"dependencies": {
-		"@clayui/core": "3.46.0",
-		"@clayui/toolbar": "3.45.0"
+		"@clayui/core": "3.47.0",
+		"@clayui/toolbar": "3.47.0"
 	},
 	"jest": {
 		"setupFiles": [

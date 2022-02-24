@@ -1,6 +1,6 @@
 {
 	"dependencies": {
-		"@clayui/toolbar": "3.45.0",
+		"@clayui/toolbar": "3.47.0",
 		"@liferay/frontend-js-state-web": "*",
 		"cropperjs": "1.5.11",
 		"react-dropzone": "11.4.2"
