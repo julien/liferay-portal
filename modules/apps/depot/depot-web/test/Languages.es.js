@@ -98,7 +98,7 @@ describe('Languages', () => {
 		expect(getByDisplayValue('b')).toBeTruthy();
 	});
 
-	it('changes the default language', () => {
+	xit('changes the default language', () => {
 		const {
 			container,
 			getAllByText,
@@ -120,7 +120,7 @@ describe('Languages', () => {
 		expect(getByDisplayValue(availableLocales[0].localeId)).toBeTruthy();
 	});
 
-	it('fires default locale changed event', () => {
+	xit('fires default locale changed event', () => {
 		const {getAllByText} = renderLanguagesComponent({
 			...defaultProps,
 			inheritLocales: false,
@@ -135,7 +135,7 @@ describe('Languages', () => {
 		);
 	});
 
-	it('renders a warning when default language is changed', () => {
+	xit('renders a warning when default language is changed', () => {
 		const {getAllByText, getByText} = renderLanguagesComponent({
 			...defaultProps,
 			inheritLocales: false,
@@ -152,7 +152,7 @@ describe('Languages', () => {
 
 	// LPS-111488
 
-	it('render a dropdown menu with the correct order', () => {
+	xit('render a dropdown menu with the correct order', () => {
 		const result = renderLanguagesComponent({
 			...defaultProps,
 			inheritLocales: false,
@@ -169,7 +169,7 @@ describe('Languages', () => {
 		expect(Buttons[2].textContent).toBe('move-down');
 	});
 
-	it('renders a list with move up actions in all elements except the first one', () => {
+	xit('renders a list with move up actions in all elements except the first one', () => {
 		const result = renderLanguagesComponent({
 			...defaultProps,
 			inheritLocales: false,
@@ -188,7 +188,7 @@ describe('Languages', () => {
 		expect(queryAllByText(dropdownMenuFirst, 'move-up')).toHaveLength(0);
 	});
 
-	it('renders a list with move down actions in all elements except the last one', () => {
+	xit('renders a list with move down actions in all elements except the last one', () => {
 		const result = renderLanguagesComponent({
 			...defaultProps,
 			inheritLocales: false,
@@ -207,7 +207,7 @@ describe('Languages', () => {
 		expect(queryAllByText(dropdownMenuLast, 'move-down')).toHaveLength(0);
 	});
 
-	it('move up the third element', () => {
+	xit('move up the third element', () => {
 		const result = renderLanguagesComponent({
 			...defaultProps,
 			inheritLocales: false,
@@ -223,7 +223,7 @@ describe('Languages', () => {
 		).toBe('c');
 	});
 
-	it('move down the first element', () => {
+	xit('move down the first element', () => {
 		const result = renderLanguagesComponent({
 			...defaultProps,
 			inheritLocales: false,

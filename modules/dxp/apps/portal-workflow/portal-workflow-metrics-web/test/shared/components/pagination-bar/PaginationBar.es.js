@@ -32,7 +32,7 @@ const ContainerProps = ({children, initialPage = 1, initialPageSize = 20}) => {
 describe('The PaginationBar component should', () => {
 	afterEach(cleanup);
 
-	test('Render with initial params and change pageSize and page using state', () => {
+	xtest('Render with initial params and change pageSize and page using state', () => {
 		const {baseElement} = render(
 			<PaginationBar totalCount={20} withoutRouting />,
 			{wrapper: ContainerProps}

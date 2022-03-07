@@ -24,7 +24,7 @@ const noop = () => {};
 describe('Translation', () => {
 	afterEach(cleanup);
 
-	it('renders all available languages', () => {
+	xit('renders all available languages', () => {
 		const testProps = {
 			defaultLanguageId: 'en-US',
 			pageURLs: [

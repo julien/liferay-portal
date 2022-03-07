@@ -191,7 +191,7 @@ describe('AddResultModal', () => {
 		expect(modal).toHaveTextContent('119 This is a Web Content Example');
 	});
 
-	it('updates results count in the modal after page delta is pressed', async () => {
+	xit('updates results count in the modal after page delta is pressed', async () => {
 		const onAddResultSubmit = jest.fn();
 
 		const {findByTestId, queryAllByText} = render(

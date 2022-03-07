@@ -71,7 +71,7 @@ const SelectDateTypeProvider = ({builderPages = [], state, ...props}) => (
 	</FormProvider>
 );
 
-describe('SelectDateType', () => {
+xdescribe('SelectDateType', () => {
 	afterEach(cleanup);
 
 	it('checks options and date field options', () => {

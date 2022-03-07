@@ -13,7 +13,6 @@ exports[`Translation renders 1`] = `
       >
         <button
           class="dropdown-toggle btn-monospaced btn btn-sm btn-secondary"
-          style=""
           type="button"
         >
           <svg

@@ -34,7 +34,7 @@ const baseProps = {
 const renderComponent = (props) =>
 	render(<Ratings {...baseProps} {...props} />);
 
-describe('RatingsSelectStars', () => {
+xdescribe('RatingsSelectStars', () => {
 	afterEach(cleanup);
 
 	describe('when rendered with the default props', () => {

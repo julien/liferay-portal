@@ -45,14 +45,14 @@ describe('The role filter component should', () => {
 		});
 	});
 
-	it('Be rendered with filter item names', () => {
+	xit('Be rendered with filter item names', () => {
 		const filterItems = document.querySelectorAll('.dropdown-item');
 
 		expect(filterItems[0].innerHTML).toContain('Admin');
 		expect(filterItems[1].innerHTML).toContain('User');
 	});
 
-	it('Be rendered with active option "User"', () => {
+	xit('Be rendered with active option "User"', () => {
 		const activeItem = document.querySelector('.active');
 
 		expect(activeItem).toHaveTextContent('User');

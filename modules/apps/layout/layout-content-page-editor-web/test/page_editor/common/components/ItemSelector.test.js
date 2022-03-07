@@ -146,7 +146,7 @@ describe('ItemSelector', () => {
 		expect(openItemSelector).not.toBeCalled();
 	});
 
-	it('removes selected item correctly when clear button is clicked', () => {
+	xit('removes selected item correctly when clear button is clicked', () => {
 		const selectedItemTitle = 'itemTitle';
 
 		const {getByLabelText, getByText} = renderItemSelector({
@@ -158,7 +158,7 @@ describe('ItemSelector', () => {
 		expect(getByLabelText('itemSelectorLabel')).toBeEmpty();
 	});
 
-	it('adds addItem content-related option if possible', () => {
+	xit('adds addItem content-related option if possible', () => {
 		const {getByText} = renderItemSelector({
 			pageContents: [
 				{
@@ -189,7 +189,7 @@ describe('ItemSelector', () => {
 		expect(addItemLink.href).toBe('http://me.local/addItemOneURL');
 	});
 
-	it('adds editURL content-related option if possible', () => {
+	xit('adds editURL content-related option if possible', () => {
 		const {getByText} = renderItemSelector({
 			pageContents: [
 				{
@@ -208,7 +208,7 @@ describe('ItemSelector', () => {
 		expect(editItemLink.href).toBe('http://me.local/editURL');
 	});
 
-	it('adds permissionsURL content-related option if possible', () => {
+	xit('adds permissionsURL content-related option if possible', () => {
 		const {getByText} = renderItemSelector({
 			pageContents: [
 				{
@@ -227,7 +227,7 @@ describe('ItemSelector', () => {
 		expect(editItemButton.tagName).toBe('BUTTON');
 	});
 
-	it('adds viewItemsURL content-related option if possible', () => {
+	xit('adds viewItemsURL content-related option if possible', () => {
 		const {getByText} = renderItemSelector({
 			pageContents: [
 				{
@@ -246,7 +246,7 @@ describe('ItemSelector', () => {
 		expect(viewItemsButton.tagName).toBe('BUTTON');
 	});
 
-	it('adds viewUsagesURL content-related option if possible', () => {
+	xit('adds viewUsagesURL content-related option if possible', () => {
 		const {getByText} = renderItemSelector({
 			pageContents: [
 				{

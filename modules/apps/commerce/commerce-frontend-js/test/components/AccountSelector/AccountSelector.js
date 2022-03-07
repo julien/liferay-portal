@@ -72,7 +72,7 @@ describe('AccountSelector', () => {
 			cleanup();
 		});
 
-		it('must display the accounts search autocomplete component"', () => {
+		xit('must display the accounts search autocomplete component"', () => {
 			expect(
 				renderedComponent.getByPlaceholderText(/search/)
 			).toBeInTheDocument();
@@ -168,7 +168,7 @@ describe('AccountSelector', () => {
 			cleanup();
 		});
 
-		it('must display the orders search autocomplete component"', () => {
+		xit('must display the orders search autocomplete component"', () => {
 			expect(
 				renderedComponent.getByPlaceholderText(/search-order/)
 			).toBeInTheDocument();

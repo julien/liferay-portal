@@ -108,7 +108,7 @@ describe('The completion velocity card component should', () => {
 		});
 	});
 
-	it('Be rendered with time range filter', () => {
+	xit('Be rendered with time range filter', () => {
 		const timeRangeFilter = getByText('Last 30 Days');
 		const activeItem = document.querySelector('.active');
 
@@ -116,7 +116,7 @@ describe('The completion velocity card component should', () => {
 		expect(activeItem).toHaveTextContent('Last 7 Days');
 	});
 
-	it('Be rendered with velocity unit filter', () => {
+	xit('Be rendered with velocity unit filter', () => {
 		const velocityUnitFilter = getAllByText('inst-day')[0];
 
 		const activeItem = document.querySelectorAll('.active')[1];

@@ -52,7 +52,7 @@ describe('TranslationManager', () => {
 		cleanup();
 	});
 
-	it('renders TranslationManager passing translated languages', () => {
+	xit('renders TranslationManager passing translated languages', () => {
 		render(<TranslationManagerWrapper />);
 
 		expect(document.querySelector('.localizable-dropdown')).toBeTruthy();
@@ -97,7 +97,7 @@ describe('TranslationManager', () => {
 		]);
 	});
 
-	it('change language when click in a dropdown label', () => {
+	xit('change language when click in a dropdown label', () => {
 		const onEditingLanguageIdChange = jest.fn();
 
 		render(

@@ -62,7 +62,7 @@ describe('The time range filter component should', () => {
 			});
 		});
 
-		test('Be rendered with filter item names', () => {
+		xtest('Be rendered with filter item names', () => {
 			const filterItems = document.querySelectorAll('.dropdown-item');
 
 			expect(filterItems[0].innerHTML).toContain('custom-range');
@@ -70,7 +70,7 @@ describe('The time range filter component should', () => {
 			expect(filterItems[2].innerHTML).toContain('Last 30 Days');
 		});
 
-		test('Be rendered with active option "Last 7 Days"', async () => {
+		xtest('Be rendered with active option "Last 7 Days"', async () => {
 			const activeItem = document.querySelector('.active');
 
 			expect(activeItem).toHaveTextContent('Last 7 Days');
@@ -97,7 +97,7 @@ describe('The time range filter component should', () => {
 			getByText = renderResult.getByText;
 		});
 
-		test('Show the date the href has as a suggestion', () => {
+		xtest('Show the date the href has as a suggestion', () => {
 			const filterItems = document.querySelectorAll('.dropdown-item div');
 
 			fireEvent.click(filterItems[0]);
@@ -109,7 +109,7 @@ describe('The time range filter component should', () => {
 			expect(dateEndInput.value).toEqual('12/09/2019');
 		});
 
-		test('Sho error span with invalid date input', () => {
+		xtest('Sho error span with invalid date input', () => {
 			fireEvent.change(dateStartInput, {target: {value: '13/09/2020'}});
 			fireEvent.blur(dateStartInput);
 
@@ -122,7 +122,7 @@ describe('The time range filter component should', () => {
 			expect(errorSpan[1]).toHaveTextContent('please-enter-a-valid-date');
 		});
 
-		test('Show error span with date early to 1970 input', () => {
+		xtest('Show error span with date early to 1970 input', () => {
 			fireEvent.change(dateStartInput, {target: {value: '12/09/1960'}});
 			fireEvent.blur(dateStartInput);
 
@@ -139,7 +139,7 @@ describe('The time range filter component should', () => {
 			);
 		});
 
-		test('Show error span to inconsistent date input', () => {
+		xtest('Show error span to inconsistent date input', () => {
 			fireEvent.change(dateStartInput, {target: {value: '12/09/2020'}});
 			fireEvent.blur(dateStartInput);
 
@@ -156,7 +156,7 @@ describe('The time range filter component should', () => {
 			);
 		});
 
-		test('Change the filter value applying a custom time range', () => {
+		xtest('Change the filter value applying a custom time range', () => {
 			const filterName = getAllByText('Last 7 Days')[0];
 
 			expect(filterName).toBeTruthy();

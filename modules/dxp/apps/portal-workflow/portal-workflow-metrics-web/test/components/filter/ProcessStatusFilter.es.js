@@ -31,14 +31,14 @@ describe('The process status filter component should', () => {
 		});
 	});
 
-	test('Be rendered with filter item names', () => {
+	xtest('Be rendered with filter item names', () => {
 		const filterItems = document.querySelectorAll('.dropdown-item');
 
 		expect(filterItems[0].innerHTML).toContain('completed');
 		expect(filterItems[1].innerHTML).toContain('pending');
 	});
 
-	test('Be rendered with active option "Completed"', async () => {
+	xtest('Be rendered with active option "Completed"', async () => {
 		const activeItem = document.querySelector('.active');
 
 		expect(activeItem).toHaveTextContent('completed');

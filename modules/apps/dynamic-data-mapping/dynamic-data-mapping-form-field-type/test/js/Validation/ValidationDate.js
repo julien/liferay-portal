@@ -81,7 +81,7 @@ const ValidationDateProvider = ({
 	</FormProvider>
 );
 
-describe('ValidationDate', () => {
+xdescribe('ValidationDate', () => {
 	beforeAll(() => {
 		Liferay.Language.direction = {
 			en_US: 'rtl',

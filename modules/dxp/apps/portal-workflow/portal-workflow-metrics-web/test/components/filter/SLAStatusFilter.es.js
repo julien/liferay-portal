@@ -31,7 +31,7 @@ describe('The sla status filter component should', () => {
 		});
 	});
 
-	test('Be rendered with filter item names', () => {
+	xtest('Be rendered with filter item names', () => {
 		const filterItems = document.querySelectorAll('.dropdown-item');
 
 		expect(filterItems[0].innerHTML).toContain('on-time');
@@ -39,7 +39,7 @@ describe('The sla status filter component should', () => {
 		expect(filterItems[2].innerHTML).toContain('untracked');
 	});
 
-	test('Be rendered with active option "Overdue"', () => {
+	xtest('Be rendered with active option "Overdue"', () => {
 		const activeItem = document.querySelector('.active');
 
 		expect(activeItem).toHaveTextContent('overdue');

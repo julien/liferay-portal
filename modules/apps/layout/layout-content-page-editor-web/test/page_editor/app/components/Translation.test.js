@@ -138,13 +138,13 @@ const renderTranslation = ({state}) => {
 describe('Translation', () => {
 	afterEach(cleanup);
 
-	it('renders Translation component', () => {
+	xit('renders Translation component', () => {
 		const {getByText} = renderTranslation({state: defaultState});
 
 		expect(getByText('language-4')).toBeInTheDocument();
 	});
 
-	it('dispatches languageId when a language is selected', () => {
+	xit('dispatches languageId when a language is selected', () => {
 		const {getByText} = renderTranslation({state: defaultState});
 		const button = getByText('language-3').parentElement;
 
@@ -155,14 +155,14 @@ describe('Translation', () => {
 		});
 	});
 
-	it('sets label "translated" when there is a translated language', () => {
+	xit('sets label "translated" when there is a translated language', () => {
 		const {getByText} = renderTranslation({state: defaultState});
 		const indicator = getByText('language-1').nextSibling.textContent;
 
 		expect(indicator).toBe('translated');
 	});
 
-	it('sets label 1/n when there is one language traduction', () => {
+	xit('sets label 1/n when there is one language traduction', () => {
 		const newState = {
 			...defaultState,
 			fragmentEntryLinks: {
@@ -176,7 +176,7 @@ describe('Translation', () => {
 		expect(indicator).toBe('translating 1/2');
 	});
 
-	it('only takes into account elements which do not come from the master page', () => {
+	xit('only takes into account elements which do not come from the master page', () => {
 		const newState = {
 			...defaultState,
 			fragmentEntryLinks: {

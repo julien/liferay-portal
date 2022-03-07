@@ -78,7 +78,7 @@ describe('Conjunction', () => {
 		expect(selectedConjunction.tagName).toBe('DIV');
 	});
 
-	it('dropdown opens on click in editable mode', () => {
+	xit('dropdown opens on click in editable mode', () => {
 		const {
 			label: initialConjunctionLabel,
 			name: initialConjunctionName,

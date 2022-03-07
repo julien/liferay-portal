@@ -112,7 +112,7 @@ describe('PageContent', () => {
 		expect(queryByText('mountain.png')).not.toBeInTheDocument();
 	});
 
-	it('filters content according to a type value', async () => {
+	xit('filters content according to a type value', async () => {
 		const {getByRole, queryByText} = renderPageContents({});
 		const dropdown = getByRole('listbox');
 

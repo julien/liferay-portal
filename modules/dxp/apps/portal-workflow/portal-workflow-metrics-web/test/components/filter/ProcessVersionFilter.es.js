@@ -51,7 +51,7 @@ describe('The process version filter component should', () => {
 		});
 	});
 
-	it('Render with filter item names', () => {
+	xit('Render with filter item names', () => {
 		const filterItems = document.querySelectorAll('.dropdown-item');
 
 		expect(filterItems[0].innerHTML).toContain('all-versions');
@@ -59,7 +59,7 @@ describe('The process version filter component should', () => {
 		expect(filterItems[2].innerHTML).toContain('2.0');
 	});
 
-	it('Render with active option "1.0"', () => {
+	xit('Render with active option "1.0"', () => {
 		const activeItem = document.querySelector('.active');
 
 		expect(activeItem).toHaveTextContent('1.0');

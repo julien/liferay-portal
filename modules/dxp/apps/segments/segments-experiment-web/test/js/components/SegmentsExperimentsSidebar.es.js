@@ -63,7 +63,7 @@ describe('SegmentsExperimentsSidebar', () => {
 		getByText('create-test');
 	});
 
-	it('Renders ab testing panel with an experiment', () => {
+	xit('Renders ab testing panel with an experiment', () => {
 		const {getByText} = renderApp({
 			initialSegmentsExperiment: segmentsExperiment,
 		});

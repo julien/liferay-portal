@@ -45,7 +45,7 @@ describe('The assignee filter component should', () => {
 		});
 	});
 
-	it('Be rendered with filter item names', () => {
+	xit('Be rendered with filter item names', () => {
 		const filterItems = document.querySelectorAll('.dropdown-item');
 
 		expect(filterItems[0].innerHTML).toContain('unassigned');
@@ -53,7 +53,7 @@ describe('The assignee filter component should', () => {
 		expect(filterItems[2].innerHTML).toContain('User 2');
 	});
 
-	it('Be rendered with active option "User 1"', () => {
+	xit('Be rendered with active option "User 1"', () => {
 		const activeItem = document.querySelector('.active');
 
 		expect(activeItem).toHaveTextContent('User 1');

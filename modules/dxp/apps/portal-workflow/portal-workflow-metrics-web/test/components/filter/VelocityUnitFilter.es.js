@@ -39,7 +39,7 @@ describe('The velocity unit filter component should', () => {
 		);
 	});
 
-	test('Be rendered with filter item names', () => {
+	xtest('Be rendered with filter item names', () => {
 		const filterItems = document.querySelectorAll('.dropdown-item');
 
 		expect(filterItems[0]).toHaveTextContent('inst-day');
@@ -47,7 +47,7 @@ describe('The velocity unit filter component should', () => {
 		expect(filterItems[2]).toHaveTextContent('inst-month');
 	});
 
-	test('Be rendered with active option "Weeks"', async () => {
+	xtest('Be rendered with active option "Weeks"', async () => {
 		const activeItem = document.querySelector('.active');
 
 		expect(activeItem).toHaveTextContent('inst-week');

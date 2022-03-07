@@ -67,14 +67,14 @@ const renderComponent = (
 describe('TargetCollectionsField', () => {
 	afterEach(cleanup);
 
-	it('renders specified collections', () => {
+	xit('renders specified collections', () => {
 		const {getByLabelText} = renderComponent();
 
 		expect(getByLabelText('Collection A')).toBeInTheDocument();
 		expect(getByLabelText('Collection B')).toBeInTheDocument();
 	});
 
-	it('marks specified collections as selected', () => {
+	xit('marks specified collections as selected', () => {
 		const {getByLabelText} = renderComponent({
 			value: ['collection-display-a'],
 		});
@@ -83,7 +83,7 @@ describe('TargetCollectionsField', () => {
 		expect(getByLabelText('Collection B')).not.toBeChecked();
 	});
 
-	it('executes onValueSelect when some collection is selected', () => {
+	xit('executes onValueSelect when some collection is selected', () => {
 		const onValueSelect = jest.fn();
 
 		const {getByLabelText} = renderComponent({
@@ -99,7 +99,7 @@ describe('TargetCollectionsField', () => {
 		]);
 	});
 
-	it('only allow selecting compatible collections if enableCompatibleCollections is true', () => {
+	xit('only allow selecting compatible collections if enableCompatibleCollections is true', () => {
 		const {getByLabelText} = renderComponent({
 			enableCompatibleCollections: true,
 			value: ['collection-display-a'],
@@ -108,7 +108,7 @@ describe('TargetCollectionsField', () => {
 		expect(getByLabelText('Collection B')).toBeDisabled();
 	});
 
-	it('shows warning message if enableCompatibleCollections is true', () => {
+	xit('shows warning message if enableCompatibleCollections is true', () => {
 		const {getByRole} = renderComponent({
 			enableCompatibleCollections: true,
 		});

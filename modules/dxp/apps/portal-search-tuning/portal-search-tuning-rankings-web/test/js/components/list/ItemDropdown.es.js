@@ -32,7 +32,7 @@ function renderTestItemDropdown(props) {
 	);
 }
 
-describe('ItemDropdown', () => {
+xdescribe('ItemDropdown', () => {
 	afterEach(() => {
 		jest.clearAllMocks();
 	});

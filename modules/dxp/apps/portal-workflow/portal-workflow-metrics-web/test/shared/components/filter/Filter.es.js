@@ -30,7 +30,7 @@ describe('The filter component should', () => {
 
 	afterEach(cleanup);
 
-	test('Be rendered with filter item names and default item selected', async () => {
+	xtest('Be rendered with filter item names and default item selected', async () => {
 		render(
 			<MockRouter>
 				<Filter
@@ -54,7 +54,7 @@ describe('The filter component should', () => {
 		expect(activeItem).toHaveTextContent('Untracked');
 	});
 
-	test('Be rendered with other item selected', async () => {
+	xtest('Be rendered with other item selected', async () => {
 		items[0].active = true;
 
 		render(

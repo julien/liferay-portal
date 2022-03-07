@@ -66,7 +66,7 @@ describe('Translation', () => {
 		expect(asFragment()).toMatchSnapshot();
 	});
 
-	it('renders languages translated into', () => {
+	xit('renders languages translated into', () => {
 		const testProps = {
 			defaultLanguage: 'en-US',
 			pagePublishDate: 'Thu Aug 10 08:17:57 GMT 2020',

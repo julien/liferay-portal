@@ -142,7 +142,7 @@ describe('PreviewSelector', () => {
 		expect(queryByText('masters')).not.toBeInTheDocument();
 	});
 
-	it('shows correct items in layout selector when selecting a type', () => {
+	xit('shows correct items in layout selector when selecting a type', () => {
 		const {getByText} = renderPreviewSelector(
 			LAYOUT_TYPES.displayPageTemplate
 		);
@@ -150,7 +150,7 @@ describe('PreviewSelector', () => {
 		expect(getByText('Display Page 1')).toBeInTheDocument();
 	});
 
-	it('shows More button and number of items info when selected type has more than 4 items', () => {
+	xit('shows More button and number of items info when selected type has more than 4 items', () => {
 		const {getByText} = renderPreviewSelector();
 
 		expect(getByText('more')).toBeInTheDocument();
@@ -164,7 +164,7 @@ describe('PreviewSelector', () => {
 		expect(queryByText('showing-x-of-x-items')).not.toBeInTheDocument();
 	});
 
-	it('calls openItemSelector with correct url when clicking More button', () => {
+	xit('calls openItemSelector with correct url when clicking More button', () => {
 		const {getByText} = renderPreviewSelector();
 
 		fireEvent.click(getByText('more'));

@@ -57,7 +57,7 @@ describe('The CurrentNodes component should', () => {
 		).toBeTruthy();
 	});
 
-	it('Be rendered dropdown options', () => {
+	xit('Be rendered dropdown options', () => {
 		const moreOption = container.querySelector(
 			'.current-node-link.more-link'
 		);
