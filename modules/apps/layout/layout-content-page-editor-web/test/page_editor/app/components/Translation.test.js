@@ -138,14 +138,19 @@ const renderTranslation = ({state}) => {
 describe('Translation', () => {
 	afterEach(cleanup);
 
-	xit('renders Translation component', () => {
+	it('renders Translation component', () => {
 		const {getByText} = renderTranslation({state: defaultState});
+
+		userEvent.click(document.querySelector('.dropdown-toggle'));
 
 		expect(getByText('language-4')).toBeInTheDocument();
 	});
 
-	xit('dispatches languageId when a language is selected', () => {
+	it('dispatches languageId when a language is selected', () => {
 		const {getByText} = renderTranslation({state: defaultState});
+
+		userEvent.click(document.querySelector('.dropdown-toggle'));
+
 		const button = getByText('language-3').parentElement;
 
 		userEvent.click(button);
@@ -155,14 +160,17 @@ describe('Translation', () => {
 		});
 	});
 
-	xit('sets label "translated" when there is a translated language', () => {
+	it('sets label "translated" when there is a translated language', () => {
 		const {getByText} = renderTranslation({state: defaultState});
+
+		userEvent.click(document.querySelector('.dropdown-toggle'));
+
 		const indicator = getByText('language-1').nextSibling.textContent;
 
 		expect(indicator).toBe('translated');
 	});
 
-	xit('sets label 1/n when there is one language traduction', () => {
+	it('sets label 1/n when there is one language traduction', () => {
 		const newState = {
 			...defaultState,
 			fragmentEntryLinks: {
@@ -171,12 +179,15 @@ describe('Translation', () => {
 			},
 		};
 		const {getByText} = renderTranslation({state: newState});
+
+		userEvent.click(document.querySelector('.dropdown-toggle'));
+
 		const indicator = getByText('language-1').nextSibling.textContent;
 
 		expect(indicator).toBe('translating 1/2');
 	});
 
-	xit('only takes into account elements which do not come from the master page', () => {
+	it('only takes into account elements which do not come from the master page', () => {
 		const newState = {
 			...defaultState,
 			fragmentEntryLinks: {
@@ -191,6 +202,9 @@ describe('Translation', () => {
 			},
 		};
 		const {getByText} = renderTranslation({state: newState});
+
+		userEvent.click(document.querySelector('.dropdown-toggle'));
+
 		const indicator = getByText('language-1').nextSibling.textContent;
 
 		expect(indicator).toBe('translated');

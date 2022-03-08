@@ -11,6 +11,7 @@
 
 import '@testing-library/jest-dom/extend-expect';
 import {act, cleanup, render} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 
 import RoleFilter from '../../../src/main/resources/META-INF/resources/js/components/filter/RoleFilter.es';
@@ -45,14 +46,18 @@ describe('The role filter component should', () => {
 		});
 	});
 
-	xit('Be rendered with filter item names', () => {
+	it('Be rendered with filter item names', () => {
+		userEvent.click(document.querySelector('.dropdown-toggle'));
+
 		const filterItems = document.querySelectorAll('.dropdown-item');
 
 		expect(filterItems[0].innerHTML).toContain('Admin');
 		expect(filterItems[1].innerHTML).toContain('User');
 	});
 
-	xit('Be rendered with active option "User"', () => {
+	it('Be rendered with active option "User"', () => {
+		userEvent.click(document.querySelector('.dropdown-toggle'));
+
 		const activeItem = document.querySelector('.active');
 
 		expect(activeItem).toHaveTextContent('User');

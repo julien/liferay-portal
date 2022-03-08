@@ -10,6 +10,7 @@
  */
 
 import {render} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 
 import Translation from '../../../src/main/resources/META-INF/resources/js/components/Translation';
@@ -66,7 +67,7 @@ describe('Translation', () => {
 		expect(asFragment()).toMatchSnapshot();
 	});
 
-	xit('renders languages translated into', () => {
+	it('renders languages translated into', () => {
 		const testProps = {
 			defaultLanguage: 'en-US',
 			pagePublishDate: 'Thu Aug 10 08:17:57 GMT 2020',
@@ -87,6 +88,8 @@ describe('Translation', () => {
 				/>
 			</ChartStateContextProvider>
 		);
+
+		userEvent.click(document.querySelector('.dropdown-toggle'));
 
 		expect(getByText('en-US')).toBeInTheDocument();
 		expect(getByText('English (United States)')).toBeInTheDocument();

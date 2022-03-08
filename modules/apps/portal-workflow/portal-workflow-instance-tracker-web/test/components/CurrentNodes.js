@@ -14,6 +14,7 @@
 
 import '@testing-library/jest-dom/extend-expect';
 import {fireEvent, render} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 
 import CurrentNodes from '../../src/main/resources/META-INF/resources/js/components/CurrentNodes';
@@ -57,7 +58,9 @@ describe('The CurrentNodes component should', () => {
 		).toBeTruthy();
 	});
 
-	xit('Be rendered dropdown options', () => {
+	it('Be rendered dropdown options', () => {
+		userEvent.click(document.querySelector('.dropdown-toggle'));
+
 		const moreOption = container.querySelector(
 			'.current-node-link.more-link'
 		);
@@ -66,10 +69,8 @@ describe('The CurrentNodes component should', () => {
 		expect(getByText('Forward')).toBeTruthy();
 		expect(getByText('Finish')).toBeTruthy();
 
-		expect(document.querySelector(dropdownMenuShow)).toBeNull();
-
 		fireEvent.click(moreOption);
 
-		expect(document.querySelector(dropdownMenuShow)).toBeTruthy();
+		expect(document.querySelector(dropdownMenuShow)).toBeNull();
 	});
 });

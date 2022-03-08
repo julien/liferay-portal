@@ -170,14 +170,14 @@ describe('ListView', () => {
 			fireEvent.click(refreshButton);
 		});
 
-		// expect(refreshAction.mock.calls.length).toBe(1);
+		expect(refreshAction.mock.calls.length).toBe(1);
 
 		buttons = getAllByRole('button');
 		const nonRefreshButton = buttons[buttons.length - 1];
 		fireEvent.click(nonRefreshButton);
 
-		// expect(nonRefreshAction.mock.calls.length).toBe(1);
-		// expect(fetch.mock.calls.length).toEqual(2);
+		expect(nonRefreshAction.mock.calls.length).toBe(1);
+		expect(fetch.mock.calls.length).toEqual(2);
 
 		const input = queryByPlaceholderText('search...');
 

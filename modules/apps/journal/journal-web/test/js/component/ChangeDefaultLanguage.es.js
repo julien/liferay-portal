@@ -14,6 +14,7 @@
 
 import '@testing-library/jest-dom/extend-expect';
 import {fireEvent, render} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 
 import ChangeDefaultLanguage from '../../../src/main/resources/META-INF/resources/js/ChangeDefaultLanguage.es';
@@ -66,12 +67,14 @@ describe('ChangeDefaultLanguage', () => {
 		expect(getByText('Spanish (ES)')).toBeTruthy();
 	});
 
-	xit('change default language', async () => {
+	it('change default language', async () => {
 		const {
 			findByText,
 			getByText,
 			getByTitle,
 		} = _renderChangeDefaultLanguageComponent();
+
+		userEvent.click(document.querySelector('.dropdown-toggle'));
 
 		fireEvent.click(getByTitle('es_ES'));
 
@@ -80,8 +83,10 @@ describe('ChangeDefaultLanguage', () => {
 		expect(getByText('Spanish (ES)')).toBeTruthy();
 	});
 
-	xit('to fire default locale changed event', () => {
+	it('to fire default locale changed event', () => {
 		const {getByTitle} = _renderChangeDefaultLanguageComponent();
+
+		userEvent.click(document.querySelector('.dropdown-toggle'));
 
 		const button = getByTitle('es_ES');
 

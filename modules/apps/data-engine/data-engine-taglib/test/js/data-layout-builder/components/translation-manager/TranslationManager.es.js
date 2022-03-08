@@ -13,6 +13,7 @@
  */
 
 import {cleanup, fireEvent, render} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 
 import TranslationManager, {
@@ -52,8 +53,11 @@ describe('TranslationManager', () => {
 		cleanup();
 	});
 
-	xit('renders TranslationManager passing translated languages', () => {
+	it('renders TranslationManager passing translated languages', () => {
 		render(<TranslationManagerWrapper />);
+
+		const trigger = document.querySelector('.dropdown-toggle');
+		userEvent.click(trigger);
 
 		expect(document.querySelector('.localizable-dropdown')).toBeTruthy();
 		expect(document.querySelector('.localizable-dropdown-ul')).toBeTruthy();
@@ -97,7 +101,7 @@ describe('TranslationManager', () => {
 		]);
 	});
 
-	xit('change language when click in a dropdown label', () => {
+	it('change language when click in a dropdown label', () => {
 		const onEditingLanguageIdChange = jest.fn();
 
 		render(
@@ -107,6 +111,9 @@ describe('TranslationManager', () => {
 				}
 			/>
 		);
+
+		const trigger = document.querySelector('.dropdown-toggle');
+		userEvent.click(trigger);
 
 		const list = document.querySelectorAll('.localizable-dropdown-ul li');
 

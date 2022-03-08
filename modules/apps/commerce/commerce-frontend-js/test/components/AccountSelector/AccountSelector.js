@@ -22,6 +22,7 @@ import {
 	render,
 	waitForElementToBeRemoved,
 } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import fetchMock from 'fetch-mock';
 import React from 'react';
 
@@ -72,7 +73,12 @@ describe('AccountSelector', () => {
 			cleanup();
 		});
 
-		xit('must display the accounts search autocomplete component"', () => {
+		it('must display the accounts search autocomplete component"', () => {
+			const trigger = document.querySelector(
+				'.account-selector-dropdown'
+			);
+			userEvent.click(trigger);
+
 			expect(
 				renderedComponent.getByPlaceholderText(/search/)
 			).toBeInTheDocument();
@@ -168,7 +174,12 @@ describe('AccountSelector', () => {
 			cleanup();
 		});
 
-		xit('must display the orders search autocomplete component"', () => {
+		it('must display the orders search autocomplete component"', () => {
+			const trigger = document.querySelector(
+				'.account-selector-dropdown'
+			);
+			userEvent.click(trigger);
+
 			expect(
 				renderedComponent.getByPlaceholderText(/search-order/)
 			).toBeInTheDocument();

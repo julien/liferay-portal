@@ -13,6 +13,7 @@
  */
 
 import {cleanup, fireEvent, render} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 
 import '@testing-library/jest-dom/extend-expect';
@@ -181,8 +182,11 @@ describe('VariationsNav With segments', () => {
 		).toBe(0);
 	});
 
-	xit('shows a variations nav list with an action menu for each item', () => {
+	it('shows a variations nav list with an action menu for each item', () => {
 		const {getAllByText} = render(_getComponent(listWithTwoVariations));
+
+		const trigger = document.querySelector('.dropdown-toggle');
+		userEvent.click(trigger);
 
 		const prioritizeButtons = getAllByText('prioritize');
 		const deprioritizeButtons = getAllByText('deprioritize');
@@ -210,8 +214,11 @@ describe('VariationsNav With segments', () => {
 		);
 	});
 
-	xit('shows a variations nav list with a non deletable default item', () => {
+	it('shows a variations nav list with a non deletable default item', () => {
 		const {getAllByText} = render(_getComponent(listWithTwoVariations));
+
+		const trigger = document.querySelector('.dropdown-toggle');
+		userEvent.click(trigger);
 
 		const deleteButtons = getAllByText('delete');
 		expect(deleteButtons.length).toBe(2);
@@ -261,10 +268,14 @@ describe('VariationsNav', () => {
 		});
 	});
 
-	xit('responds to reorder on click event', async () => {
+	it('responds to reorder on click event', async () => {
 		const {getAllByRole, getAllByText} = render(
 			_getComponent(listWithTwoVariations)
 		);
+
+		const trigger = document.querySelector('.dropdown-toggle');
+		userEvent.click(trigger);
+
 		let nodes = getAllByRole('listitem');
 
 		expect(nodes[0].innerHTML).toContain('Anyone');
@@ -288,7 +299,7 @@ describe('VariationsNav', () => {
 		});
 	});
 
-	xit('throws an error if the API call fails', async () => {
+	it('throws an error if the API call fails', async () => {
 		saveVariationsListPriorityService.mockReturnValue({
 			ok: false,
 			status: 500,
@@ -297,6 +308,10 @@ describe('VariationsNav', () => {
 		const {getAllByRole, getAllByText} = render(
 			_getComponent(listWithTwoVariations)
 		);
+
+		const trigger = document.querySelector('.dropdown-toggle');
+		userEvent.click(trigger);
+
 		let nodes = getAllByRole('listitem');
 
 		expect(nodes[0].innerHTML).toContain('Anyone');

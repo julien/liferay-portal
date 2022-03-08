@@ -13,6 +13,7 @@
  */
 
 import {cleanup, fireEvent, render} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 
 import ManagementToolbarFilterAndOrder from '../../../../src/main/resources/META-INF/resources/js/components/management-toolbar/ManagementToolbarFilterAndOrder';
@@ -50,13 +51,16 @@ describe('ManagementToolbarFilterAndOrder', () => {
 		expect(sort.disabled).toBeTruthy();
 	});
 
-	xit('renders', () => {
+	it('renders', () => {
 		const {container, queryByText} = render(
 			<ManagementToolbarFilterAndOrder columns={columns} />,
 			{
 				wrapper: SearchContextProviderWrapper,
 			}
 		);
+
+		const trigger = document.querySelector('.dropdown-toggle');
+		userEvent.click(trigger);
 
 		const field = queryByText('field');
 		const field1 = queryByText('field1');
@@ -77,7 +81,7 @@ describe('ManagementToolbarFilterAndOrder', () => {
 		expect(sort.classList).toContain('order-arrow-up-active');
 	});
 
-	xit('renders with filters and without addButton', () => {
+	it('renders with filters and without addButton', () => {
 		const dispatch = jest.fn();
 
 		const columns = [
@@ -120,6 +124,9 @@ describe('ManagementToolbarFilterAndOrder', () => {
 				/>
 			</SearchContextProviderWrapper>
 		);
+
+		const trigger = document.querySelector('.dropdown-toggle');
+		userEvent.click(trigger);
 
 		const anyOption = queryByLabelText('any');
 		const doneButton = queryByText('done');

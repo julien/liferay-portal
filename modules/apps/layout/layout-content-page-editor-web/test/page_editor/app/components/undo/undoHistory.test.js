@@ -100,8 +100,10 @@ describe('UndoHistory', () => {
 		multipleUndo.mockClear();
 	});
 
-	xit('shows all redo and undo history items in the list', () => {
+	it('shows all redo and undo history items in the list', () => {
 		const {getByText} = renderUndoHistory();
+
+		userEvent.click(document.querySelector('.dropdown-toggle'));
 
 		mockState.redoHistory
 			.concat(mockState.undoHistory)
@@ -110,8 +112,10 @@ describe('UndoHistory', () => {
 			);
 	});
 
-	xit('calls multipleUndo with the correct number of actions', async () => {
+	it('calls multipleUndo with the correct number of actions', async () => {
 		const {getByText} = renderUndoHistory();
+
+		userEvent.click(document.querySelector('.dropdown-toggle'));
 
 		const redoHistory = [...mockState.redoHistory].reverse();
 

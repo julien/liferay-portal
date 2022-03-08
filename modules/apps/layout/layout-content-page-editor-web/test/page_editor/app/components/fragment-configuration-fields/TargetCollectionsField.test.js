@@ -13,6 +13,7 @@
  */
 
 import {cleanup, fireEvent, render} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 import '@testing-library/jest-dom/extend-expect';
 import React from 'react';
@@ -67,29 +68,35 @@ const renderComponent = (
 describe('TargetCollectionsField', () => {
 	afterEach(cleanup);
 
-	xit('renders specified collections', () => {
+	it('renders specified collections', () => {
 		const {getByLabelText} = renderComponent();
+
+		userEvent.click(document.querySelector('.dropdown-toggle'));
 
 		expect(getByLabelText('Collection A')).toBeInTheDocument();
 		expect(getByLabelText('Collection B')).toBeInTheDocument();
 	});
 
-	xit('marks specified collections as selected', () => {
+	it('marks specified collections as selected', () => {
 		const {getByLabelText} = renderComponent({
 			value: ['collection-display-a'],
 		});
+
+		userEvent.click(document.querySelector('.dropdown-toggle'));
 
 		expect(getByLabelText('Collection A')).toBeChecked();
 		expect(getByLabelText('Collection B')).not.toBeChecked();
 	});
 
-	xit('executes onValueSelect when some collection is selected', () => {
+	it('executes onValueSelect when some collection is selected', () => {
 		const onValueSelect = jest.fn();
 
 		const {getByLabelText} = renderComponent({
 			onValueSelect,
 			value: ['collection-display-a'],
 		});
+
+		userEvent.click(document.querySelector('.dropdown-toggle'));
 
 		fireEvent.click(getByLabelText('Collection B'));
 
@@ -99,19 +106,23 @@ describe('TargetCollectionsField', () => {
 		]);
 	});
 
-	xit('only allow selecting compatible collections if enableCompatibleCollections is true', () => {
+	it('only allow selecting compatible collections if enableCompatibleCollections is true', () => {
 		const {getByLabelText} = renderComponent({
 			enableCompatibleCollections: true,
 			value: ['collection-display-a'],
 		});
 
+		userEvent.click(document.querySelector('.dropdown-toggle'));
+
 		expect(getByLabelText('Collection B')).toBeDisabled();
 	});
 
-	xit('shows warning message if enableCompatibleCollections is true', () => {
+	it('shows warning message if enableCompatibleCollections is true', () => {
 		const {getByRole} = renderComponent({
 			enableCompatibleCollections: true,
 		});
+
+		userEvent.click(document.querySelector('.dropdown-toggle'));
 
 		expect(getByRole('alert')).toHaveTextContent(
 			'multiple-selection-must-have-at-least-one-filter-in-common'

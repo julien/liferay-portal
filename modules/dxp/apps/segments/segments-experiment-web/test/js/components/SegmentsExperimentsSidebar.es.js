@@ -63,10 +63,12 @@ describe('SegmentsExperimentsSidebar', () => {
 		getByText('create-test');
 	});
 
-	xit('Renders ab testing panel with an experiment', () => {
+	it('Renders ab testing panel with an experiment', () => {
 		const {getByText} = renderApp({
 			initialSegmentsExperiment: segmentsExperiment,
 		});
+
+		userEvent.click(document.querySelector('.dropdown-toggle'));
 
 		getByText(segmentsExperiment.name);
 		getByText(segmentsExperiment.description);

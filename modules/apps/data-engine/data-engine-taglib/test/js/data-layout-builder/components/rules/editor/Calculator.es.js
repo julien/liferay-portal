@@ -13,6 +13,7 @@
  */
 
 import {cleanup, fireEvent, render} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 
 import Calculator from '../../../../../../src/main/resources/META-INF/resources/data_layout_builder/js/components/rules/editor/Calculator.es';
@@ -175,7 +176,7 @@ describe('Calculator', () => {
 	});
 
 	describe('clicking the Sum function', () => {
-		xit("don't disable functions, numbers and operators", () => {
+		it("don't disable functions, numbers and operators", () => {
 			const {getByText} = render(
 				<Calculator
 					{...defaultProps()}
@@ -184,6 +185,9 @@ describe('Calculator', () => {
 					}
 				/>
 			);
+
+			const trigger = document.querySelector('.dropdown-toggle');
+			userEvent.click(trigger);
 
 			fireEvent.click(getByText('sum'));
 
@@ -208,7 +212,7 @@ describe('Calculator', () => {
 			).toBe(false);
 		});
 
-		xit("don't disable the add field button when there are repeatable fields ", () => {
+		it("don't disable the add field button when there are repeatable fields ", () => {
 			const {getByText} = render(
 				<Calculator
 					{...defaultProps()}
@@ -218,11 +222,14 @@ describe('Calculator', () => {
 				/>
 			);
 
+			const trigger = document.querySelector('.dropdown-toggle');
+			userEvent.click(trigger);
+
 			fireEvent.click(getByText('sum'));
 			expect(getByText('add-field').disabled).toBe(false);
 		});
 
-		xit("don't disable the add field button when there are no repeatable fields ", () => {
+		it("don't disable the add field button when there are no repeatable fields ", () => {
 			const {getByText} = render(
 				<Calculator
 					{...defaultProps(fieldsNonRepeatable)}
@@ -231,6 +238,9 @@ describe('Calculator', () => {
 					}
 				/>
 			);
+
+			const trigger = document.querySelector('.dropdown-toggle');
+			userEvent.click(trigger);
 
 			fireEvent.click(getByText('sum'));
 			expect(getByText('add-field').disabled).toBe(false);
@@ -256,7 +266,7 @@ describe('Calculator', () => {
 			);
 		});
 
-		xit('removes both the left parenthesis and the function when last tokens are an openning of a function', () => {
+		it('removes both the left parenthesis and the function when last tokens are an openning of a function', () => {
 			const {getByLabelText, getByText} = render(
 				<Calculator
 					{...defaultProps()}
@@ -266,6 +276,9 @@ describe('Calculator', () => {
 					}
 				/>
 			);
+
+			const trigger = document.querySelector('.dropdown-toggle');
+			userEvent.click(trigger);
 
 			fireEvent.click(getByText('sum'));
 
@@ -343,7 +356,7 @@ describe('Calculator', () => {
 			);
 		});
 
-		xit('adds an implicit multiplication operator between consecutive field operands, number, function and left parenthesis', () => {
+		it('adds an implicit multiplication operator between consecutive field operands, number, function and left parenthesis', () => {
 			const {getByText} = render(
 				<Calculator
 					{...defaultProps()}
@@ -352,6 +365,9 @@ describe('Calculator', () => {
 					}
 				/>
 			);
+
+			const trigger = document.querySelector('.dropdown-toggle');
+			userEvent.click(trigger);
 
 			fireEvent.click(getByText('3'));
 			fireEvent.click(getByText('add-field'));

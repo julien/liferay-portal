@@ -13,6 +13,7 @@
  */
 
 import {cleanup, render} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 
 import Translation from '../../../src/main/resources/META-INF/resources/js/components/Translation';
@@ -24,7 +25,7 @@ const noop = () => {};
 describe('Translation', () => {
 	afterEach(cleanup);
 
-	xit('renders all available languages', () => {
+	it('renders all available languages', () => {
 		const testProps = {
 			defaultLanguageId: 'en-US',
 			pageURLs: [
@@ -52,6 +53,8 @@ describe('Translation', () => {
 				selectedLanguageId={testProps.selectedLanguageId}
 			/>
 		);
+
+		userEvent.click(document.querySelector('.dropdown-toggle'));
 
 		const defaultLanguageId = getAllByText('English');
 		expect(defaultLanguageId.length === 1).toBe(true);

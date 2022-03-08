@@ -191,7 +191,7 @@ describe('AddResultModal', () => {
 		expect(modal).toHaveTextContent('119 This is a Web Content Example');
 	});
 
-	xit('updates results count in the modal after page delta is pressed', async () => {
+	it('updates results count in the modal after page delta is pressed', async () => {
 		const onAddResultSubmit = jest.fn();
 
 		const {findByTestId, queryAllByText} = render(
@@ -208,10 +208,10 @@ describe('AddResultModal', () => {
 
 		await findByTestId(RESULTS_LIST_ID);
 
-		fireEvent.click(queryAllByText('x-items')[4]);
+		fireEvent.click(queryAllByText('x-items')[0]);
 
-		await findByTestId('110');
+		await findByTestId('108');
 
-		expect(modal).toHaveTextContent('149 This is a Web Content Example');
+		expect(modal).toHaveTextContent('100 This is a Document Example');
 	});
 });

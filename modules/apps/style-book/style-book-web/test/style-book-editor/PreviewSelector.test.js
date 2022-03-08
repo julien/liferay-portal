@@ -14,6 +14,7 @@
 
 import '@testing-library/jest-dom/extend-expect';
 import {fireEvent, render} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 
 import {
@@ -142,16 +143,20 @@ describe('PreviewSelector', () => {
 		expect(queryByText('masters')).not.toBeInTheDocument();
 	});
 
-	xit('shows correct items in layout selector when selecting a type', () => {
+	it('shows correct items in layout selector when selecting a type', () => {
 		const {getByText} = renderPreviewSelector(
 			LAYOUT_TYPES.displayPageTemplate
 		);
 
+		userEvent.click(document.querySelectorAll('.dropdown-toggle')[1]);
+
 		expect(getByText('Display Page 1')).toBeInTheDocument();
 	});
 
-	xit('shows More button and number of items info when selected type has more than 4 items', () => {
+	it('shows More button and number of items info when selected type has more than 4 items', () => {
 		const {getByText} = renderPreviewSelector();
+
+		userEvent.click(document.querySelectorAll('.dropdown-toggle')[1]);
 
 		expect(getByText('more')).toBeInTheDocument();
 		expect(getByText('showing-x-of-x-items')).toBeInTheDocument();
@@ -164,8 +169,10 @@ describe('PreviewSelector', () => {
 		expect(queryByText('showing-x-of-x-items')).not.toBeInTheDocument();
 	});
 
-	xit('calls openItemSelector with correct url when clicking More button', () => {
+	it('calls openItemSelector with correct url when clicking More button', () => {
 		const {getByText} = renderPreviewSelector();
+
+		userEvent.click(document.querySelectorAll('.dropdown-toggle')[1]);
 
 		fireEvent.click(getByText('more'));
 

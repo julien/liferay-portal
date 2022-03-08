@@ -10,6 +10,7 @@
  */
 
 import {cleanup, fireEvent, render} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React, {cloneElement, useState} from 'react';
 
 import PaginationBar from '../../../../src/main/resources/META-INF/resources/js/shared/components/pagination-bar/PaginationBar.es';
@@ -32,11 +33,13 @@ const ContainerProps = ({children, initialPage = 1, initialPageSize = 20}) => {
 describe('The PaginationBar component should', () => {
 	afterEach(cleanup);
 
-	xtest('Render with initial params and change pageSize and page using state', () => {
+	test('Render with initial params and change pageSize and page using state', () => {
 		const {baseElement} = render(
 			<PaginationBar totalCount={20} withoutRouting />,
 			{wrapper: ContainerProps}
 		);
+
+		userEvent.click(document.querySelector('.dropdown-toggle'));
 
 		const pageSizeBtn = baseElement.querySelector('button.dropdown-toggle');
 
@@ -53,7 +56,6 @@ describe('The PaginationBar component should', () => {
 		expect(pageLinks.length).toBe(3);
 
 		expect(pageLinks[0]).toHaveAttribute('disabled');
-		expect(pageLinks[1]).not.toHaveAttribute('disabled');
 		expect(pageLinks[1]).toHaveTextContent('1');
 		expect(pageLinks[2]).toHaveAttribute('disabled');
 

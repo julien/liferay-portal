@@ -19,6 +19,7 @@ import {
 	render,
 	waitFor,
 } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 
 import Languages from '../src/main/resources/META-INF/resources/js/Languages.es';
@@ -98,7 +99,7 @@ describe('Languages', () => {
 		expect(getByDisplayValue('b')).toBeTruthy();
 	});
 
-	xit('changes the default language', () => {
+	it('changes the default language', () => {
 		const {
 			container,
 			getAllByText,
@@ -107,6 +108,9 @@ describe('Languages', () => {
 			...defaultProps,
 			inheritLocales: false,
 		});
+
+		const trigger = document.querySelector('.dropdown-toggle');
+		userEvent.click(trigger);
 
 		const actions = getAllByText('make-default');
 
@@ -120,11 +124,14 @@ describe('Languages', () => {
 		expect(getByDisplayValue(availableLocales[0].localeId)).toBeTruthy();
 	});
 
-	xit('fires default locale changed event', () => {
+	it('fires default locale changed event', () => {
 		const {getAllByText} = renderLanguagesComponent({
 			...defaultProps,
 			inheritLocales: false,
 		});
+
+		const trigger = document.querySelector('.dropdown-toggle');
+		userEvent.click(trigger);
 
 		fireEvent.click(getAllByText('make-default')[0]);
 
@@ -135,11 +142,14 @@ describe('Languages', () => {
 		);
 	});
 
-	xit('renders a warning when default language is changed', () => {
+	it('renders a warning when default language is changed', () => {
 		const {getAllByText, getByText} = renderLanguagesComponent({
 			...defaultProps,
 			inheritLocales: false,
 		});
+
+		const trigger = document.querySelector('.dropdown-toggle');
+		userEvent.click(trigger);
 
 		fireEvent.click(getAllByText('make-default')[0]);
 
@@ -152,12 +162,15 @@ describe('Languages', () => {
 
 	// LPS-111488
 
-	xit('render a dropdown menu with the correct order', () => {
+	it('render a dropdown menu with the correct order', () => {
 		const result = renderLanguagesComponent({
 			...defaultProps,
 			inheritLocales: false,
 			siteAvailableLocales: availableLocales,
 		});
+
+		const trigger = document.querySelector('.dropdown-toggle');
+		userEvent.click(trigger);
 
 		const dropdownMenuSecond = result.baseElement.querySelectorAll(
 			'.dropdown-menu'
@@ -169,12 +182,15 @@ describe('Languages', () => {
 		expect(Buttons[2].textContent).toBe('move-down');
 	});
 
-	xit('renders a list with move up actions in all elements except the first one', () => {
+	it('renders a list with move up actions in all elements except the first one', () => {
 		const result = renderLanguagesComponent({
 			...defaultProps,
 			inheritLocales: false,
 			siteAvailableLocales: availableLocales,
 		});
+
+		const trigger = document.querySelector('.dropdown-toggle');
+		userEvent.click(trigger);
 
 		const dropdownTriggers = result.container.querySelectorAll('.dropdown');
 		const moveDownButtons = result.getAllByText('move-up');
@@ -188,12 +204,15 @@ describe('Languages', () => {
 		expect(queryAllByText(dropdownMenuFirst, 'move-up')).toHaveLength(0);
 	});
 
-	xit('renders a list with move down actions in all elements except the last one', () => {
+	it('renders a list with move down actions in all elements except the last one', () => {
 		const result = renderLanguagesComponent({
 			...defaultProps,
 			inheritLocales: false,
 			siteAvailableLocales: availableLocales,
 		});
+
+		const trigger = document.querySelector('.dropdown-toggle');
+		userEvent.click(trigger);
 
 		const dropdownTriggers = result.container.querySelectorAll('.dropdown');
 		const moveDownButtons = result.getAllByText('move-down');
@@ -207,12 +226,15 @@ describe('Languages', () => {
 		expect(queryAllByText(dropdownMenuLast, 'move-down')).toHaveLength(0);
 	});
 
-	xit('move up the third element', () => {
+	it('move up the third element', () => {
 		const result = renderLanguagesComponent({
 			...defaultProps,
 			inheritLocales: false,
 			siteAvailableLocales: availableLocales,
 		});
+
+		const trigger = document.querySelector('.dropdown-toggle');
+		userEvent.click(trigger);
 
 		expect(
 			result.container.querySelectorAll('tbody > tr')[2].textContent
@@ -223,12 +245,15 @@ describe('Languages', () => {
 		).toBe('c');
 	});
 
-	xit('move down the first element', () => {
+	it('move down the first element', () => {
 		const result = renderLanguagesComponent({
 			...defaultProps,
 			inheritLocales: false,
 			siteAvailableLocales: availableLocales,
 		});
+
+		const trigger = document.querySelector('.dropdown-toggle');
+		userEvent.click(trigger);
 
 		expect(
 			result.container.querySelectorAll('tbody > tr')[0].textContent

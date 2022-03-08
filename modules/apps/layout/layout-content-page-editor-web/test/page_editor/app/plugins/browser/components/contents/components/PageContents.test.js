@@ -114,6 +114,7 @@ describe('PageContent', () => {
 
 	xit('filters content according to a type value', async () => {
 		const {getByRole, queryByText} = renderPageContents({});
+
 		const dropdown = getByRole('listbox');
 
 		userEvent.click(dropdown);

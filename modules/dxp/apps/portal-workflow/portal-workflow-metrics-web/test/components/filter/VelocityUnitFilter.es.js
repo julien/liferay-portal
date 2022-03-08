@@ -10,6 +10,7 @@
  */
 
 import {cleanup, render} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 
 import VelocityUnitFilter from '../../../src/main/resources/META-INF/resources/js/components/filter/VelocityUnitFilter.es';
@@ -39,7 +40,9 @@ describe('The velocity unit filter component should', () => {
 		);
 	});
 
-	xtest('Be rendered with filter item names', () => {
+	test('Be rendered with filter item names', () => {
+		userEvent.click(document.querySelector('.dropdown-toggle'));
+
 		const filterItems = document.querySelectorAll('.dropdown-item');
 
 		expect(filterItems[0]).toHaveTextContent('inst-day');
@@ -47,7 +50,9 @@ describe('The velocity unit filter component should', () => {
 		expect(filterItems[2]).toHaveTextContent('inst-month');
 	});
 
-	xtest('Be rendered with active option "Weeks"', async () => {
+	test('Be rendered with active option "Weeks"', async () => {
+		userEvent.click(document.querySelector('.dropdown-toggle'));
+
 		const activeItem = document.querySelector('.active');
 
 		expect(activeItem).toHaveTextContent('inst-week');

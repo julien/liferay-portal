@@ -11,6 +11,7 @@
 
 import '@testing-library/jest-dom/extend-expect';
 import {cleanup, render} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 
 import SLAStatusFilter from '../../../src/main/resources/META-INF/resources/js/components/filter/SLAStatusFilter.es';
@@ -31,7 +32,9 @@ describe('The sla status filter component should', () => {
 		});
 	});
 
-	xtest('Be rendered with filter item names', () => {
+	test('Be rendered with filter item names', () => {
+		userEvent.click(document.querySelector('.dropdown-toggle'));
+
 		const filterItems = document.querySelectorAll('.dropdown-item');
 
 		expect(filterItems[0].innerHTML).toContain('on-time');
@@ -39,7 +42,9 @@ describe('The sla status filter component should', () => {
 		expect(filterItems[2].innerHTML).toContain('untracked');
 	});
 
-	xtest('Be rendered with active option "Overdue"', () => {
+	test('Be rendered with active option "Overdue"', () => {
+		userEvent.click(document.querySelector('.dropdown-toggle'));
+
 		const activeItem = document.querySelector('.active');
 
 		expect(activeItem).toHaveTextContent('overdue');

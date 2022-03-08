@@ -10,6 +10,7 @@
  */
 
 import {cleanup, fireEvent, render} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 
 import TimeRangeFilter from '../../../src/main/resources/META-INF/resources/js/components/filter/TimeRangeFilter.es';
@@ -62,7 +63,9 @@ describe('The time range filter component should', () => {
 			});
 		});
 
-		xtest('Be rendered with filter item names', () => {
+		test('Be rendered with filter item names', () => {
+			userEvent.click(document.querySelector('.dropdown-toggle'));
+
 			const filterItems = document.querySelectorAll('.dropdown-item');
 
 			expect(filterItems[0].innerHTML).toContain('custom-range');
@@ -70,7 +73,9 @@ describe('The time range filter component should', () => {
 			expect(filterItems[2].innerHTML).toContain('Last 30 Days');
 		});
 
-		xtest('Be rendered with active option "Last 7 Days"', async () => {
+		test('Be rendered with active option "Last 7 Days"', async () => {
+			userEvent.click(document.querySelector('.dropdown-toggle'));
+
 			const activeItem = document.querySelector('.active');
 
 			expect(activeItem).toHaveTextContent('Last 7 Days');
@@ -97,7 +102,9 @@ describe('The time range filter component should', () => {
 			getByText = renderResult.getByText;
 		});
 
-		xtest('Show the date the href has as a suggestion', () => {
+		test('Show the date the href has as a suggestion', () => {
+			userEvent.click(document.querySelector('.dropdown-toggle'));
+
 			const filterItems = document.querySelectorAll('.dropdown-item div');
 
 			fireEvent.click(filterItems[0]);
@@ -109,7 +116,16 @@ describe('The time range filter component should', () => {
 			expect(dateEndInput.value).toEqual('12/09/2019');
 		});
 
-		xtest('Sho error span with invalid date input', () => {
+		test('Sho error span with invalid date input', () => {
+			userEvent.click(document.querySelector('.dropdown-toggle'));
+
+			const filterItems = document.querySelectorAll('.dropdown-item div');
+
+			fireEvent.click(filterItems[0]);
+
+			dateStartInput = document.querySelectorAll('.form-control')[0];
+			dateEndInput = document.querySelectorAll('.form-control')[1];
+
 			fireEvent.change(dateStartInput, {target: {value: '13/09/2020'}});
 			fireEvent.blur(dateStartInput);
 
@@ -122,7 +138,16 @@ describe('The time range filter component should', () => {
 			expect(errorSpan[1]).toHaveTextContent('please-enter-a-valid-date');
 		});
 
-		xtest('Show error span with date early to 1970 input', () => {
+		test('Show error span with date early to 1970 input', () => {
+			userEvent.click(document.querySelector('.dropdown-toggle'));
+
+			const filterItems = document.querySelectorAll('.dropdown-item div');
+
+			fireEvent.click(filterItems[0]);
+
+			dateStartInput = document.querySelectorAll('.form-control')[0];
+			dateEndInput = document.querySelectorAll('.form-control')[1];
+
 			fireEvent.change(dateStartInput, {target: {value: '12/09/1960'}});
 			fireEvent.blur(dateStartInput);
 
@@ -139,7 +164,16 @@ describe('The time range filter component should', () => {
 			);
 		});
 
-		xtest('Show error span to inconsistent date input', () => {
+		test('Show error span to inconsistent date input', () => {
+			userEvent.click(document.querySelector('.dropdown-toggle'));
+
+			const filterItems = document.querySelectorAll('.dropdown-item div');
+
+			fireEvent.click(filterItems[0]);
+
+			dateStartInput = document.querySelectorAll('.form-control')[0];
+			dateEndInput = document.querySelectorAll('.form-control')[1];
+
 			fireEvent.change(dateStartInput, {target: {value: '12/09/2020'}});
 			fireEvent.blur(dateStartInput);
 
@@ -156,7 +190,16 @@ describe('The time range filter component should', () => {
 			);
 		});
 
-		xtest('Change the filter value applying a custom time range', () => {
+		test('Change the filter value applying a custom time range', () => {
+			userEvent.click(document.querySelector('.dropdown-toggle'));
+
+			const filterItems = document.querySelectorAll('.dropdown-item div');
+
+			fireEvent.click(filterItems[0]);
+
+			dateStartInput = document.querySelectorAll('.form-control')[0];
+			dateEndInput = document.querySelectorAll('.form-control')[1];
+
 			const filterName = getAllByText('Last 7 Days')[0];
 
 			expect(filterName).toBeTruthy();

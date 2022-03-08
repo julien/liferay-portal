@@ -10,6 +10,7 @@
  */
 
 import {cleanup, fireEvent, render} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 
 import Filter from '../../../../src/main/resources/META-INF/resources/js/shared/components/filter/Filter.es';
@@ -30,7 +31,7 @@ describe('The filter component should', () => {
 
 	afterEach(cleanup);
 
-	xtest('Be rendered with filter item names and default item selected', async () => {
+	test('Be rendered with filter item names and default item selected', async () => {
 		render(
 			<MockRouter>
 				<Filter
@@ -43,6 +44,8 @@ describe('The filter component should', () => {
 			</MockRouter>
 		);
 
+		userEvent.click(document.querySelector('.dropdown-toggle'));
+
 		const filterItems = document.querySelectorAll('.dropdown-item');
 
 		expect(filterItems[0]).toHaveTextContent('Overdue');
@@ -54,7 +57,7 @@ describe('The filter component should', () => {
 		expect(activeItem).toHaveTextContent('Untracked');
 	});
 
-	xtest('Be rendered with other item selected', async () => {
+	test('Be rendered with other item selected', async () => {
 		items[0].active = true;
 
 		render(
@@ -68,6 +71,8 @@ describe('The filter component should', () => {
 				/>
 			</MockRouter>
 		);
+
+		userEvent.click(document.querySelector('.dropdown-toggle'));
 
 		const activeItem = document.querySelector('.active');
 

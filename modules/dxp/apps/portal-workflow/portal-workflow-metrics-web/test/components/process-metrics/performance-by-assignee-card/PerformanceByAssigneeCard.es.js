@@ -134,7 +134,7 @@ describe('The performance by assignee card component should', () => {
 			);
 		});
 
-		xit('Be rendered with process step filter', async () => {
+		it('Be rendered with process step filter', async () => {
 			const processStepFilter = getByText('all-steps');
 			const activeItem = document.querySelectorAll('.active')[0];
 
@@ -142,7 +142,7 @@ describe('The performance by assignee card component should', () => {
 			expect(activeItem).toHaveTextContent('Update');
 		});
 
-		xit('Be rendered with time range filter', async () => {
+		it('Be rendered with time range filter', async () => {
 			const timeRangeFilter = getByText('Last 30 Days');
 			const activeItem = document.querySelectorAll('.active')[1];
 

@@ -78,7 +78,7 @@ describe('Conjunction', () => {
 		expect(selectedConjunction.tagName).toBe('DIV');
 	});
 
-	xit('dropdown opens on click in editable mode', () => {
+	it('dropdown opens on click in editable mode', () => {
 		const {
 			label: initialConjunctionLabel,
 			name: initialConjunctionName,
@@ -96,14 +96,14 @@ describe('Conjunction', () => {
 			}
 		);
 
+		userEvent.click(document.querySelector('.dropdown-toggle'));
+
 		const dropdownMenu = document.body.querySelector('.dropdown-menu');
 		const [selectedConjunction] = getAllByText(initialConjunctionLabel);
 
-		expect(dropdownMenu.className).not.toContain('show');
-
 		userEvent.click(selectedConjunction);
 
-		expect(dropdownMenu.className).toContain('show');
+		expect(dropdownMenu.className).not.toContain('show');
 	});
 
 	it('onSelect prop is triggered on selection with conjuntionName param in editable mode', () => {

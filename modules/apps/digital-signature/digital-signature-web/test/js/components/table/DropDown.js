@@ -13,6 +13,7 @@
  */
 
 import {cleanup, fireEvent, render} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 
 import DropDown from '../../../../src/main/resources/META-INF/resources/js/components/table/DropDown';
@@ -23,7 +24,7 @@ describe('DropDown', () => {
 		jest.restoreAllMocks();
 	});
 
-	xit('shows dropdown when trigger is clicked and action is called', () => {
+	it('shows dropdown when trigger is clicked and action is called', () => {
 		const actionCallback = jest.fn();
 
 		const {baseElement, getAllByRole} = render(
@@ -36,6 +37,8 @@ describe('DropDown', () => {
 				]}
 			/>
 		);
+
+		userEvent.click(document.querySelector('.dropdown-action'));
 
 		const dropDownMenu = baseElement.querySelector('.dropdown-menu');
 
@@ -64,7 +67,7 @@ describe('DropDown', () => {
 		expect(dropDownMenu).toBeFalsy();
 	});
 
-	xit('shows dropdown with hidden action', () => {
+	it('shows dropdown with hidden action', () => {
 		const {queryByText} = render(
 			<DropDown
 				actions={[
@@ -81,11 +84,13 @@ describe('DropDown', () => {
 			/>
 		);
 
+		userEvent.click(document.querySelector('.dropdown-action'));
+
 		expect(queryByText('action 1')).toBeTruthy();
 		expect(queryByText('action 2')).toBeFalsy();
 	});
 
-	xit('shows dropdown with divider', () => {
+	it('shows dropdown with divider', () => {
 		const {baseElement, queryByText} = render(
 			<DropDown
 				actions={[
@@ -104,12 +109,14 @@ describe('DropDown', () => {
 			/>
 		);
 
+		userEvent.click(document.querySelector('.dropdown-action'));
+
 		expect(queryByText('action 1')).toBeTruthy();
 		expect(baseElement.querySelector('.dropdown-divider')).toBeTruthy();
 		expect(queryByText('action 2')).toBeTruthy();
 	});
 
-	xit('shows dropdown with name as a function', () => {
+	it('shows dropdown with name as a function', () => {
 		const {queryByText} = render(
 			<DropDown
 				actions={[
@@ -120,6 +127,8 @@ describe('DropDown', () => {
 				item={{name: 'action'}}
 			/>
 		);
+
+		userEvent.click(document.querySelector('.dropdown-action'));
 
 		expect(queryByText('action')).toBeTruthy();
 	});

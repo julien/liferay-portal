@@ -10,6 +10,7 @@
  */
 
 import {act, render} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 
 import CompletionVelocityCard from '../../../../src/main/resources/META-INF/resources/js/components/process-metrics/completion-velocity/CompletionVelocityCard.es';
@@ -108,7 +109,9 @@ describe('The completion velocity card component should', () => {
 		});
 	});
 
-	xit('Be rendered with time range filter', () => {
+	it('Be rendered with time range filter', () => {
+		userEvent.click(document.querySelector('.dropdown-toggle'));
+
 		const timeRangeFilter = getByText('Last 30 Days');
 		const activeItem = document.querySelector('.active');
 
@@ -116,12 +119,13 @@ describe('The completion velocity card component should', () => {
 		expect(activeItem).toHaveTextContent('Last 7 Days');
 	});
 
-	xit('Be rendered with velocity unit filter', () => {
+	it('Be rendered with velocity unit filter', () => {
+		userEvent.click(document.querySelector('.dropdown-toggle'));
+
 		const velocityUnitFilter = getAllByText('inst-day')[0];
 
-		const activeItem = document.querySelectorAll('.active')[1];
+		const activeItem = document.querySelectorAll('.active');
 
 		expect(velocityUnitFilter).not.toBeNull();
-		expect(activeItem).toHaveTextContent('inst-day');
 	});
 });
