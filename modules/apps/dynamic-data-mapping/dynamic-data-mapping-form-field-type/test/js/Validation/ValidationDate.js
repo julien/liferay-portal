@@ -309,7 +309,9 @@ describe('ValidationDate', () => {
 			/>
 		);
 
-		const [dateSelect, dateType] = container.querySelectorAll('.form-builder-select-field');
+		const [dateSelect, dateType] = container.querySelectorAll(
+			'.form-builder-select-field'
+		);
 
 		fireEvent.click(dateSelect);
 		fireEvent.click(dateType);
@@ -377,7 +379,9 @@ describe('ValidationDate', () => {
 			/>
 		);
 
-		const [dateSelect, dateType] = container.querySelectorAll('.form-builder-select-field');
+		const [dateSelect, dateType] = container.querySelectorAll(
+			'.form-builder-select-field'
+		);
 
 		fireEvent.click(dateSelect);
 		fireEvent.click(dateType);
@@ -448,7 +452,9 @@ describe('ValidationDate', () => {
 			/>
 		);
 
-		const [dateSelect, dateType] = container.querySelectorAll('.form-builder-select-field');
+		const [dateSelect, dateType] = container.querySelectorAll(
+			'.form-builder-select-field'
+		);
 
 		fireEvent.click(dateSelect);
 		fireEvent.click(dateType);
@@ -520,7 +526,9 @@ describe('ValidationDate', () => {
 			/>
 		);
 
-		const [dateSelect, dateType] = container.querySelectorAll('.form-builder-select-field');
+		const [dateSelect, dateType] = container.querySelectorAll(
+			'.form-builder-select-field'
+		);
 
 		fireEvent.click(dateSelect);
 		fireEvent.click(dateType);
@@ -586,7 +594,9 @@ describe('ValidationDate', () => {
 			/>
 		);
 
-		const [dateSelect, dateType, customDate] = container.querySelectorAll('.form-builder-select-field');
+		const [dateSelect, dateType, customDate] = container.querySelectorAll(
+			'.form-builder-select-field'
+		);
 
 		fireEvent.click(dateSelect);
 		fireEvent.click(dateType);

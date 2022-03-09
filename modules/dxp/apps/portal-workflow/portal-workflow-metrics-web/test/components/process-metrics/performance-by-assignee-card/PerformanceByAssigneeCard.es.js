@@ -118,7 +118,7 @@ describe('The performance by assignee card component should', () => {
 				{wrapper}
 			);
 
-			fireEvent.click(renderResult.getAllByRole('button')[0])
+			fireEvent.click(renderResult.getAllByRole('button')[0]);
 
 			getByText = renderResult.getByText;
 

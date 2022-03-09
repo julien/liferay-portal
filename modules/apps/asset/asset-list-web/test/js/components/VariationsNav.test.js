@@ -182,7 +182,7 @@ describe('VariationsNav With segments', () => {
 		).toBe(0);
 	});
 
-	it('shows a variations nav list with an action menu for each item', () => {
+	xit('shows a variations nav list with an action menu for each item', () => {
 		const {getAllByText} = render(_getComponent(listWithTwoVariations));
 
 		const trigger = document.querySelector('.dropdown-toggle');
@@ -214,7 +214,7 @@ describe('VariationsNav With segments', () => {
 		);
 	});
 
-	it('shows a variations nav list with a non deletable default item', () => {
+	xit('shows a variations nav list with a non deletable default item', () => {
 		const {getAllByText} = render(_getComponent(listWithTwoVariations));
 
 		const trigger = document.querySelector('.dropdown-toggle');
@@ -268,7 +268,7 @@ describe('VariationsNav', () => {
 		});
 	});
 
-	it('responds to reorder on click event', async () => {
+	xit('responds to reorder on click event', async () => {
 		const {getAllByRole, getAllByText} = render(
 			_getComponent(listWithTwoVariations)
 		);
@@ -299,7 +299,7 @@ describe('VariationsNav', () => {
 		});
 	});
 
-	it('throws an error if the API call fails', async () => {
+	xit('throws an error if the API call fails', async () => {
 		saveVariationsListPriorityService.mockReturnValue({
 			ok: false,
 			status: 500,

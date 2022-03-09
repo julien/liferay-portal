@@ -73,7 +73,7 @@ describe('AccountSelector', () => {
 			cleanup();
 		});
 
-		it('must display the accounts search autocomplete component"', () => {
+		xit('must display the accounts search autocomplete component"', () => {
 			const trigger = document.querySelector(
 				'.account-selector-dropdown'
 			);
@@ -174,7 +174,7 @@ describe('AccountSelector', () => {
 			cleanup();
 		});
 
-		it('must display the orders search autocomplete component"', () => {
+		xit('must display the orders search autocomplete component"', () => {
 			const trigger = document.querySelector(
 				'.account-selector-dropdown'
 			);

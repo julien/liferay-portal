@@ -124,7 +124,7 @@ describe('The completion velocity card component should', () => {
 
 		const velocityUnitFilter = getAllByText('inst-day')[0];
 
-		const activeItem = document.querySelectorAll('.active');
+		// const activeItem = document.querySelectorAll('.active');
 
 		expect(velocityUnitFilter).not.toBeNull();
 	});

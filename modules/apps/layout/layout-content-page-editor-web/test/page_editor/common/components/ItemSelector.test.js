@@ -180,7 +180,9 @@ describe('ItemSelector', () => {
 			selectedItemTitle: 'itemTitle',
 		});
 
-		const [controls, options] = container.querySelectorAll('.dropdown-toggle');
+		const [controls, options] = container.querySelectorAll(
+			'.dropdown-toggle'
+		);
 
 		fireEvent.click(controls);
 		fireEvent.click(options);
@@ -209,7 +211,9 @@ describe('ItemSelector', () => {
 			selectedItemTitle: 'itemTitle',
 		});
 
-		const [controls, options] = container.querySelectorAll('.dropdown-toggle');
+		const [controls, options] = container.querySelectorAll(
+			'.dropdown-toggle'
+		);
 
 		fireEvent.click(controls);
 		fireEvent.click(options);
@@ -233,7 +237,9 @@ describe('ItemSelector', () => {
 			selectedItemTitle: 'itemTitle',
 		});
 
-		const [controls, options] = container.querySelectorAll('.dropdown-toggle');
+		const [controls, options] = container.querySelectorAll(
+			'.dropdown-toggle'
+		);
 
 		fireEvent.click(controls);
 		fireEvent.click(options);
@@ -257,7 +263,9 @@ describe('ItemSelector', () => {
 			selectedItemTitle: 'itemTitle',
 		});
 
-		const [controls, options] = container.querySelectorAll('.dropdown-toggle');
+		const [controls, options] = container.querySelectorAll(
+			'.dropdown-toggle'
+		);
 
 		fireEvent.click(controls);
 		fireEvent.click(options);
@@ -281,7 +289,9 @@ describe('ItemSelector', () => {
 			selectedItemTitle: 'itemTitle',
 		});
 
-		const [controls, options] = container.querySelectorAll('.dropdown-toggle');
+		const [controls, options] = container.querySelectorAll(
+			'.dropdown-toggle'
+		);
 
 		fireEvent.click(controls);
 		fireEvent.click(options);
