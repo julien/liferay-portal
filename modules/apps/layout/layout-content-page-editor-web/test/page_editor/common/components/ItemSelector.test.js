@@ -146,20 +146,22 @@ describe('ItemSelector', () => {
 		expect(openItemSelector).not.toBeCalled();
 	});
 
-	xit('removes selected item correctly when clear button is clicked', () => {
+	it('removes selected item correctly when clear button is clicked', () => {
 		const selectedItemTitle = 'itemTitle';
 
-		const {getByLabelText, getByText} = renderItemSelector({
+		const {container, getByLabelText, getByText} = renderItemSelector({
 			selectedItemTitle,
 		});
+
+		fireEvent.click(container.querySelector('.dropdown-toggle'));
 
 		fireEvent.click(getByText('remove-itemSelectorLabel'));
 
 		expect(getByLabelText('itemSelectorLabel')).toBeEmpty();
 	});
 
-	xit('adds addItem content-related option if possible', () => {
-		const {getByText} = renderItemSelector({
+	it('adds addItem content-related option if possible', () => {
+		const {container, getByText} = renderItemSelector({
 			pageContents: [
 				{
 					actions: {
@@ -178,6 +180,11 @@ describe('ItemSelector', () => {
 			selectedItemTitle: 'itemTitle',
 		});
 
+		const [controls, options] = container.querySelectorAll('.dropdown-toggle');
+
+		fireEvent.click(controls);
+		fireEvent.click(options);
+
 		const addSubMenuButton = getByText('add-items');
 
 		expect(addSubMenuButton).toBeInTheDocument();
@@ -189,8 +196,8 @@ describe('ItemSelector', () => {
 		expect(addItemLink.href).toBe('http://me.local/addItemOneURL');
 	});
 
-	xit('adds editURL content-related option if possible', () => {
-		const {getByText} = renderItemSelector({
+	it('adds editURL content-related option if possible', () => {
+		const {container, getByText} = renderItemSelector({
 			pageContents: [
 				{
 					actions: {editURL: 'http://me.local/editURL'},
@@ -202,14 +209,19 @@ describe('ItemSelector', () => {
 			selectedItemTitle: 'itemTitle',
 		});
 
+		const [controls, options] = container.querySelectorAll('.dropdown-toggle');
+
+		fireEvent.click(controls);
+		fireEvent.click(options);
+
 		const editItemLink = getByText('edit-itemSelectorLabel');
 
 		expect(editItemLink).toBeInTheDocument();
 		expect(editItemLink.href).toBe('http://me.local/editURL');
 	});
 
-	xit('adds permissionsURL content-related option if possible', () => {
-		const {getByText} = renderItemSelector({
+	it('adds permissionsURL content-related option if possible', () => {
+		const {container, getByText} = renderItemSelector({
 			pageContents: [
 				{
 					actions: {permissionsURL: 'http://me.local/permissionsURL'},
@@ -221,14 +233,19 @@ describe('ItemSelector', () => {
 			selectedItemTitle: 'itemTitle',
 		});
 
+		const [controls, options] = container.querySelectorAll('.dropdown-toggle');
+
+		fireEvent.click(controls);
+		fireEvent.click(options);
+
 		const editItemButton = getByText('edit-itemSelectorLabel-permissions');
 
 		expect(editItemButton).toBeInTheDocument();
 		expect(editItemButton.tagName).toBe('BUTTON');
 	});
 
-	xit('adds viewItemsURL content-related option if possible', () => {
-		const {getByText} = renderItemSelector({
+	it('adds viewItemsURL content-related option if possible', () => {
+		const {container, getByText} = renderItemSelector({
 			pageContents: [
 				{
 					actions: {viewItemsURL: 'http://me.local/viewItemsURL'},
@@ -240,14 +257,19 @@ describe('ItemSelector', () => {
 			selectedItemTitle: 'itemTitle',
 		});
 
+		const [controls, options] = container.querySelectorAll('.dropdown-toggle');
+
+		fireEvent.click(controls);
+		fireEvent.click(options);
+
 		const viewItemsButton = getByText('view-items');
 
 		expect(viewItemsButton).toBeInTheDocument();
 		expect(viewItemsButton.tagName).toBe('BUTTON');
 	});
 
-	xit('adds viewUsagesURL content-related option if possible', () => {
-		const {getByText} = renderItemSelector({
+	it('adds viewUsagesURL content-related option if possible', () => {
+		const {container, getByText} = renderItemSelector({
 			pageContents: [
 				{
 					actions: {viewUsagesURL: 'http://me.local/viewUsagesURL'},
@@ -258,6 +280,11 @@ describe('ItemSelector', () => {
 			selectedItemClassPK: 'sampleItem-classPK',
 			selectedItemTitle: 'itemTitle',
 		});
+
+		const [controls, options] = container.querySelectorAll('.dropdown-toggle');
+
+		fireEvent.click(controls);
+		fireEvent.click(options);
 
 		const viewUsagesButton = getByText('view-itemSelectorLabel-usages');
 

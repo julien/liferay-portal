@@ -32,7 +32,7 @@ function renderTestItemDropdown(props) {
 	);
 }
 
-xdescribe('ItemDropdown', () => {
+describe('ItemDropdown', () => {
 	afterEach(() => {
 		jest.clearAllMocks();
 	});
@@ -45,10 +45,12 @@ xdescribe('ItemDropdown', () => {
 		${false} | ${false} | ${HIDE_BUTTON_LABEL}  | ${'hide a visible result'}
 		${true}  | ${false} | ${SHOW_BUTTON_LABEL}  | ${'show a hidden result'}
 	`('shows option to $description', ({expected, hidden, pinned}) => {
-		const {getByText} = renderTestItemDropdown({
+		const {getByRole, getByText} = renderTestItemDropdown({
 			hidden,
 			pinned,
 		});
+
+		fireEvent.click(getByRole('button'));
 
 		expect(getByText(expected)).not.toBeNull();
 	});
@@ -63,11 +65,13 @@ xdescribe('ItemDropdown', () => {
 	`(
 		'shows option to $description',
 		({expected, hidden, itemCount, pinned}) => {
-			const {getByText} = renderTestItemDropdown({
+			const {getByRole, getByText} = renderTestItemDropdown({
 				hidden,
 				itemCount,
 				pinned,
 			});
+
+			fireEvent.click(getByRole('button'));
 
 			expect(getByText(`${expected}s`)).not.toBeNull();
 		}
@@ -100,10 +104,12 @@ xdescribe('ItemDropdown', () => {
 	`(
 		'calls the $fcnName function when the button gets clicked on',
 		({fcn, title}) => {
-			const {getByText} = renderTestItemDropdown({
+			const {getByRole, getByText} = renderTestItemDropdown({
 				hidden: false,
 				pinned: false,
 			});
+
+			fireEvent.click(getByRole('button'));
 
 			fireEvent.click(getByText(title));
 

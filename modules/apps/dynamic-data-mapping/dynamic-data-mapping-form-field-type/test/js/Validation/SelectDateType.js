@@ -13,7 +13,7 @@
  */
 
 import '@testing-library/jest-dom/extend-expect';
-import {cleanup, render} from '@testing-library/react';
+import {cleanup, fireEvent, render} from '@testing-library/react';
 import {FormProvider} from 'data-engine-js-components-web';
 import React from 'react';
 
@@ -71,7 +71,7 @@ const SelectDateTypeProvider = ({builderPages = [], state, ...props}) => (
 	</FormProvider>
 );
 
-xdescribe('SelectDateType', () => {
+describe('SelectDateType', () => {
 	afterEach(cleanup);
 
 	it('checks options and date field options', () => {
@@ -106,7 +106,7 @@ xdescribe('SelectDateType', () => {
 
 		const localizedValue = jest.fn(() => parameter['en_US']);
 
-		const {getAllByRole} = render(
+		const {container, getAllByRole} = render(
 			<SelectDateTypeProvider
 				dateFieldOptions={dateFieldOptions}
 				defaultLanguageId="en_US"
@@ -126,6 +126,8 @@ xdescribe('SelectDateType', () => {
 				visible={true}
 			/>
 		);
+
+		fireEvent.click(container.querySelector('.form-builder-select-field'));
 
 		const [responseDate, dateField] = [...getAllByRole('button')];
 

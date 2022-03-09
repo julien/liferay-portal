@@ -10,7 +10,7 @@
  */
 
 import '@testing-library/jest-dom/extend-expect';
-import {act, render} from '@testing-library/react';
+import {act, fireEvent, render} from '@testing-library/react';
 import React from 'react';
 
 import ProcessVersionFilter from '../../../src/main/resources/META-INF/resources/js/components/filter/ProcessVersionFilter.es';
@@ -31,7 +31,7 @@ describe('The process version filter component should', () => {
 			ok: true,
 		});
 
-		render(
+		const {getAllByRole} = render(
 			<ProcessVersionFilter
 				options={{
 					hideControl: true,
@@ -46,12 +46,16 @@ describe('The process version filter component should', () => {
 			}
 		);
 
+		const [toggle] = getAllByRole('button');
+
+		fireEvent.click(toggle);
+
 		await act(async () => {
 			jest.runAllTimers();
 		});
 	});
 
-	xit('Render with filter item names', () => {
+	it('Render with filter item names', () => {
 		const filterItems = document.querySelectorAll('.dropdown-item');
 
 		expect(filterItems[0].innerHTML).toContain('all-versions');
@@ -59,7 +63,7 @@ describe('The process version filter component should', () => {
 		expect(filterItems[2].innerHTML).toContain('2.0');
 	});
 
-	xit('Render with active option "1.0"', () => {
+	it('Render with active option "1.0"', () => {
 		const activeItem = document.querySelector('.active');
 
 		expect(activeItem).toHaveTextContent('1.0');

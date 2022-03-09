@@ -34,7 +34,7 @@ const baseProps = {
 const renderComponent = (props) =>
 	render(<Ratings {...baseProps} {...props} />);
 
-xdescribe('RatingsSelectStars', () => {
+describe('RatingsSelectStars', () => {
 	afterEach(cleanup);
 
 	describe('when rendered with the default props', () => {
@@ -42,8 +42,13 @@ xdescribe('RatingsSelectStars', () => {
 		let starsButtons;
 
 		beforeEach(() => {
-			starsButtons = renderComponent().getAllByRole('button');
-			starsDropdownToggle = starsButtons[0];
+			const {getAllByRole, getByRole} = renderComponent();
+
+			starsDropdownToggle = getByRole('button');
+
+			fireEvent.click(starsDropdownToggle);
+
+			starsButtons = getAllByRole('button');
 		});
 
 		it('is enabled', () => {
@@ -97,10 +102,15 @@ xdescribe('RatingsSelectStars', () => {
 			let starsButtons;
 
 			beforeEach(() => {
-				starsButtons = renderComponent({
+				const {getAllByRole, getByRole} = renderComponent({
 					userScore: 0.2,
-				}).getAllByRole('button');
-				starsDropdownToggle = starsButtons[0];
+				});
+
+				starsDropdownToggle = getByRole('button');
+
+				fireEvent.click(starsDropdownToggle);
+
+				starsButtons = getAllByRole('button');
 
 				act(() => {
 					fireEvent.click(starsButtons[1]);
@@ -161,10 +171,15 @@ xdescribe('RatingsSelectStars', () => {
 			let starsButtons;
 
 			beforeEach(() => {
-				starsButtons = renderComponent({
+				const {getAllByRole, getByRole} = renderComponent({
 					userScore: 1,
-				}).getAllByRole('button');
-				starsDropdownToggle = starsButtons[0];
+				});
+
+				starsDropdownToggle = getByRole('button');
+
+				fireEvent.click(starsDropdownToggle);
+
+				starsButtons = getAllByRole('button');
 			});
 
 			it('shows the initial user score', () => {
@@ -209,8 +224,12 @@ xdescribe('RatingsSelectStars', () => {
 				result = renderComponent({
 					userScore: 0.4,
 				});
+
+				starsDropdownToggle = result.getByRole('button');
+
+				fireEvent.click(starsDropdownToggle);
+
 				starsButtons = result.getAllByRole('button');
-				starsDropdownToggle = starsButtons[0];
 
 				await act(async () => {
 					fireEvent.click(starsButtons[3]);

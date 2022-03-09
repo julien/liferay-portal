@@ -10,7 +10,7 @@
  */
 
 import '@testing-library/jest-dom/extend-expect';
-import {cleanup, render} from '@testing-library/react';
+import {cleanup, fireEvent, render} from '@testing-library/react';
 import React from 'react';
 
 import ProcessStatusFilter from '../../../src/main/resources/META-INF/resources/js/components/filter/ProcessStatusFilter.es';
@@ -26,19 +26,21 @@ describe('The process status filter component should', () => {
 	afterEach(cleanup);
 
 	beforeEach(() => {
-		render(<ProcessStatusFilter processId={12345} />, {
+		const {getByRole} = render(<ProcessStatusFilter processId={12345} />, {
 			wrapper,
 		});
+
+		fireEvent.click(getByRole('button'));
 	});
 
-	xtest('Be rendered with filter item names', () => {
+	test('Be rendered with filter item names', () => {
 		const filterItems = document.querySelectorAll('.dropdown-item');
 
 		expect(filterItems[0].innerHTML).toContain('completed');
 		expect(filterItems[1].innerHTML).toContain('pending');
 	});
 
-	xtest('Be rendered with active option "Completed"', async () => {
+	test('Be rendered with active option "Completed"', async () => {
 		const activeItem = document.querySelector('.active');
 
 		expect(activeItem).toHaveTextContent('completed');

@@ -13,7 +13,7 @@
  */
 
 import '@testing-library/jest-dom/extend-expect';
-import {render} from '@testing-library/react';
+import {fireEvent, render} from '@testing-library/react';
 import {FormProvider} from 'data-engine-js-components-web';
 import React from 'react';
 
@@ -81,7 +81,7 @@ const ValidationDateProvider = ({
 	</FormProvider>
 );
 
-xdescribe('ValidationDate', () => {
+describe('ValidationDate', () => {
 	beforeAll(() => {
 		Liferay.Language.direction = {
 			en_US: 'rtl',
@@ -289,7 +289,7 @@ xdescribe('ValidationDate', () => {
 
 		const localizedValue = jest.fn(() => parameter['en_US']);
 
-		const {getAllByRole} = render(
+		const {container, getAllByRole} = render(
 			<ValidationDateProvider
 				defaultLanguageId="en_US"
 				editingLanguageId="en_US"
@@ -308,6 +308,11 @@ xdescribe('ValidationDate', () => {
 				visible={true}
 			/>
 		);
+
+		const [dateSelect, dateType] = container.querySelectorAll('.form-builder-select-field');
+
+		fireEvent.click(dateSelect);
+		fireEvent.click(dateType);
 
 		const lastOption = [...getAllByRole('button')].pop();
 
@@ -352,7 +357,7 @@ xdescribe('ValidationDate', () => {
 
 		const localizedValue = jest.fn(() => parameter['en_US']);
 
-		const {getAllByRole} = render(
+		const {container, getAllByRole} = render(
 			<ValidationDateProvider
 				defaultLanguageId="en_US"
 				editingLanguageId="en_US"
@@ -371,6 +376,11 @@ xdescribe('ValidationDate', () => {
 				visible={true}
 			/>
 		);
+
+		const [dateSelect, dateType] = container.querySelectorAll('.form-builder-select-field');
+
+		fireEvent.click(dateSelect);
+		fireEvent.click(dateType);
 
 		const lastOption = [...getAllByRole('button')].pop();
 
@@ -418,7 +428,7 @@ xdescribe('ValidationDate', () => {
 
 		const localizedValue = jest.fn(() => parameter['en_US']);
 
-		const {getAllByRole} = render(
+		const {container, getAllByRole} = render(
 			<ValidationDateProvider
 				defaultLanguageId="en_US"
 				editingLanguageId="en_US"
@@ -437,6 +447,11 @@ xdescribe('ValidationDate', () => {
 				visible={true}
 			/>
 		);
+
+		const [dateSelect, dateType] = container.querySelectorAll('.form-builder-select-field');
+
+		fireEvent.click(dateSelect);
+		fireEvent.click(dateType);
 
 		const lastOption = [...getAllByRole('button')].pop();
 
@@ -485,7 +500,7 @@ xdescribe('ValidationDate', () => {
 
 		const localizedValue = jest.fn(() => parameter['en_US']);
 
-		const {getAllByRole} = render(
+		const {container, getAllByRole} = render(
 			<ValidationDateProvider
 				defaultLanguageId="en_US"
 				editingLanguageId="en_US"
@@ -504,6 +519,11 @@ xdescribe('ValidationDate', () => {
 				visible={true}
 			/>
 		);
+
+		const [dateSelect, dateType] = container.querySelectorAll('.form-builder-select-field');
+
+		fireEvent.click(dateSelect);
+		fireEvent.click(dateType);
 
 		const lastOption = [...getAllByRole('button')].pop();
 
@@ -546,7 +566,7 @@ xdescribe('ValidationDate', () => {
 		};
 
 		const localizedValue = jest.fn(() => parameter['en_US']);
-		const {getAllByRole, getByText} = render(
+		const {container, getAllByRole, getByText} = render(
 			<ValidationDateProvider
 				defaultLanguageId="en_US"
 				editingLanguageId="en_US"
@@ -565,6 +585,12 @@ xdescribe('ValidationDate', () => {
 				visible={true}
 			/>
 		);
+
+		const [dateSelect, dateType, customDate] = container.querySelectorAll('.form-builder-select-field');
+
+		fireEvent.click(dateSelect);
+		fireEvent.click(dateType);
+		fireEvent.click(customDate);
 
 		const [acceptedDate, operation, quantity, unit] = [
 			getByText('accepted-date'),

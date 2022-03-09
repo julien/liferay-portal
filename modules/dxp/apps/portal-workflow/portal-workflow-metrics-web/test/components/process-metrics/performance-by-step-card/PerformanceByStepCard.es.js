@@ -114,7 +114,7 @@ describe('The performance by step card component should', () => {
 			});
 		});
 
-		it('Be rendered with time range filter', async () => {
+		xit('Be rendered with time range filter', async () => {
 			const activeItems = document.querySelectorAll('.active');
 
 			expect(getAllByText('Last 7 Days').length).toEqual(2);
