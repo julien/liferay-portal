@@ -41,6 +41,9 @@ module.exports = {
 					'@liferay/frontend-js-a11y-web': {
 						'/': '*',
 					},
+					'@liferay/frontend-js-clay-web': {
+						'/': '*',
+					},
 					'@liferay/frontend-js-react-web': {
 						'/': '*',
 						'classnames': '*',
